@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="Gallery placeholder 3">
+  <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FF3F72"/><stop offset="100%" stop-color="#FF315E"/></linearGradient></defs>
+  <rect width="800" height="600" fill="#FFF8E7"/>
+  <rect x="120" y="100" width="560" height="400" rx="20" fill="url(#g3)" opacity="0.85"/>
+  <text x="400" y="310" fill="#FFFDF8" font-family="Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle">Gallery 3</text>
+</svg>

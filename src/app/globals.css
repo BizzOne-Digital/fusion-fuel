@@ -1,26 +1,115 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-carbon: #10161A;
+  --color-ink: #07090A;
+  --color-lime: #E8F000;
+  --color-yellow: #FFE500;
+  --color-pink: #FF3F72;
+  --color-coral: #FF315E;
+  --color-white: #FFFDF8;
+  --color-cream: #FFF8E7;
+  --color-grey: #687078;
+  --background: var(--color-white);
+  --foreground: var(--color-carbon);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-carbon: #10161A;
+  --color-ink: #07090A;
+  --color-lime: #E8F000;
+  --color-yellow: #FFE500;
+  --color-pink: #FF3F72;
+  --color-coral: #FF315E;
+  --color-white: #FFFDF8;
+  --color-cream: #FFF8E7;
+  --color-grey: #687078;
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-bebas);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.font-display {
+  font-family: var(--font-bebas), Impact, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-lime) 40%, transparent);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-lime);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.prose-brand h1,
+.prose-brand h2,
+.prose-brand h3 {
+  font-family: var(--font-bebas), Impact, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.gradient-fuel {
+  background: linear-gradient(135deg, var(--color-lime) 0%, var(--color-yellow) 100%);
+}
+
+.gradient-boost {
+  background: linear-gradient(135deg, var(--color-pink) 0%, var(--color-coral) 100%);
+}
+
+.section-dark {
+  background: var(--color-carbon);
+  color: var(--color-white);
+}
+
+.section-cream {
+  background: var(--color-cream);
+  color: var(--color-carbon);
 }
