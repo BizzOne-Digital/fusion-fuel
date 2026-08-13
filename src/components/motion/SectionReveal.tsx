@@ -3,6 +3,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { cn } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -43,7 +44,7 @@ export function SectionReveal({ children, className }: SectionRevealProps) {
   }, []);
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} className={cn('min-w-0 w-full overflow-x-clip', className)}>
       {children}
     </div>
   );

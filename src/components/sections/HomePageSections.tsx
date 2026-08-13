@@ -65,7 +65,7 @@ export function HomePageSections({
       <section className="relative min-h-[85vh] overflow-hidden bg-ink text-white">
         <Image src={hero.backgroundImage?.url ?? SITE_IMAGES.hero} alt="" fill className="object-cover opacity-50" priority sizes="100vw" />
         <div className="relative mx-auto flex min-h-[85vh] max-w-7xl flex-col justify-center px-4 py-20 lg:px-6">
-          <SplitText text={getLocalized(hero.title, locale)} className="font-display max-w-4xl text-5xl leading-none md:text-7xl lg:text-8xl" />
+          <SplitText text={getLocalized(hero.title, locale)} className="font-display max-w-full text-4xl leading-none sm:text-5xl md:text-7xl lg:max-w-4xl lg:text-8xl" />
           {hero.subtitle && (
             <p className="mt-6 max-w-2xl text-lg text-white/80 md:text-xl">{getLocalized(hero.subtitle, locale)}</p>
           )}
@@ -81,8 +81,8 @@ export function HomePageSections({
       <SectionReveal>
         <section className="section-cream py-20">
           <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 lg:grid-cols-2 lg:px-6">
-            <LiquidMask>
-              <Image src={SITE_IMAGES.megaTea} alt="Mega Tea" width={600} height={500} className="h-auto w-full rounded-2xl object-cover" />
+            <LiquidMask className="overflow-hidden rounded-2xl">
+              <Image src={SITE_IMAGES.megaTea} alt="Mega Tea" width={600} height={500} className="h-auto w-full max-w-full rounded-2xl object-cover" />
             </LiquidMask>
             <div>
               <p className="text-sm font-bold uppercase tracking-widest text-pink">01 · Mega Teas</p>
@@ -254,8 +254,8 @@ export function HomePageSections({
 
       {/* 15. Special offer */}
       <SectionReveal>
-        <section className="py-16">
-          <div className="mx-auto max-w-3xl rounded-2xl border border-grey/20 bg-white p-8 text-center shadow-sm">
+        <section className="px-4 py-16">
+          <div className="mx-auto max-w-3xl rounded-2xl border border-grey/20 bg-white p-6 text-center shadow-sm sm:p-8">
             <h2 className="font-display text-3xl">Special Offers</h2>
             <p className="mt-4 text-grey">Promotional offers such as kit bundles or free shipping may be available when configured by the business. Contact us for current eligibility.</p>
             <Link href="/contact" className="mt-6 inline-block text-pink font-semibold hover:underline">Contact for details →</Link>
@@ -315,7 +315,7 @@ export function HomePageSections({
           <div className="mx-auto max-w-7xl px-4 text-center lg:px-6">
             <h2 className="font-display text-4xl">Follow the Energy</h2>
             {instagram ? (
-              <a href={instagram.url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block text-lg underline">@{instagram.url.split('/').filter(Boolean).pop()}</a>
+              <a href={instagram.url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block max-w-full break-all text-lg underline">@{instagram.url.split('/').filter(Boolean).pop()}</a>
             ) : (
               <p className="mt-4 text-white/80">Connect with us on Instagram for updates.</p>
             )}

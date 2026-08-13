@@ -12,7 +12,8 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
 
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
+    const isMobile = window.matchMedia('(max-width: 1023px)').matches;
+    if (prefersReduced || isMobile) return;
 
     const lenis = new Lenis({
       duration: 1.1,
@@ -33,5 +34,9 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
     };
   }, []);
 
-  return <div className="lenis lenis-smooth">{children}</div>;
+  return (
+    <div className="lenis lenis-smooth flex min-w-0 w-full flex-1 flex-col overflow-x-clip">
+      {children}
+    </div>
+  );
 }

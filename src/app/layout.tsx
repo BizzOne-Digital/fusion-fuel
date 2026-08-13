@@ -17,7 +17,7 @@ const bebasNeue = Bebas_Neue({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${bebasNeue.variable} h-full`} suppressHydrationWarning>
-      <body className="min-h-full flex flex-col antialiased">{children}</body>
+      <body className="flex min-h-full max-w-full flex-col overflow-x-clip antialiased">{children}</body>
     </html>
   );
 }

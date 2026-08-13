@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { X } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { Logo } from './Logo';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 interface MobileNavProps {
   open: boolean;
@@ -65,6 +66,9 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
             </Link>
           ))}
         </nav>
+        <div className="border-t border-grey/15 p-4">
+          <LanguageSwitcher compact />
+        </div>
       </div>
     </div>
   );

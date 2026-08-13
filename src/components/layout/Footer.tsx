@@ -44,7 +44,7 @@ export async function Footer({ settings, locale }: FooterProps) {
             <p className="max-w-xs text-sm text-white/70">
               {getLocalized(settings.footer?.tagline ?? settings.tagline, locale)}
             </p>
-            <div className="space-y-1 text-sm text-white/80">
+            <div className="space-y-1 break-all text-sm text-white/80">
               <p>{settings.contactEmail}</p>
               <p>{settings.contactPhone}</p>
             </div>
@@ -87,7 +87,7 @@ export async function Footer({ settings, locale }: FooterProps) {
         </div>
         <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-6 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {settings.businessName ?? 'Fusion Fuel & Boost Co.'}. {t('rights')}</p>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
             {(settings.legalLinks ?? []).map((link, i) => (
               <Link key={i} href={link.href} className="hover:text-white">
                 {getLocalized(link.label, locale)}

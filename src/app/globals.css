@@ -36,6 +36,8 @@
 
 html {
   scroll-behavior: auto;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 html.lenis,
@@ -45,6 +47,9 @@ html.lenis body {
 
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
+  width: 100%;
+  min-width: 0;
+  overflow-x: clip;
 }
 
 .lenis.lenis-smooth [data-lenis-prevent] {
@@ -61,11 +66,15 @@ body {
   font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 .font-display {
   font-family: var(--font-bebas), Impact, sans-serif;
   letter-spacing: 0.04em;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 ::selection {
@@ -94,6 +103,24 @@ body {
 .prose-brand h3 {
   font-family: var(--font-bebas), Impact, sans-serif;
   letter-spacing: 0.04em;
+}
+
+.prose-brand {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.prose-brand img,
+.prose-brand video,
+.prose-brand iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+.prose-brand table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .gradient-fuel {

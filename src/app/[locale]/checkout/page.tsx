@@ -57,7 +57,7 @@ export default function CheckoutPage() {
     <div className="mx-auto max-w-5xl px-4 py-12 lg:px-6">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Cart', href: '/cart' }, { label: t('title') }]} />
       <h1 className="font-display text-5xl">{t('title')}</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-8 grid gap-10 lg:grid-cols-[1fr_340px]">
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-8 grid min-w-0 gap-10 lg:grid-cols-[minmax(0,1fr)_min(100%,340px)]">
         <div className="space-y-4">
           <Input label={t('email')} type="email" {...register('email')} error={errors.email?.message} />
           <Select

@@ -43,8 +43,8 @@ export function AnnouncementBarComponent({ announcement, locale }: AnnouncementB
       role="region"
       aria-label="Announcement"
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-center gap-4">
-        <p>{content}</p>
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-3 sm:gap-4">
+        <p className="min-w-0 flex-1 break-words text-center">{content}</p>
         <button
           type="button"
           onClick={() => {

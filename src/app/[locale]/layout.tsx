@@ -47,7 +47,7 @@ export default async function LocaleLayout({
         <AnnouncementBarComponent announcement={settings.announcement ?? { enabled: false, message: { en: '', es: '' } }} locale={locale as Locale} />
         <SmoothScrollProvider>
           <Header />
-          <main id="main-content" className="flex-1">{children}</main>
+          <main id="main-content" className="min-w-0 w-full flex-1 overflow-x-clip">{children}</main>
           <Footer settings={settings} locale={locale as Locale} />
         </SmoothScrollProvider>
         <CartDrawer />

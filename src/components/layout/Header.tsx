@@ -24,9 +24,9 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-grey/15 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-3 px-4 lg:h-16 lg:px-6">
-          <Logo priority className="h-7 w-auto max-w-[120px] object-contain object-left sm:h-8 sm:max-w-[136px]" />
+      <header className="sticky top-0 z-40 overflow-x-clip border-b border-grey/15 bg-white/95 backdrop-blur">
+        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-3 sm:gap-3 sm:px-4 lg:h-16 lg:px-6">
+          <Logo priority className="h-7 w-auto max-w-[96px] shrink-0 object-contain object-left sm:h-8 sm:max-w-[120px] lg:max-w-[136px]" />
           <nav className="hidden items-center gap-5 lg:flex" aria-label="Main">
             {navItems.map((item) => (
               <Link key={item.href} href={item.href} className="text-sm font-medium text-carbon hover:text-pink">
@@ -34,8 +34,8 @@ export function Header() {
               </Link>
             ))}
           </nav>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <LanguageSwitcher />
+          <div className="flex min-w-0 shrink-0 items-center gap-1 sm:gap-2 lg:gap-3">
+            <LanguageSwitcher className="hidden lg:block" />
             <Link href="/account" className="rounded-full p-1.5 hover:bg-cream" aria-label={t('account')}>
               <User className="h-4 w-4" />
             </Link>
