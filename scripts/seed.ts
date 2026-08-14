@@ -19,7 +19,8 @@ import ProductCategory from '../src/models/ProductCategory';
 import Promotion from '../src/models/Promotion';
 import Service from '../src/models/Service';
 import SiteSettings from '../src/models/SiteSettings';
-import { SITE_IMAGES, getCategoryImage, getServiceImage, getProductFallbackImage } from '../src/lib/site-images';
+import { SITE_IMAGES, getCategoryImage, getServiceImage, getProductFallbackImage, getFlavorImage } from '../src/lib/site-images';
+import { CATERING_TAGLINE, CONTACT, DELIVERY, acaiBowlEventServiceHtml, ACAI_BOWL_EVENT, flavorIngredientsHtml, HOME_HERO, LOADED_TEAS, MONTHLY_TEA_CLUB } from '../src/lib/brand-content';
 
 const ES = '[ES - Review Required]';
 
@@ -82,8 +83,8 @@ async function seedSiteSettings(): Promise<void> {
           en: 'FUEL YOUR DAY. BOOST YOUR LIFE.',
           es: ES,
         },
-        contactEmail: 'fusionfuelboostco@gmail.com',
-        contactPhone: '786-712-2133',
+        contactEmail: CONTACT.email,
+        contactPhone: CONTACT.phone,
         address: {
           street: '',
           city: '',
@@ -95,8 +96,9 @@ async function seedSiteSettings(): Promise<void> {
         seo: {
           title: `${BRAND.name} | Premium Fuel for Body and Mind`,
           description:
-            'Mega Teas, açaí bowls, protein coffee, shakes, waffles, donuts, and Mega Tea Kit Program Club. Catering for corporate, medical, school, and special events.',
+            'Monthly Tea Club, Mega Teas, protein coffee, shakes, waffles, donuts, and full-service catering. Local delivery and nationwide shipping.',
           keywords: [
+            'monthly tea club',
             'mega tea',
             'protein shakes',
             'acai bowls',
@@ -106,11 +108,11 @@ async function seedSiteSettings(): Promise<void> {
           ogImage: img(SITE_IMAGES.hero, 'Fusion Fuel & Boost Co.'),
         },
         announcement: {
-          enabled: false,
-          message: loc('Welcome to Fusion Fuel & Boost Co.'),
-          link: '/en/products',
-          backgroundColor: '#10161A',
-          textColor: '#E8F000',
+          enabled: true,
+          message: loc('Mega Tea Kits • 100+ Flavor Combinations'),
+          link: '/en/products/mega-tea-kit-builder',
+          backgroundColor: '#E8F000',
+          textColor: '#07090A',
         },
         shipping: {
           enabled: false,
@@ -134,7 +136,7 @@ async function seedSiteSettings(): Promise<void> {
               title: loc('Shop'),
               links: [
                 { label: loc('Products'), href: '/en/products' },
-                { label: loc('Mega Tea Kits'), href: '/en/products/mega-tea-kit-builder' },
+                { label: loc('Monthly Tea Club'), href: '/en/products/mega-tea-kit-builder' },
                 { label: loc('Pricing'), href: '/en/pricing' },
               ],
             },
@@ -151,8 +153,8 @@ async function seedSiteSettings(): Promise<void> {
         social: [
           {
             platform: 'instagram',
-            url: 'https://www.instagram.com/pereira_katerine?igsh=cGNiajFwZzNndjly',
-            label: '@pereira_katerine',
+            url: CONTACT.instagramUrl,
+            label: CONTACT.instagramHandle,
           },
         ],
         hours: [...DEFAULT_BUSINESS_HOURS],
@@ -170,7 +172,7 @@ async function seedSiteSettings(): Promise<void> {
 
 function buildPages() {
   const ctaShop = {
-    label: loc('Shop Mega Tea Kits'),
+    label: loc(MONTHLY_TEA_CLUB.cta),
     href: '/en/products/mega-tea-kit-builder',
     variant: 'primary' as const,
   };
@@ -189,14 +191,12 @@ function buildPages() {
       seo: {
         title: `${BRAND.name} | FUEL YOUR DAY. BOOST YOUR LIFE.`,
         description:
-          'Explore Mega Teas, protein-forward menu items, Mega Tea Kit Program Club, and full-service catering.',
+          'Monthly Tea Club, Mega Teas, protein-forward menu items, and full-service catering.',
       },
       hero: {
         title: loc('FUEL YOUR DAY. BOOST YOUR LIFE.'),
-        subtitle: loc(
-          'Energizing Mega Teas, açaí bowls, protein coffee, shakes, waffles, donuts, and customizable Mega Tea Kits.'
-        ),
-        backgroundImage: img(SITE_IMAGES.hero, 'Fusion Fuel hero'),
+        subtitle: loc(HOME_HERO.description),
+        backgroundImage: img(SITE_IMAGES.heroDrinks, 'Fusion Fuel Mega Tea hero'),
         cta: ctaShop,
       },
       sections: [
@@ -224,12 +224,12 @@ function buildPages() {
         {
           key: 'kit-club',
           type: 'cta' as const,
-          title: loc('Mega Tea Kit Program Club'),
+          title: loc(MONTHLY_TEA_CLUB.name),
           body: rich(
-            '<p>Build your kit at home with 6, 12, 20, or 30 servings and choose from a searchable flavor catalog with optional add-ins.</p>'
+            `<p><strong>${MONTHLY_TEA_CLUB.intro}</strong></p><p>${MONTHLY_TEA_CLUB.taglines.primary}</p><p>${MONTHLY_TEA_CLUB.taglines.product}</p><ul>${MONTHLY_TEA_CLUB.whatsInside.map((item) => `<li>${item}</li>`).join('')}</ul><p>${DELIVERY.local} ${DELIVERY.nationwide}</p><p>${MONTHLY_TEA_CLUB.ctaDetail}</p>`
           ),
           cta: {
-            label: loc('Build Your Kit'),
+            label: loc(MONTHLY_TEA_CLUB.cta),
             href: '/en/products/mega-tea-kit-builder',
             variant: 'primary' as const,
           },
@@ -241,7 +241,7 @@ function buildPages() {
           type: 'features' as const,
           title: loc('Catering & Events'),
           body: rich(
-            '<p>Corporate offices, medical practices, schools, weddings, private parties, and special celebrations. Request a quote to confirm availability and pricing.</p>'
+            `<p>${CATERING_TAGLINE} We also cater corporate offices, medical practices, schools, weddings, and private parties. ${DELIVERY.local}</p>`
           ),
           cta: ctaCatering,
           order: 3,
@@ -297,7 +297,7 @@ function buildPages() {
           type: 'text' as const,
           title: loc('Full-Service Catering'),
           body: rich(
-            '<p>We cater corporate gatherings, medical offices, schools, weddings, private parties, and special events. Packages, minimums, and pricing are confirmed after your inquiry.</p>'
+            `<p>${CATERING_TAGLINE} Packages, minimums, and pricing are confirmed after your inquiry.</p><p>${DELIVERY.local} ${DELIVERY.nationwide}</p>`
           ),
           order: 0,
         },
@@ -318,7 +318,7 @@ function buildPages() {
           type: 'text' as const,
           title: loc('Contact for Pricing'),
           body: rich(
-            '<p>Product and catering prices are managed in the admin portal and will be published when confirmed. Results and nutritional needs vary by individual.</p>'
+            `<p>Choose a Monthly Tea Club plan: 6, 12, 20, or 30 tea kit boxes. ${MONTHLY_TEA_CLUB.taglines.value}</p><p>${DELIVERY.local} ${DELIVERY.nationwide}</p><p>Product and catering prices are managed in the admin portal and published when confirmed.</p>`
           ),
           order: 0,
         },
@@ -416,7 +416,7 @@ function buildPages() {
       status: 'published' as const,
       hero: {
         title: loc('Get in Touch'),
-        subtitle: loc('Email fusionfuelboostco@gmail.com or call 786-712-2133.'),
+        subtitle: loc(`Email ${CONTACT.email} or call ${CONTACT.phone}. Text or DM us on Instagram to join the Monthly Tea Club.`),
         backgroundImage: img(SITE_IMAGES.contact, 'Contact Fusion Fuel'),
       },
       sections: [
@@ -425,7 +425,7 @@ function buildPages() {
           type: 'text' as const,
           title: loc('Contact Information'),
           body: rich(
-            '<p><strong>Email:</strong> fusionfuelboostco@gmail.com<br/><strong>Phone:</strong> 786-712-2133<br/><strong>Instagram:</strong> @pereira_katerine</p><p>Business address and hours will appear here once confirmed by the client.</p>'
+            `<p><strong>Email:</strong> ${CONTACT.email}<br/><strong>Phone:</strong> ${CONTACT.phone}<br/><strong>Instagram:</strong> ${CONTACT.instagramHandle}</p><p>${MONTHLY_TEA_CLUB.ctaDetail}</p><p>${DELIVERY.local} ${DELIVERY.nationwide}</p>`
           ),
           order: 0,
         },
@@ -490,45 +490,27 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
 }
 
 async function seedFlavors(): Promise<Record<string, Types.ObjectId>> {
-  const flavors = [
-    { slug: 'strawberry', name: 'Strawberry', category: 'fruit', color: '#FF315E' },
-    { slug: 'blue-raspberry', name: 'Blue Raspberry', category: 'fruit', color: '#2EC4B6' },
-    { slug: 'mango', name: 'Mango', category: 'fruit', color: '#FFE500' },
-    { slug: 'peach', name: 'Peach', category: 'fruit', color: '#FF9F68' },
-    { slug: 'watermelon', name: 'Watermelon', category: 'fruit', color: '#FF6B8A' },
-    { slug: 'pineapple', name: 'Pineapple', category: 'tropical', color: '#FFD166' },
-    { slug: 'cherry', name: 'Cherry', category: 'fruit', color: '#DC2626' },
-    { slug: 'green-apple', name: 'Green Apple', category: 'fruit', color: '#84CC16' },
-    { slug: 'original-mega-tea', name: 'Original Mega Tea', category: 'tea', color: '#E8F000' },
-    { slug: 'green-tea', name: 'Green Tea', category: 'tea', color: '#10B981' },
-    { slug: 'herbal-blend', name: 'Herbal Blend', category: 'tea', color: '#687078' },
-    { slug: 'chai-spice', name: 'Chai Spice', category: 'tea', color: '#D97706' },
-    { slug: 'coconut', name: 'Coconut', category: 'tropical', color: '#FFF8E7' },
-    { slug: 'passion-fruit', name: 'Passion Fruit', category: 'tropical', color: '#9333EA' },
-    { slug: 'guava', name: 'Guava', category: 'tropical', color: '#FB7185' },
-    { slug: 'kiwi', name: 'Kiwi', category: 'tropical', color: '#65A30D' },
-    { slug: 'electric-lemon', name: 'Electric Lemon', category: 'citrus', color: '#EAB308' },
-    { slug: 'berry-blast', name: 'Berry Blast', category: 'fruit', color: '#7C3AED' },
-    { slug: 'citrus-punch', name: 'Citrus Punch', category: 'citrus', color: '#F97316' },
-    { slug: 'lemon', name: 'Lemon', category: 'citrus', color: '#FACC15' },
-    { slug: 'raspberry', name: 'Raspberry', category: 'fruit', color: '#E11D48' },
-    { slug: 'blueberry', name: 'Blueberry', category: 'fruit', color: '#3B82F6' },
-  ];
+  const flavorSlugs = LOADED_TEAS.flavors.map((f) => f.slug);
+
+  await Flavor.updateMany(
+    { slug: { $nin: flavorSlugs } },
+    { $set: { status: 'archived' } }
+  );
 
   const ids: Record<string, Types.ObjectId> = {};
 
-  for (const [index, flavor] of flavors.entries()) {
+  for (const [index, flavor] of LOADED_TEAS.flavors.entries()) {
+    const displayName = flavor.isNew ? `${flavor.name} — NEW!` : flavor.name;
     const doc = await Flavor.findOneAndUpdate(
       { slug: flavor.slug },
       {
         $set: {
           slug: flavor.slug,
-          name: loc(flavor.name),
+          name: loc(displayName),
           category: flavor.category,
           color: flavor.color,
-          description: rich(
-            `<p>${flavor.name} flavor profile for Mega Tea Kit builder demos. Customize serving selections in the kit builder.</p>`
-          ),
+          description: rich(flavorIngredientsHtml(flavor.ingredients)),
+          image: img(getFlavorImage(flavor.slug, displayName).url, `${displayName} loaded tea`),
           status: 'published',
           order: index,
         },
@@ -539,7 +521,7 @@ async function seedFlavors(): Promise<Record<string, Types.ObjectId>> {
     ids[flavor.slug] = doc._id;
   }
 
-  console.log(`Flavors upserted (${flavors.length} records).`);
+  console.log(`Flavors upserted (${LOADED_TEAS.flavors.length} loaded tea records).`);
   return ids;
 }
 
@@ -549,25 +531,49 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
       slug: 'collagen',
       name: 'Collagen',
       category: 'wellness',
-      description: 'Optional collagen add-in. Confirm ingredients and pricing in admin before publishing.',
+      description: 'Optional collagen add-in for loaded teas and kits.',
     },
     {
-      slug: 'hydration-booster',
-      name: 'Hydration Booster',
+      slug: 'nrg-clean-energy',
+      name: 'NRG (Clean Energy)',
       category: 'wellness',
-      description: 'Optional hydration booster add-in for kit customization.',
+      description: 'Clean energy booster add-in.',
     },
     {
-      slug: 'aloe-vera',
-      name: 'Aloe Vera',
+      slug: 'protein',
+      name: 'Protein',
       category: 'wellness',
-      description: 'Optional aloe vera add-in. Ingredient details to be confirmed by the business.',
+      description: 'Protein add-in for loaded teas and kits.',
     },
     {
-      slug: 'extra-flavor',
-      name: 'Extra Flavor',
+      slug: 'aloe',
+      name: 'Aloe',
+      category: 'wellness',
+      description: 'Aloe add-in — Mandarin, Mango, and other varieties.',
+    },
+    {
+      slug: 'fiber',
+      name: 'Fiber',
+      category: 'wellness',
+      description: 'Fiber add-in for loaded teas and kits.',
+    },
+    {
+      slug: 'probiotics',
+      name: 'Probiotics',
+      category: 'wellness',
+      description: 'Probiotics add-in for loaded teas and kits.',
+    },
+    {
+      slug: 'beverage-enhancers',
+      name: 'Beverage Enhancers',
       category: 'customization',
-      description: 'Add an extra flavor shot to your Mega Tea Kit selection.',
+      description: 'Flavor beverage enhancers for custom blends.',
+    },
+    {
+      slug: 'vitamins-and-more',
+      name: 'Vitamins & More',
+      category: 'wellness',
+      description: 'Vitamins and additional wellness add-ins.',
     },
   ];
 
@@ -593,7 +599,7 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
     ids[addIn.slug] = doc._id;
   }
 
-  console.log('Add-ins upserted (4 records).');
+  console.log(`Add-ins upserted (${addIns.length} records).`);
   return ids;
 }
 
@@ -654,54 +660,103 @@ function serviceTemplate(
 
 async function seedServices(): Promise<void> {
   const services = [
+    {
+      slug: 'acai-bowl-event-experience',
+      name: loc(ACAI_BOWL_EVENT.name),
+      shortDescription: loc(ACAI_BOWL_EVENT.headline),
+      description: rich(
+        `<p>${ACAI_BOWL_EVENT.headline}</p><p>${ACAI_BOWL_EVENT.serviceArea}. ${ACAI_BOWL_EVENT.deliveryNote}.</p>`
+      ),
+      detailContent: rich(acaiBowlEventServiceHtml()),
+      thumbnail: img(getServiceImage('special-event-catering'), ACAI_BOWL_EVENT.name),
+      heroImage: img(SITE_IMAGES.acaiBowl, `${ACAI_BOWL_EVENT.name} hero`),
+      startingPrice: undefined,
+      seo: {
+        title: `${ACAI_BOWL_EVENT.name} | ${BRAND.name}`,
+        description: ACAI_BOWL_EVENT.headline,
+      },
+      faqs: [
+        {
+          question: loc('What guest counts are available?'),
+          answer: rich(
+            `<p>Packages are available for ${ACAI_BOWL_EVENT.guestPackages.join(', ')} guests. Contact us to confirm availability for your date.</p>`
+          ),
+          order: 0,
+        },
+        {
+          question: loc('What is the deposit and payment schedule?'),
+          answer: rich(`<p>${ACAI_BOWL_EVENT.deposit} ${ACAI_BOWL_EVENT.balance}</p>`),
+          order: 1,
+        },
+        {
+          question: loc('Do you serve indoor and outdoor events?'),
+          answer: rich(
+            `<p>Yes. Your event can be indoor or outdoor. ${ACAI_BOWL_EVENT.serviceDuration}. ${ACAI_BOWL_EVENT.deliveryNote}.</p>`
+          ),
+          order: 2,
+        },
+      ],
+      sections: [
+        {
+          title: loc('Fresh On-Site Açaí Bowl Bar'),
+          body: rich(
+            `<p>Guests choose fresh fruits and premium toppings while we finish each bowl at our serving station. ${ACAI_BOWL_EVENT.howItWorks[0]}</p>`
+          ),
+          image: img(SITE_IMAGES.acaiBowl, 'Açaí bowl event bar'),
+          order: 0,
+        },
+      ],
+      status: 'published' as const,
+      order: 0,
+    },
     serviceTemplate(
       'corporate-catering',
       'Corporate Catering',
       'Refresh your team with energizing Mega Teas and protein-forward options.',
-      0,
+      1,
       'Corporate offices and workplace events'
     ),
     serviceTemplate(
       'medical-office-catering',
       'Medical Office Catering',
       'Convenient, flavorful options for staff and patient-facing events.',
-      1,
+      2,
       'Medical offices and healthcare teams'
     ),
     serviceTemplate(
       'school-catering',
       'School Catering',
       'Flavorful catering formats for school events and staff appreciation.',
-      2,
+      3,
       'Schools and educational events'
     ),
     serviceTemplate(
       'wedding-catering',
       'Wedding Catering',
       'Bold beverage and treat stations for weddings and celebrations.',
-      3,
+      4,
       'Weddings and reception events'
     ),
     serviceTemplate(
       'private-party-catering',
       'Private Party Catering',
       'Custom spreads for birthdays, showers, and private gatherings.',
-      4,
+      5,
       'Private parties and home events'
     ),
     serviceTemplate(
       'special-event-catering',
       'Special Event Catering',
       'Flexible catering for festivals, pop-ups, and community events.',
-      5,
+      6,
       'Special events and organizers'
     ),
     serviceTemplate(
       'mega-tea-kit-program-club',
-      'Mega Tea Kit Program Club',
-      'Prepare favorite Mega Tea combinations at home with kit sizes from 6 to 30 servings.',
-      6,
-      'At-home kit customers and repeat buyers'
+      'Monthly Tea Club',
+      `${MONTHLY_TEA_CLUB.taglines.primary} Choose 6, 12, 20, or 30 tea kit boxes with loaded blends, guides, and wellness add-ins.`,
+      7,
+      'Monthly subscribers and at-home tea customers'
     ),
   ];
 
@@ -713,7 +768,7 @@ async function seedServices(): Promise<void> {
     );
   }
 
-  console.log('Services upserted (7 records).');
+  console.log('Services upserted (8 records).');
 }
 
 async function seedProducts(
@@ -729,10 +784,10 @@ async function seedProducts(
   }));
 
   const kitSizes = [
-    { key: '6', name: loc('6 Servings'), servings: 6, price: 0 },
-    { key: '12', name: loc('12 Servings'), servings: 12, price: 0 },
-    { key: '20', name: loc('20 Servings'), servings: 20, price: 0 },
-    { key: '30', name: loc('30 Servings'), servings: 30, price: 0 },
+    { key: '6', name: loc('6 Tea Kit Box'), servings: 6, price: 0 },
+    { key: '12', name: loc('12 Tea Kit Box'), servings: 12, price: 0 },
+    { key: '20', name: loc('20 Tea Kit Box'), servings: 20, price: 0 },
+    { key: '30', name: loc('30 Tea Kit Box'), servings: 30, price: 0 },
   ];
 
   const draftProducts = [
@@ -827,7 +882,7 @@ async function seedProducts(
           images: [img(product.image, product.name)],
           basePrice: 0,
           variants: [],
-          flavorIds: product.category === 'mega-teas' ? allFlavorIds.slice(0, 8) : [],
+          flavorIds: allFlavorIds,
           kitSizes: [],
           addInOptions: product.category === 'mega-teas' ? addInOptions : [],
           inventory: {
@@ -857,12 +912,12 @@ async function seedProducts(
       $set: {
         slug: 'mega-tea-kit-builder',
         sku: 'FFB-KIT-001',
-        name: loc('Mega Tea Kit Builder'),
+        name: loc('Monthly Tea Club Kit Builder'),
         shortDescription: loc(
-          'Build your at-home Mega Tea Kit with 6, 12, 20, or 30 servings. Contact for pricing.'
+          `${MONTHLY_TEA_CLUB.intro} Choose a 6, 12, 20, or 30 tea kit box. ${MONTHLY_TEA_CLUB.ctaDetail}`
         ),
         description: rich(
-          '<p>Choose your kit size, select flavors from our catalog, and add optional boosters such as collagen, hydration booster, aloe vera, or an extra flavor shot.</p><p>Pricing is set per serving size in the admin portal. Products with zero price remain unavailable for paid checkout until configured.</p>'
+          `<p><strong>${MONTHLY_TEA_CLUB.taglines.primary}</strong></p><p>${MONTHLY_TEA_CLUB.taglines.product}</p><ul>${MONTHLY_TEA_CLUB.whatsInside.map((item) => `<li>${item}</li>`).join('')}</ul><p>${DELIVERY.local} ${DELIVERY.nationwide}</p><p>Choose your kit size, select flavors from our catalog, and add optional wellness boosters such as collagen, hydration booster, aloe vera, or an extra flavor shot.</p>`
         ),
         productType: 'kit',
         categoryId: categoryIds['mega-tea-kits'],
@@ -881,9 +936,9 @@ async function seedProducts(
         allergens: [],
         dietaryTags: [],
         seo: {
-          title: `Mega Tea Kit Builder | ${BRAND.name}`,
+          title: `Monthly Tea Club | ${BRAND.name}`,
           description:
-            'Customize Mega Tea Kits with multiple serving sizes and flavor combinations.',
+            `${MONTHLY_TEA_CLUB.taglines.primary} ${MONTHLY_TEA_CLUB.whatsInside.join(', ')}.`,
         },
         status: 'draft',
         featured: true,
@@ -914,17 +969,37 @@ async function seedFaqs(): Promise<void> {
     },
     {
       category: 'mega-tea-kits',
-      question: 'How many flavors can I choose in a Mega Tea Kit?',
+      question: 'What is the Monthly Tea Club?',
+      answer:
+        'Our Monthly Tea Club delivers a curated box of loaded tea blends, an easy step-by-step guide, wellness boosters, sweet extras, and new flavors each month. Choose a 6, 12, 20, or 30 tea kit box plan.',
+      order: 0,
+    },
+    {
+      category: 'mega-tea-kits',
+      question: 'How do I join the Monthly Tea Club?',
+      answer:
+        `${MONTHLY_TEA_CLUB.ctaDetail} Call ${CONTACT.phone}, email ${CONTACT.email}, or message us on Instagram at ${CONTACT.instagramHandle}.`,
+      order: 1,
+    },
+    {
+      category: 'mega-tea-kits',
+      question: 'How many flavors can I choose in a tea kit box?',
       answer:
         'Flavor selection limits depend on kit size and admin configuration. The kit builder supports searchable flavor selection with limits set per serving size.',
-      order: 0,
+      order: 2,
     },
     {
       category: 'mega-tea-kits',
       question: 'What add-ins are available for kits?',
       answer:
-        'Optional add-ins may include collagen, hydration booster, aloe vera, and extra flavor shots. Availability and pricing are managed in the admin portal.',
-      order: 1,
+        'Optional wellness boosters and add-ins may include collagen, hydration booster, aloe vera, and extra flavor shots. Availability and pricing are managed in the admin portal.',
+      order: 3,
+    },
+    {
+      category: 'mega-tea-kits',
+      question: 'Do you offer local delivery or shipping?',
+      answer: `${DELIVERY.local} ${DELIVERY.nationwide}`,
+      order: 4,
     },
     {
       category: 'products',
@@ -946,6 +1021,18 @@ async function seedFaqs(): Promise<void> {
       answer:
         'No. Booking submissions are requests. You will receive an acknowledgement, and a team member will follow up to confirm availability and details.',
       order: 0,
+    },
+    {
+      category: 'catering',
+      question: 'Do you cater events, parties, and offices?',
+      answer: CATERING_TAGLINE,
+      order: 1,
+    },
+    {
+      category: 'catering',
+      question: 'What is included in the Açaí Bowl Event Experience?',
+      answer: `${ACAI_BOWL_EVENT.packageIncludes.join('; ')}. ${ACAI_BOWL_EVENT.serviceDuration}.`,
+      order: 2,
     },
     {
       category: 'orders',
@@ -983,7 +1070,7 @@ async function seedFaqs(): Promise<void> {
     );
   }
 
-  console.log('FAQs upserted (9 records).');
+  console.log('FAQs upserted (13 records).');
 }
 
 async function seedPromotions(): Promise<void> {

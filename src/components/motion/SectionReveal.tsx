@@ -44,7 +44,7 @@ export function SectionReveal({ children, className }: SectionRevealProps) {
   }, []);
 
   return (
-    <div ref={ref} className={cn('min-w-0 w-full overflow-x-clip', className)}>
+    <div ref={ref} className={cn('min-w-0 w-full max-w-full overflow-x-hidden', className)}>
       {children}
     </div>
   );

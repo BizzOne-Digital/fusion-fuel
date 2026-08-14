@@ -55,10 +55,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     backgroundImage: {
       ...rawHero.backgroundImage,
       url:
-        rawHero.backgroundImage?.url?.includes('/placeholders/') || !rawHero.backgroundImage?.url
-          ? SITE_IMAGES.hero
+        rawHero.backgroundImage?.url?.includes('/placeholders/') ||
+        !rawHero.backgroundImage?.url ||
+        rawHero.backgroundImage.url.includes('hero-tea.png')
+          ? SITE_IMAGES.heroDrinks
           : rawHero.backgroundImage.url,
-      alt: rawHero.backgroundImage?.alt ?? 'Fusion Fuel & Boost Co.',
+      alt: rawHero.backgroundImage?.alt ?? 'Fusion Fuel & Boost Co. Mega Tea drinks',
     },
   };
 

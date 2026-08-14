@@ -26,7 +26,7 @@ export function ProductCard({ product, locale }: ProductCardProps) {
             alt={image.alt || getLocalized(product.name, locale)}
             fill
             className="object-cover transition duration-500 group-hover:scale-105"
-            sizes="(max-width:768px) 100vw, 33vw"
+            sizes="(max-width:768px) 100%, 33vw"
           />
           {product.featured && (
             <span className="absolute left-3 top-3 rounded-full bg-lime px-3 py-1 text-xs font-bold uppercase text-ink">

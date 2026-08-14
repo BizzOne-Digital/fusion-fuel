@@ -24,7 +24,7 @@ export default async function ServiceDetailPage({
 
   return (
     <article className="min-w-0 overflow-x-clip">
-      <div className="relative min-h-[40vh] overflow-hidden bg-ink text-white">
+      <div className="relative min-h-[40vh] w-full overflow-x-clip bg-ink text-white">
         <Image src={service.heroImage?.url?.includes('/placeholders/') ? getServiceImage(slug) : (service.heroImage?.url ?? getServiceImage(slug))} alt="" fill className="object-cover opacity-50" />
         <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-6">
           <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Services', href: '/services' }, { label: getLocalized(service.name, locale as Locale) }]} />
@@ -32,7 +32,7 @@ export default async function ServiceDetailPage({
           <p className="mt-4 max-w-2xl text-white/80">{getLocalized(service.shortDescription, locale as Locale)}</p>
         </div>
       </div>
-      <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6">
+      <div className="page-shell mx-auto max-w-7xl px-4 py-12 lg:px-6">
         <div className="prose-brand max-w-none text-grey" dangerouslySetInnerHTML={{ __html: sanitizeHtml(getLocalized(service.detailContent, locale as Locale)) }} />
         {service.sections.map((section, index) => (
           <section key={`${service.slug}-section-${index}`} className="mt-12 grid gap-8 lg:grid-cols-2">

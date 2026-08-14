@@ -36,11 +36,11 @@ export async function Footer({ settings, locale }: FooterProps) {
       ];
 
   return (
-    <footer className="section-dark mt-auto border-t border-white/10">
+    <footer className="site-content section-dark mt-auto w-full overflow-x-hidden border-t border-white/10">
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4">
-            <Logo className="h-10 w-auto max-w-[200px]" />
+            <Logo className="h-14 w-auto max-w-[220px] object-contain object-left md:h-16 md:max-w-[260px]" />
             <p className="max-w-xs text-sm text-white/70">
               {getLocalized(settings.footer?.tagline ?? settings.tagline, locale)}
             </p>

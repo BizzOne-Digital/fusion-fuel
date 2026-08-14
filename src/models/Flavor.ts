@@ -9,6 +9,7 @@ export interface IFlavor extends Document {
   category: string;
   color: string;
   description: { en: string; es: string };
+  image?: { url: string; alt: string };
   status: ContentStatus;
   order: number;
   createdAt: Date;
@@ -29,6 +30,10 @@ const FlavorSchema = new Schema<IFlavor>(
     category: { type: String, required: true, trim: true, index: true },
     color: { type: String, required: true, trim: true },
     description: { type: LocalizedRichTextSchema, default: () => ({ en: '', es: '' }) },
+    image: {
+      url: { type: String, trim: true },
+      alt: { type: String, trim: true, default: '' },
+    },
     status: {
       type: String,
       enum: ['draft', 'published', 'archived'],

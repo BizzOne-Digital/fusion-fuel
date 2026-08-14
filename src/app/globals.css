@@ -36,8 +36,24 @@
 
 html {
   scroll-behavior: auto;
-  overflow-x: clip;
+  overflow-x: hidden;
+  width: 100%;
   max-width: 100%;
+}
+
+html.intro-active,
+html.intro-active body {
+  overflow: hidden !important;
+  height: 100%;
+  max-height: 100vh;
+  touch-action: none;
+}
+
+html.intro-active .site-shell {
+  visibility: hidden !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  max-height: 100vh;
 }
 
 html.lenis,
@@ -49,7 +65,8 @@ html.lenis body {
   scroll-behavior: auto !important;
   width: 100%;
   min-width: 0;
-  overflow-x: clip;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .lenis.lenis-smooth [data-lenis-prevent] {
@@ -66,8 +83,45 @@ body {
   font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: clip;
+  overflow-x: hidden;
+  width: 100%;
   max-width: 100%;
+  min-width: 0;
+  position: relative;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+.site-content {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.site-content > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.site-shell {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.page-shell {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .font-display {
@@ -139,4 +193,13 @@ body {
 .section-cream {
   background: var(--color-cream);
   color: var(--color-carbon);
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

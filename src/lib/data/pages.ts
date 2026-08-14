@@ -3,6 +3,7 @@ import Page from '@/models/Page';
 import type { IPage } from '@/models/Page';
 import type { Locale } from '@/types';
 import { SITE_IMAGES } from '@/lib/site-images';
+import { CATERING_TAGLINE, DELIVERY, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
 
 const HOME_FALLBACK_SECTIONS = [
   { key: 'hero', type: 'custom' as const, order: 0, visible: true },
@@ -56,16 +57,16 @@ export function getHomeFallback(locale: Locale) {
         es: 'IMPULSA TU DÍA. POTENCIA TU VIDA.',
       },
       subtitle: {
-        en: 'Mega Teas, açaí bowls, protein coffee, and customizable Mega Tea Kits — made to order.',
-        es: 'Mega Teas, bowls de açaí, café proteico y Mega Tea Kits personalizables — hechos al momento.',
+        en: `${MONTHLY_TEA_CLUB.taglines.primary} Mega Teas, Monthly Tea Club kits, and catering — ${MONTHLY_TEA_CLUB.taglines.secondary}`,
+        es: `${MONTHLY_TEA_CLUB.taglines.primary} Mega Teas, kits del Monthly Tea Club y catering — ${MONTHLY_TEA_CLUB.taglines.secondary}`,
       },
       backgroundImage: {
         url: SITE_IMAGES.hero,
         alt: locale === 'es' ? 'Bebidas Mega Tea' : 'Mega Tea drinks',
       },
       cta: {
-        label: { en: 'Shop Mega Tea Kits', es: 'Comprar Mega Tea Kits' },
-        href: '/products',
+        label: { en: MONTHLY_TEA_CLUB.cta, es: MONTHLY_TEA_CLUB.cta },
+        href: '/products/mega-tea-kit-builder',
         variant: 'primary' as const,
       },
     },
@@ -73,7 +74,7 @@ export function getHomeFallback(locale: Locale) {
     seo: {
       title: 'Fusion Fuel & Boost Co. | Premium Fuel for Body and Mind',
       description:
-        'Explore Mega Teas, protein coffee, açaí bowls, and customizable Mega Tea Kits. Catering available for corporate, medical, school, and event clients.',
+        `${MONTHLY_TEA_CLUB.name}, Mega Teas, and loaded tea kits. ${CATERING_TAGLINE} ${DELIVERY.local}`,
     },
   };
 }

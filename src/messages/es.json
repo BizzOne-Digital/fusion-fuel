@@ -16,6 +16,10 @@
     "logout": "Cerrar Sesión",
     "admin": "Admin",
     "shop": "Tienda",
+    "menu": "Menú",
+    "catering": "Catering",
+    "ourStory": "Nuestra Historia",
+    "search": "Buscar",
     "viewMenu": "Ver Menú"
   },
   "cart": {

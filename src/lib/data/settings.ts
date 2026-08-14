@@ -17,7 +17,16 @@ export function getDefaultSettings(): Partial<ISiteSettings> {
     locales: ['en', 'es'],
     defaultLocale: 'en',
     hours: DEFAULT_BUSINESS_HOURS,
-    announcement: { enabled: false, message: { en: '', es: '' } },
+    announcement: {
+      enabled: true,
+      message: {
+        en: 'Mega Tea Kits • 100+ Flavor Combinations',
+        es: 'Kits Mega Tea • Más de 100 combinaciones',
+      },
+      link: '/products/mega-tea-kit-builder',
+      backgroundColor: '#E8F000',
+      textColor: '#07090A',
+    },
     social: [],
     footer: { tagline: BRAND.tagline, columns: [] },
     legalLinks: [],

@@ -36,7 +36,7 @@ export function PageSectionRenderer({ section, locale }: PageSectionRendererProp
 
   return (
     <SectionReveal>
-      <section className={`overflow-x-clip py-16 ${themeClass}`}>
+      <section className={`overflow-x-hidden py-16 ${themeClass}`}>
         <div className="mx-auto max-w-7xl px-4 lg:px-6">
           {section.title && (
             <h2 className="font-display mb-6 text-4xl">{getLocalized(section.title, locale)}</h2>

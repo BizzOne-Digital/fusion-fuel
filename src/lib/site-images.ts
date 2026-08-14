@@ -1,6 +1,7 @@
 /** Local brand photography assets (replace in /public/images/ when client supplies final photos). */
 export const SITE_IMAGES = {
-  hero: '/images/hero-tea.png',
+  hero: '/images/hero-drinks.png',
+  heroDrinks: '/images/hero-drinks.png',
   megaTea: '/images/mega-tea.png',
   megaTeaKit: '/images/mega-tea-kit.png',
   acaiBowl: '/images/acai-bowl.png',
@@ -51,6 +52,27 @@ export const SITE_IMAGES = {
     'protein-treats': '/images/protein-treat.png',
   } as Record<string, string>,
 } as const;
+
+/** Client flavor photos live in /public/flavours/{slug}.png */
+export const FLAVOR_IMAGE_DIR = '/flavours';
+
+export function getFlavorImagePath(slug: string): string {
+  return `${FLAVOR_IMAGE_DIR}/${slug}.png`;
+}
+
+export function getFlavorImage(slug: string, alt = 'Loaded tea flavor') {
+  return { url: getFlavorImagePath(slug), alt };
+}
+
+export function resolveFlavorImage(
+  flavor: { slug: string; image?: { url?: string; alt?: string } },
+  name: string
+) {
+  if (flavor.image?.url) {
+    return { url: flavor.image.url, alt: flavor.image.alt || name };
+  }
+  return getFlavorImage(flavor.slug, name);
+}
 
 export function getCategoryImage(slug: string): string {
   return SITE_IMAGES.categories[slug] ?? SITE_IMAGES.megaTea;

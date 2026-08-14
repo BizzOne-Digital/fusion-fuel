@@ -35,7 +35,7 @@ export function AnnouncementBarComponent({ announcement, locale }: AnnouncementB
 
   return (
     <div
-      className="relative z-50 px-4 py-2 text-center text-sm font-medium"
+      className="relative z-50 w-full overflow-x-hidden px-4 py-2 text-center text-sm font-medium"
       style={{
         backgroundColor: announcement.backgroundColor ?? '#E8F000',
         color: announcement.textColor ?? '#07090A',

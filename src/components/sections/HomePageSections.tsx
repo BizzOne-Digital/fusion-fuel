@@ -2,13 +2,17 @@ import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { getLocalized } from '@/lib/utils';
 import { SectionReveal } from '@/components/motion/SectionReveal';
-import { SplitText } from '@/components/motion/SplitText';
+import { splitBrandSlogan } from '@/lib/brand-slogan';
+import { HomeHeroSection } from '@/components/sections/HomeHeroSection';
 import { LiquidMask } from '@/components/motion/LiquidMask';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import { CategoryNav } from '@/components/products/CategoryNav';
 import { FlavorDiscoverySection } from '@/components/sections/FlavorDiscoverySection';
+import { AcaiBowlEventSection } from '@/components/sections/AcaiBowlEventSection';
+import { MonthlyTeaClubSection } from '@/components/sections/MonthlyTeaClubSection';
 import { Button } from '@/components/ui/Button';
 import { SITE_IMAGES, getCategoryImage } from '@/lib/site-images';
+import { CATERING_TAGLINE, DELIVERY, LOADED_TEAS, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
 import type { Locale } from '@/types';
 import type { IProduct } from '@/models/Product';
 import type { IProductCategory } from '@/models/ProductCategory';
@@ -58,24 +62,18 @@ export function HomePageSections({
   const kitProduct = products.find((p) => p.productType === 'kit');
   const featured = products.filter((p) => p.featured).slice(0, 6);
   const instagram = settings.social?.find((s) => s.platform === 'instagram');
+  const heroTitle = getLocalized(hero.title, locale);
+  const { fuel: fuelLine, boost: boostLine } = splitBrandSlogan(heroTitle);
 
   return (
-    <>
-      {/* 2-3. Hero + animated headline */}
-      <section className="relative min-h-[85vh] overflow-hidden bg-ink text-white">
-        <Image src={hero.backgroundImage?.url ?? SITE_IMAGES.hero} alt="" fill className="object-cover opacity-50" priority sizes="100vw" />
-        <div className="relative mx-auto flex min-h-[85vh] max-w-7xl flex-col justify-center px-4 py-20 lg:px-6">
-          <SplitText text={getLocalized(hero.title, locale)} className="font-display max-w-full text-4xl leading-none sm:text-5xl md:text-7xl lg:max-w-4xl lg:text-8xl" />
-          {hero.subtitle && (
-            <p className="mt-6 max-w-2xl text-lg text-white/80 md:text-xl">{getLocalized(hero.subtitle, locale)}</p>
-          )}
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Link href="/products"><Button size="lg">Shop Mega Tea Kits</Button></Link>
-            <Link href="/products"><Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-ink">Explore the Menu</Button></Link>
-            <Link href="/booking"><Button variant="secondary" size="lg">Book Catering</Button></Link>
-          </div>
-        </div>
-      </section>
+    <div className="min-w-0 w-full max-w-full overflow-x-hidden">
+      {/* Hero */}
+      <HomeHeroSection
+        fuelLine={fuelLine}
+        boostLine={boostLine || undefined}
+        kitHref={kitProduct ? `/products/${kitProduct.slug}` : '/products/mega-tea-kit-builder'}
+        backgroundUrl={hero.backgroundImage?.url ?? SITE_IMAGES.heroDrinks}
+      />
 
       {/* 4. Mega Tea showcase */}
       <SectionReveal>
@@ -85,9 +83,10 @@ export function HomePageSections({
               <Image src={SITE_IMAGES.megaTea} alt="Mega Tea" width={600} height={500} className="h-auto w-full max-w-full rounded-2xl object-cover" />
             </LiquidMask>
             <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-pink">01 · Mega Teas</p>
-              <h2 className="font-display mt-2 text-4xl md:text-5xl">Flavorful, customizable, made to order</h2>
-              <p className="mt-4 text-grey">Designed to complement an active lifestyle. Ingredient and nutrition details available upon request.</p>
+              <p className="text-sm font-bold uppercase tracking-widest text-pink">01 · Loaded Teas</p>
+              <h2 className="font-display mt-2 text-4xl md:text-5xl">{LOADED_TEAS.headline.replace(' For You!', '')}<span className="text-pink"> For You!</span></h2>
+              <p className="mt-4 text-grey">{LOADED_TEAS.sellingPoints.join(' ')}</p>
+              <p className="mt-2 font-semibold text-carbon">{LOADED_TEAS.combinations}</p>
               <Link href="/products?category=mega-teas" className="mt-6 inline-block text-pink font-semibold hover:underline">View Mega Teas →</Link>
             </div>
           </div>
@@ -112,32 +111,12 @@ export function HomePageSections({
         </section>
       </SectionReveal>
 
-      {/* 6. Flavor discovery */}
-      <SectionReveal>
-        <section className="section-dark py-20">
-          <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <h2 className="font-display text-4xl text-lime">Discover Flavors</h2>
-            <p className="mt-2 max-w-2xl text-white/70">Search and preview flavor options for Mega Tea Kits. More than 100 combinations possible.</p>
-            <div className="mt-8 rounded-2xl bg-white/5 p-6">
-              <FlavorDiscoverySection flavors={flavors.slice(0, 24)} locale={locale} />
-            </div>
-            <Link href="/products" className="mt-6 inline-block"><Button>Build Your Kit</Button></Link>
-          </div>
-        </section>
-      </SectionReveal>
+      {/* 6. Flavor discovery — pinned horizontal scroll */}
+      <FlavorDiscoverySection flavors={flavors} locale={locale} />
 
-      {/* 7. Açaí spotlight */}
+      {/* 7. Açaí Bowl Event Experience */}
       <SectionReveal>
-        <section className="py-20">
-          <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 lg:grid-cols-2 lg:px-6">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-pink">02 · Açaí Bowls</p>
-              <h2 className="font-display mt-2 text-4xl">Layered, colorful, protein-forward options</h2>
-              <p className="mt-4 text-grey">Made to order with customizable toppings. Nutritional needs vary.</p>
-            </div>
-            <Image src={SITE_IMAGES.acaiBowl} alt="Açaí bowl" width={600} height={500} className="h-auto w-full rounded-2xl object-cover" />
-          </div>
-        </section>
+        <AcaiBowlEventSection />
       </SectionReveal>
 
       {/* 8. Protein coffee & shakes */}
@@ -172,42 +151,28 @@ export function HomePageSections({
         </section>
       </SectionReveal>
 
-      {/* 10-12. Kit club, sizes, add-ins */}
+      {/* Monthly Tea Club */}
       <SectionReveal>
-        <section className="gradient-fuel py-20 text-ink">
-          <div className="mx-auto max-w-7xl px-4 text-center lg:px-6">
-            <h2 className="font-display text-5xl">Mega Tea Kit Program Club</h2>
-            <p className="mx-auto mt-4 max-w-2xl">Prepare your favorite drinks at home. Choose 6, 12, 20, or 30 servings with customizable flavors and add-ins.</p>
-            <Link href={kitProduct ? `/products/${kitProduct.slug}` : '/products'} className="mt-8 inline-block"><Button variant="secondary">Build Your Kit</Button></Link>
-          </div>
-        </section>
-      </SectionReveal>
-
-      <SectionReveal>
-        <section className="py-16">
-          <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <h3 className="font-display text-3xl">Kit Sizes</h3>
-            <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-              {['6', '12', '20', '30'].map((size) => (
-                <div key={size} className="rounded-2xl border-2 border-lime bg-cream p-6 text-center">
-                  <p className="font-display text-4xl">{size}</p>
-                  <p className="text-sm text-grey">servings</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <MonthlyTeaClubSection kitHref={kitProduct ? `/products/${kitProduct.slug}` : '/products/mega-tea-kit-builder'} />
       </SectionReveal>
 
       <SectionReveal>
         <section className="section-dark py-16">
           <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <h3 className="font-display text-3xl text-lime">Optional Add-ins</h3>
+            <h3 className="font-display text-3xl text-lime">Add-Ons Available</h3>
+            <p className="mt-2 text-sm text-white/70">{LOADED_TEAS.combinations}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              {addIns.slice(0, 8).map((a) => (
-                <span key={String(a._id)} className="rounded-full bg-white/10 px-4 py-2 text-sm">{getLocalized(a.name, locale)}</span>
+              {LOADED_TEAS.addOns.map((name) => (
+                <span key={name} className="rounded-full bg-white/10 px-4 py-2 text-sm">{name}</span>
               ))}
             </div>
+            {addIns.length > 0 && (
+              <div className="mt-6 flex flex-wrap gap-3 border-t border-white/10 pt-6">
+                {addIns.map((a) => (
+                  <span key={String(a._id)} className="rounded-full bg-lime/20 px-4 py-2 text-sm text-lime">{getLocalized(a.name, locale)}</span>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </SectionReveal>
@@ -219,6 +184,7 @@ export function HomePageSections({
             <Image src={SITE_IMAGES.catering} alt="Catering" width={600} height={450} className="h-auto w-full rounded-2xl object-cover" />
             <div>
               <h2 className="font-display text-4xl">Catering for Every Occasion</h2>
+              <p className="mt-3 text-grey">{CATERING_TAGLINE}</p>
               <ul className="mt-4 space-y-2 text-grey">
                 {services.slice(0, 5).map((s) => (
                   <li key={String(s._id)}>• {getLocalized(s.name, locale)}</li>
@@ -237,9 +203,9 @@ export function HomePageSections({
             <h2 className="font-display text-center text-4xl">How It Works</h2>
             <div className="mt-12 grid gap-8 md:grid-cols-3">
               {[
-                { step: '1', title: 'Choose', desc: 'Pick your kit size, flavors, and add-ins.' },
-                { step: '2', title: 'Order', desc: 'Secure checkout when pricing is available.' },
-                { step: '3', title: 'Enjoy', desc: 'Prepare at home or book catering for events.' },
+                { step: '1', title: 'Choose Your Plan', desc: 'Pick a 6, 12, 20, or 30 tea kit box and select your flavors.' },
+                { step: '2', title: 'Delivered Monthly', desc: 'Receive loaded tea blends, guides, boosters, and sweet surprises.' },
+                { step: '3', title: 'Sip & Enjoy', desc: 'Make energizing teas at home — or book catering for your next event.' },
               ].map((item) => (
                 <div key={item.step} className="text-center">
                   <span className="font-display inline-flex h-14 w-14 items-center justify-center rounded-full bg-lime text-2xl text-ink">{item.step}</span>
@@ -256,9 +222,10 @@ export function HomePageSections({
       <SectionReveal>
         <section className="px-4 py-16">
           <div className="mx-auto max-w-3xl rounded-2xl border border-grey/20 bg-white p-6 text-center shadow-sm sm:p-8">
-            <h2 className="font-display text-3xl">Special Offers</h2>
-            <p className="mt-4 text-grey">Promotional offers such as kit bundles or free shipping may be available when configured by the business. Contact us for current eligibility.</p>
-            <Link href="/contact" className="mt-6 inline-block text-pink font-semibold hover:underline">Contact for details →</Link>
+            <h2 className="font-display text-3xl">{MONTHLY_TEA_CLUB.cta}</h2>
+            <p className="mt-4 text-grey">{MONTHLY_TEA_CLUB.ctaDetail}</p>
+            <p className="mt-2 text-sm text-grey">{DELIVERY.local}</p>
+            <Link href="/contact" className="mt-6 inline-block text-pink font-semibold hover:underline">Contact us to subscribe →</Link>
           </div>
         </section>
       </SectionReveal>
@@ -327,14 +294,16 @@ export function HomePageSections({
       <SectionReveal>
         <section className="section-dark py-24">
           <div className="mx-auto max-w-4xl px-4 text-center lg:px-6">
-            <h2 className="font-display text-5xl text-lime">Ready to Fuel Your Day?</h2>
+            <h2 className="font-display text-5xl text-lime">{MONTHLY_TEA_CLUB.taglines.secondary}</h2>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Link href="/products"><Button size="lg">Shop Mega Tea Kits</Button></Link>
+              <Link href={kitProduct ? `/products/${kitProduct.slug}` : '/products/mega-tea-kit-builder'}>
+                <Button size="lg">{MONTHLY_TEA_CLUB.cta}</Button>
+              </Link>
               <Link href="/booking"><Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-ink">Book Catering</Button></Link>
             </div>
           </div>
         </section>
       </SectionReveal>
-    </>
+    </div>
   );
 }

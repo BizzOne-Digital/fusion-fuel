@@ -49,7 +49,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
       <button type="button" className="absolute inset-0 bg-ink/60" onClick={onClose} aria-label="Close menu" />
       <div className="absolute right-0 top-0 flex h-full w-[min(100%,320px)] flex-col bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-grey/15 p-4">
-          <Logo className="h-7 w-auto max-w-[120px] object-contain object-left" />
+          <Logo className="h-10 w-auto max-w-[150px] object-contain object-left sm:max-w-[170px]" />
           <button type="button" onClick={onClose} className="rounded-full p-2 hover:bg-cream" aria-label="Close">
             <X className="h-5 w-5" />
           </button>

@@ -22,7 +22,7 @@ export default async function ProductsPage({
   ]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6">
+    <div className="page-shell mx-auto max-w-7xl px-4 py-12 lg:px-6">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Products' }]} />
       <h1 className="font-display text-5xl">Shop</h1>
       <div className="mt-8"><CategoryNav categories={categories} locale={locale as Locale} activeSlug={category} /></div>
