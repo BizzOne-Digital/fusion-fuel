@@ -28,7 +28,7 @@ export function HomeHeroSection({
   backgroundUrl = SITE_IMAGES.heroDrinks,
 }: HomeHeroSectionProps) {
   return (
-    <section className="relative -mt-16 w-full max-w-full overflow-x-hidden bg-black text-white lg:-mt-[4.5rem]">
+    <section className="relative w-full max-w-full overflow-x-hidden bg-black text-white">
       <div className="absolute inset-0">
         <Image
           src={backgroundUrl}
@@ -40,7 +40,7 @@ export function HomeHeroSection({
         />
       </div>
 
-      <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl flex-col justify-center px-4 pb-8 pt-28 sm:min-h-[calc(100svh-4.5rem)] sm:px-6 sm:pt-32 lg:min-h-[min(100svh,920px)] lg:px-8 lg:pt-36">
+      <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl flex-col justify-center px-4 pb-8 pt-16 sm:min-h-[calc(100svh-4.5rem)] sm:px-6 sm:pt-20 lg:min-h-[min(100svh,920px)] lg:px-8 lg:pt-24">
         <div className="max-w-2xl [text-shadow:0_2px_18px_rgba(0,0,0,0.75)]">
           <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#F5FF00] sm:text-xs">
             {HOME_HERO.eyebrow}
