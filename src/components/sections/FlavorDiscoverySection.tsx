@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { getLocalized, sanitizeHtml } from '@/lib/utils';
 import { resolveFlavorImage } from '@/lib/site-images';
 import { LOADED_TEAS, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
+import { FLAVOR_COLLECTIONS } from '@/lib/menu-flavors';
 import type { IFlavor } from '@/models/Flavor';
 import type { Locale } from '@/types';
 
@@ -93,6 +94,15 @@ export function FlavorDiscoverySection({ flavors, locale }: FlavorDiscoverySecti
   const [selected, setSelected] = useState<string[]>([]);
   const limit = 6;
 
+  const collectionGroups = useMemo(
+    () =>
+      FLAVOR_COLLECTIONS.map((collection) => ({
+        collection,
+        flavors: flavors.filter((flavor) => flavor.category === collection.slug),
+      })).filter((group) => group.flavors.length > 0),
+    [flavors]
+  );
+
   const toggle = (id: string) => {
     setSelected((prev) => {
       if (prev.includes(id)) return prev.filter((s) => s !== id);
@@ -169,19 +179,36 @@ export function FlavorDiscoverySection({ flavors, locale }: FlavorDiscoverySecti
                 ref={trackRef}
                 className="flex w-max max-w-none gap-4 px-4 pb-2 sm:gap-6 lg:px-6 lg:will-change-transform snap-x snap-mandatory lg:snap-none"
               >
-                {flavors.map((flavor) => {
-                  const id = String(flavor._id);
-                  return (
-                    <FlavorScrollCard
-                      key={id}
-                      flavor={flavor}
-                      locale={locale}
-                      isSelected={selected.includes(id)}
-                      onToggle={() => toggle(id)}
-                      disabled={!selected.includes(id) && selected.length >= limit}
-                    />
-                  );
-                })}
+                {collectionGroups.flatMap(({ collection, flavors: groupFlavors }) => [
+                  <div
+                    key={`collection-${collection.slug}`}
+                    className="flex min-h-[420px] w-[min(78vw,280px)] shrink-0 snap-start flex-col justify-center rounded-2xl border border-lime/25 bg-gradient-to-br from-white/[0.08] to-transparent p-6 sm:min-h-[440px] sm:w-[300px] md:w-[320px]"
+                  >
+                    <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-lime">
+                      {locale === 'es' ? 'Colección' : 'Collection'}
+                    </p>
+                    <h3 className="font-display mt-3 text-2xl leading-tight text-white sm:text-3xl">
+                      {collection.name}
+                    </h3>
+                    <p className="mt-3 text-sm text-white/60">{collection.description}</p>
+                    <p className="mt-4 text-xs uppercase tracking-widest text-white/40">
+                      {groupFlavors.length} {locale === 'es' ? 'sabores' : 'flavors'}
+                    </p>
+                  </div>,
+                  ...groupFlavors.map((flavor) => {
+                    const id = String(flavor._id);
+                    return (
+                      <FlavorScrollCard
+                        key={id}
+                        flavor={flavor}
+                        locale={locale}
+                        isSelected={selected.includes(id)}
+                        onToggle={() => toggle(id)}
+                        disabled={!selected.includes(id) && selected.length >= limit}
+                      />
+                    );
+                  }),
+                ])}
               </div>
             </div>
           </div>

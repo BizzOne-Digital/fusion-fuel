@@ -19,7 +19,7 @@ import ProductCategory from '../src/models/ProductCategory';
 import Promotion from '../src/models/Promotion';
 import Service from '../src/models/Service';
 import SiteSettings from '../src/models/SiteSettings';
-import { SITE_IMAGES, getCategoryImage, getServiceImage, getProductFallbackImage, getFlavorImage } from '../src/lib/site-images';
+import { SITE_IMAGES, getCategoryImage, getServiceImage, getProductFallbackImage, getFlavorImage, FLAVOR_PHOTO_SLUGS } from '../src/lib/site-images';
 import { CATERING_TAGLINE, CONTACT, DELIVERY, acaiBowlEventServiceHtml, ACAI_BOWL_EVENT, flavorIngredientsHtml, HOME_HERO, LOADED_TEAS, MONTHLY_TEA_CLUB } from '../src/lib/brand-content';
 
 const ES = '[ES - Review Required]';
@@ -501,6 +501,7 @@ async function seedFlavors(): Promise<Record<string, Types.ObjectId>> {
 
   for (const [index, flavor] of LOADED_TEAS.flavors.entries()) {
     const displayName = flavor.isNew ? `${flavor.name} — NEW!` : flavor.name;
+    const hasPhoto = FLAVOR_PHOTO_SLUGS.has(flavor.slug);
     const doc = await Flavor.findOneAndUpdate(
       { slug: flavor.slug },
       {
@@ -510,10 +511,13 @@ async function seedFlavors(): Promise<Record<string, Types.ObjectId>> {
           category: flavor.category,
           color: flavor.color,
           description: rich(flavorIngredientsHtml(flavor.ingredients)),
-          image: img(getFlavorImage(flavor.slug, displayName).url, `${displayName} loaded tea`),
           status: 'published',
           order: index,
+          ...(hasPhoto
+            ? { image: img(getFlavorImage(flavor.slug, displayName).url, `${displayName} loaded tea`) }
+            : {}),
         },
+        ...(hasPhoto ? {} : { $unset: { image: '' } }),
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );

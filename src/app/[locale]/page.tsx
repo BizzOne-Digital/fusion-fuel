@@ -41,7 +41,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       getPageByKey('home'),
       getPublishedProducts({ limit: 12 }),
       getPublishedCategories(),
-      getPublishedFlavors(24),
+      getPublishedFlavors(200),
       getPublishedAddIns(),
       getPublishedServices(),
       getPublishedTestimonials(4),

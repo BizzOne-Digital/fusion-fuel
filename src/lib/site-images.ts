@@ -56,6 +56,20 @@ export const SITE_IMAGES = {
 /** Client flavor photos live in /public/flavours/{slug}.png */
 export const FLAVOR_IMAGE_DIR = '/flavours';
 
+/** Legacy flavor slugs that already have photos in /public/flavours/ */
+export const FLAVOR_PHOTO_SLUGS = new Set([
+  'cherry-apple',
+  'cherry-paradise',
+  'passion-island',
+  'pink-dream',
+  'pink-malibu',
+  'strawberry-lemonade',
+  'sunny-island',
+  'sweet-tart',
+  'watermelon-berry',
+  'wonder-woman',
+]);
+
 export function getFlavorImagePath(slug: string): string {
   return `${FLAVOR_IMAGE_DIR}/${slug}.png`;
 }
@@ -71,7 +85,10 @@ export function resolveFlavorImage(
   if (flavor.image?.url) {
     return { url: flavor.image.url, alt: flavor.image.alt || name };
   }
-  return getFlavorImage(flavor.slug, name);
+  if (FLAVOR_PHOTO_SLUGS.has(flavor.slug)) {
+    return getFlavorImage(flavor.slug, name);
+  }
+  return { url: '', alt: name };
 }
 
 export function getCategoryImage(slug: string): string {
