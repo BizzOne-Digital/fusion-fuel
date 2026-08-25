@@ -8,7 +8,6 @@ import {
   getPublishedCategories,
   getPublishedAddIns,
   getPublishedServices,
-  getPublishedTestimonials,
   getSiteSettings,
 } from '@/lib/data';
 import { HomePageSections } from '@/components/sections/HomePageSections';
@@ -35,14 +34,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [page, products, categories, addIns, services, testimonials, settings] =
+  const [page, products, categories, addIns, services, settings] =
     await Promise.all([
       getPageByKey('home'),
       getPublishedProducts({ limit: 12 }),
       getPublishedCategories(),
       getPublishedAddIns(),
       getPublishedServices(),
-      getPublishedTestimonials(4),
       getSiteSettings(),
     ]);
 
@@ -70,7 +68,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       categories={categories}
       addIns={addIns}
       services={services}
-      testimonials={testimonials}
       settings={settings}
     />
   );

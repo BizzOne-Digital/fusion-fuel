@@ -15,7 +15,6 @@ import type { IProduct } from '@/models/Product';
 import type { IProductCategory } from '@/models/ProductCategory';
 import type { IAddIn } from '@/models/AddIn';
 import type { IService } from '@/models/Service';
-import type { ITestimonial } from '@/models/Testimonial';
 import type { ISiteSettings } from '@/models/SiteSettings';
 
 const LIFESTYLE_IMAGES = [
@@ -39,7 +38,6 @@ interface HomePageSectionsProps {
   categories: IProductCategory[];
   addIns: IAddIn[];
   services: IService[];
-  testimonials: ITestimonial[];
   settings: Partial<ISiteSettings>;
 }
 
@@ -50,7 +48,6 @@ export function HomePageSections({
   categories,
   addIns,
   services,
-  testimonials,
   settings,
 }: HomePageSectionsProps) {
   const kitProduct = products.find((p) => p.productType === 'kit');
@@ -162,28 +159,6 @@ export function HomePageSections({
                 <Image key={img.url} src={img.url} alt={img.alt} width={400} height={300} className="h-48 w-full rounded-xl object-cover md:h-56" />
               ))}
             </div>
-          </div>
-        </section>
-      </SectionReveal>
-
-      {/* 18. Testimonials */}
-      <SectionReveal>
-        <section className="py-20">
-          <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <h2 className="font-display text-4xl">Client Feedback</h2>
-            {testimonials.length === 0 ? (
-              <p className="mt-4 text-grey">Verified testimonials will appear here when published by the business.</p>
-            ) : (
-              <div className="mt-8 grid gap-6 md:grid-cols-2">
-                {testimonials.slice(0, 2).map((t) => (
-                  <blockquote key={String(t._id)} className="rounded-2xl border border-grey/15 p-6">
-                    <p className="text-grey">&ldquo;{getLocalized(t.quote, locale)}&rdquo;</p>
-                    <footer className="mt-4 font-semibold">{t.name}{t.verified && ' · Verified'}</footer>
-                  </blockquote>
-                ))}
-              </div>
-            )}
-            <Link href="/testimonials" className="mt-6 inline-block text-pink hover:underline">View all →</Link>
           </div>
         </section>
       </SectionReveal>

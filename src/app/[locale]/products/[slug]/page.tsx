@@ -10,7 +10,8 @@ import {
 import { ProductPlaceholderVisual } from '@/components/products/ProductPlaceholderVisual';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { KitBuilder } from '@/components/products/KitBuilder';
-import { AddToCartButton } from '@/components/products/AddToCartButton';
+import { ProductAddToCart } from '@/components/products/ProductAddToCart';
+import { resolveProductAddIns } from '@/lib/product-add-ins';
 import { ProductJsonLd } from '@/components/seo/ProductJsonLd';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/Button';
@@ -33,6 +34,7 @@ export default async function ProductDetailPage({
   const shortDescription = getLocalized(product.shortDescription, typedLocale);
   const categorySlug = inferProductCategorySlug(product.slug);
   const usePlaceholder = productUsesPlaceholderCard(product);
+  const productAddIns = resolveProductAddIns(product, addIns);
   const image = product.images[0];
 
   return (
@@ -74,8 +76,8 @@ export default async function ProductDetailPage({
             {product.productType === 'kit' ? (
               <div className="mt-8"><KitBuilder product={product} flavors={flavors} addIns={addIns} /></div>
             ) : hasPrice(product.basePrice) ? (
-              <div className="mt-8 flex flex-wrap gap-4">
-                <AddToCartButton productId={String(product._id)} locale={typedLocale} />
+              <div className="mt-8 space-y-4">
+                <ProductAddToCart product={product} addIns={productAddIns} locale={typedLocale} />
                 <Link href="/booking">
                   <Button variant="outline" size="lg">
                     {typedLocale === 'es' ? 'Reservar catering' : 'Book catering'}

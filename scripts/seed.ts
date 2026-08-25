@@ -1004,7 +1004,10 @@ async function seedProducts(
   console.log('Products upserted (mega tea kit).');
 }
 
-async function seedProteinCoffeeProducts(categoryIds: Record<string, Types.ObjectId>): Promise<void> {
+async function seedProteinCoffeeProducts(
+  categoryIds: Record<string, Types.ObjectId>,
+  addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
+): Promise<void> {
   const servingHtml = `<p><strong>Iced/Hot</strong> — 24 oz &amp; 32 oz iced, 10 oz hot.</p>`;
   const notesHtml = `<ul>${PROTEIN_COFFEE.footerNotes.map((note) => `<li>${note}</li>`).join('')}</ul>`;
 
@@ -1042,7 +1045,7 @@ async function seedProteinCoffeeProducts(categoryIds: Record<string, Types.Objec
           ],
           flavorIds: [],
           kitSizes: [],
-          addInOptions: [],
+          addInOptions,
           inventory: {
             trackInventory: false,
             quantity: 0,
@@ -1067,7 +1070,10 @@ async function seedProteinCoffeeProducts(categoryIds: Record<string, Types.Objec
   console.log(`Protein coffee products upserted (${PROTEIN_COFFEE.flavors.length} records).`);
 }
 
-async function seedLoadedTeaProducts(categoryIds: Record<string, Types.ObjectId>): Promise<void> {
+async function seedLoadedTeaProducts(
+  categoryIds: Record<string, Types.ObjectId>,
+  addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
+): Promise<void> {
   const activeSlugs = LOADED_TEAS_MENU.items.map((item) => `loaded-tea-${item.slug}`);
   const pricingNote = LOADED_TEAS_MENU.sizes
     .filter((size) => 'price' in size && size.price != null)
@@ -1102,7 +1108,7 @@ async function seedLoadedTeaProducts(categoryIds: Record<string, Types.ObjectId>
           })),
           flavorIds: [],
           kitSizes: [],
-          addInOptions: [],
+          addInOptions,
           inventory: {
             trackInventory: false,
             quantity: 0,
@@ -1287,7 +1293,10 @@ async function seedWaffleProducts(categoryIds: Record<string, Types.ObjectId>): 
   console.log(`Waffle products upserted (${WAFFLES_MENU.items.length} records).`);
 }
 
-async function seedProteinTreatProducts(categoryIds: Record<string, Types.ObjectId>): Promise<void> {
+async function seedProteinTreatProducts(
+  categoryIds: Record<string, Types.ObjectId>,
+  addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
+): Promise<void> {
   const activeSlugs = PROTEIN_TREATS_MENU.items.map((item) => item.slug);
 
   await Product.updateMany(
@@ -1319,7 +1328,7 @@ async function seedProteinTreatProducts(categoryIds: Record<string, Types.Object
           })),
           flavorIds: [],
           kitSizes: [],
-          addInOptions: [],
+          addInOptions,
           inventory: {
             trackInventory: false,
             quantity: 0,
@@ -1546,14 +1555,19 @@ async function main(): Promise<void> {
   const categoryIds = await seedCategories();
   const flavorIds = await seedFlavors();
   const addInIds = await seedAddIns();
+  const addInOptions = Object.values(addInIds).map((addInId) => ({
+    addInId,
+    maxQuantity: 5,
+    included: false,
+  }));
 
   await seedServices();
   await seedProducts(categoryIds, flavorIds, addInIds);
-  await seedProteinCoffeeProducts(categoryIds);
-  await seedLoadedTeaProducts(categoryIds);
+  await seedProteinCoffeeProducts(categoryIds, addInOptions);
+  await seedLoadedTeaProducts(categoryIds, addInOptions);
   await seedAcaiBowlProducts(categoryIds);
   await seedWaffleProducts(categoryIds);
-  await seedProteinTreatProducts(categoryIds);
+  await seedProteinTreatProducts(categoryIds, addInOptions);
   await seedFaqs();
   await seedPromotions();
 

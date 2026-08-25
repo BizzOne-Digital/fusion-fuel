@@ -27,6 +27,16 @@ export function CartItemRow({ item, locale }: CartItemRowProps) {
             {getLocalized(item.kitConfig.kitSizeName, locale)} · {item.kitConfig.servings} servings
           </p>
         )}
+        {item.addIns && item.addIns.length > 0 && (
+          <ul className="mt-1 text-sm text-grey">
+            {item.addIns.map((addIn) => (
+              <li key={String(addIn.addInId)}>
+                + {getLocalized(addIn.name, locale)}
+                {addIn.quantity > 1 ? ` × ${addIn.quantity}` : ''}
+              </li>
+            ))}
+          </ul>
+        )}
         <p className="mt-1 font-medium">{formatPrice(item.lineTotal, 'USD', locale)}</p>
         <div className="mt-2 flex items-center gap-2">
           <button
