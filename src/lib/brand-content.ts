@@ -12,6 +12,8 @@ export const CONTACT = {
 export const MONTHLY_TEA_CLUB = {
   name: 'Monthly Tea Club',
   intro: 'Introducing our Monthly Tea Club',
+  posterImage: '/brand/monthly-tea-club-poster.png',
+  boxTagline: 'Your Monthly Boost of Flavor, Energy & Good Vibes!',
   taglines: {
     primary: 'New Flavors. Good Energy. Delivered.',
     secondary: 'Sip More. Love More. Feel Amazing!',
@@ -20,6 +22,7 @@ export const MONTHLY_TEA_CLUB = {
   },
   cta: 'Join the Club',
   ctaDetail: 'Text or DM us to subscribe or learn more!',
+  joinHeadline: 'JOIN THE CLUB!',
   plans: [
     { servings: 6, label: '6 Tea Kit Box' },
     { servings: 12, label: '12 Tea Kit Box' },

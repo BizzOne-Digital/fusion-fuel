@@ -11,8 +11,7 @@ import {
 } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/Button';
-import { MONTHLY_TEA_CLUB } from '@/lib/brand-content';
-import { SITE_IMAGES } from '@/lib/site-images';
+import { CATERING_TAGLINE, CONTACT, DELIVERY, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
 import { cn } from '@/lib/utils';
 
 const FEATURE_ICONS = [Sparkles, Leaf, Gift, CalendarHeart] as const;
@@ -40,15 +39,16 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
             <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-lime/30 via-transparent to-pink/30 blur-2xl" />
             <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-carbon shadow-2xl shadow-black/40">
               <Image
-                src={SITE_IMAGES.megaTeaKit}
-                alt="Monthly Tea Club kit"
+                src={MONTHLY_TEA_CLUB.posterImage}
+                alt="Monthly Tea Club — Fusion Fuel & Boost Co."
                 width={720}
-                height={640}
+                height={900}
                 className="h-auto w-full object-cover"
+                priority
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-6 pb-6 pt-16">
-                <p className="font-display text-2xl text-lime">100+ Combinations</p>
-                <p className="mt-1 text-sm text-white/75">Build your perfect loaded tea at home.</p>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-6 pb-6 pt-20">
+                <p className="font-display text-xl text-lime md:text-2xl">{MONTHLY_TEA_CLUB.boxTagline}</p>
+                <p className="mt-2 text-sm text-white/80">{MONTHLY_TEA_CLUB.taglines.product}</p>
               </div>
             </div>
           </div>
@@ -212,6 +212,63 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
             >
               Questions? Contact Us
             </Link>
+          </div>
+        </div>
+
+        {/* Delivery, shipping & join */}
+        <div className="mt-20 rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-pink/10 via-transparent to-lime/10 p-6 md:p-8 lg:mt-24">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-pink">{MONTHLY_TEA_CLUB.joinHeadline}</p>
+              <p className="mt-3 text-lg text-white/85">{MONTHLY_TEA_CLUB.ctaDetail}</p>
+              <ul className="mt-6 space-y-3 text-sm text-white/70">
+                <li className="flex gap-2">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-lime" aria-hidden />
+                  {DELIVERY.local}
+                </li>
+                <li className="flex gap-2">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-lime" aria-hidden />
+                  {DELIVERY.nationwide}
+                </li>
+                <li className="flex gap-2">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-lime" aria-hidden />
+                  {CATERING_TAGLINE}
+                </li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-ink/60 p-6">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/50">Get in Touch</p>
+              <ul className="mt-4 space-y-3 text-sm">
+                <li>
+                  <span className="text-white/55">Phone: </span>
+                  <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`} className="font-semibold text-white hover:text-lime">
+                    {CONTACT.phone}
+                  </a>
+                </li>
+                <li>
+                  <span className="text-white/55">Email: </span>
+                  <a href={`mailto:${CONTACT.email}`} className="font-semibold text-white hover:text-lime">
+                    {CONTACT.email}
+                  </a>
+                </li>
+                <li>
+                  <span className="text-white/55">Instagram: </span>
+                  <a
+                    href={CONTACT.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-white hover:text-lime"
+                  >
+                    {CONTACT.instagramHandle}
+                  </a>
+                </li>
+              </ul>
+              <Link href="/contact" className="mt-6 inline-block">
+                <Button size="sm" className="rounded-md text-xs font-bold uppercase tracking-[0.1em]">
+                  {MONTHLY_TEA_CLUB.cta}
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

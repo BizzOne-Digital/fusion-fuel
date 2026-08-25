@@ -1163,7 +1163,9 @@ async function seedAcaiBowlProducts(categoryIds: Record<string, Types.ObjectId>)
           images:
             'placeholder' in item && item.placeholder
               ? []
-              : [img(item.image, item.name)],
+              : 'image' in item && item.image
+                ? [img(item.image, item.name)]
+                : [],
           basePrice: acaiBowlPriceCents(item),
           variants:
             'size' in item && item.size

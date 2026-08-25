@@ -4,6 +4,7 @@ import { FLAVOR_IMAGE_BY_SLUG } from './flavor-image-manifest';
 export const SITE_IMAGES = {
   hero: '/images/hero-drinks.png',
   introPoster: '/brand/fusion-fuel-intro-poster.png',
+  monthlyTeaClubPoster: '/brand/monthly-tea-club-poster.png',
   heroDrinks: '/images/hero-drinks.png',
   megaTea: '/images/mega-tea.png',
   megaTeaKit: '/images/mega-tea-kit.png',
