@@ -33,7 +33,7 @@ function getTransporter(): Transporter {
       process.env.SMTP_USER && process.env.SMTP_PASS
         ? {
             user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
+            pass: process.env.SMTP_PASS.replace(/\s/g, ''),
           }
         : undefined,
   });
@@ -182,27 +182,65 @@ This is a request, not a confirmed booking. Our team will follow up soon.
   return { subject, text, html };
 }
 
-export function buildBookingBusinessEmail(payload: BookingEmailPayload & { details: string }) {
-  const subject = `[Booking] ${payload.referenceNumber} — ${payload.serviceName}`;
+export function buildBookingBusinessEmail(
+  payload: BookingEmailPayload & {
+    details: string;
+    phone?: string;
+    organization?: string;
+    venue?: string;
+    alternateDate?: string;
+    startTime?: string;
+    fulfillmentMethod?: string;
+    preferredContactMethod?: string;
+  }
+) {
+  const subject = `[Catering] ${payload.referenceNumber} — ${payload.serviceName}`;
   const text = `New catering request ${payload.referenceNumber}
 
-Contact: ${payload.contactName} (${payload.email})
+Contact: ${payload.contactName}
+Email: ${payload.email}
+Phone: ${payload.phone ?? 'N/A'}
+Organization: ${payload.organization ?? 'N/A'}
+Preferred contact: ${payload.preferredContactMethod ?? 'N/A'}
+
 Service: ${payload.serviceName}
 Event type: ${payload.eventType}
 Preferred date: ${payload.preferredDate}
+Alternate date: ${payload.alternateDate ?? 'N/A'}
+Start time: ${payload.startTime ?? 'N/A'}
 Guest count: ${payload.guestCount}
+Fulfillment: ${payload.fulfillmentMethod ?? 'N/A'}
+Venue: ${payload.venue ?? 'N/A'}
 
+Additional details:
 ${payload.details}`;
 
   const html = wrapHtml(`
     <h2 style="margin-top: 0;">New catering request</h2>
     <p><strong>Reference:</strong> ${payload.referenceNumber}</p>
-    <p><strong>Contact:</strong> ${payload.contactName} (${payload.email})</p>
-    <p><strong>Service:</strong> ${payload.serviceName}</p>
+    <p><strong>Contact:</strong> ${payload.contactName}<br />
+    <strong>Email:</strong> <a href="mailto:${payload.email}">${payload.email}</a><br />
+    <strong>Phone:</strong> ${payload.phone ?? 'N/A'}<br />
+    <strong>Organization:</strong> ${payload.organization ?? 'N/A'}<br />
+    <strong>Preferred contact:</strong> ${payload.preferredContactMethod ?? 'N/A'}</p>
+    <p><strong>Service:</strong> ${payload.serviceName}<br />
+    <strong>Event type:</strong> ${payload.eventType}<br />
+    <strong>Preferred date:</strong> ${payload.preferredDate}<br />
+    <strong>Alternate date:</strong> ${payload.alternateDate ?? 'N/A'}<br />
+    <strong>Start time:</strong> ${payload.startTime ?? 'N/A'}<br />
+    <strong>Guest count:</strong> ${payload.guestCount}<br />
+    <strong>Fulfillment:</strong> ${payload.fulfillmentMethod ?? 'N/A'}<br />
+    <strong>Venue:</strong> ${payload.venue ?? 'N/A'}</p>
+    <p><strong>Additional details:</strong></p>
     <p style="white-space: pre-wrap;">${payload.details}</p>
   `);
 
   return { subject, text, html };
+}
+
+export async function verifySmtpConnection(): Promise<void> {
+  const mailer = getTransporter();
+  await mailer.verify();
 }
 
 export interface OrderEmailPayload {

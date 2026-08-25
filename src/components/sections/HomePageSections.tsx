@@ -4,26 +4,22 @@ import { getLocalized } from '@/lib/utils';
 import { SectionReveal } from '@/components/motion/SectionReveal';
 import { splitBrandSlogan } from '@/lib/brand-slogan';
 import { HomeHeroSection } from '@/components/sections/HomeHeroSection';
-import { LiquidMask } from '@/components/motion/LiquidMask';
-import { ProductGrid } from '@/components/products/ProductGrid';
-import { CategoryNav } from '@/components/products/CategoryNav';
-import { FlavorDiscoverySection } from '@/components/sections/FlavorDiscoverySection';
+import { HomeMenuCategoriesSection } from '@/components/sections/HomeMenuCategoriesSection';
 import { AcaiBowlEventSection } from '@/components/sections/AcaiBowlEventSection';
 import { MonthlyTeaClubSection } from '@/components/sections/MonthlyTeaClubSection';
+import { SITE_IMAGES } from '@/lib/site-images';
 import { Button } from '@/components/ui/Button';
-import { SITE_IMAGES, getCategoryImage } from '@/lib/site-images';
 import { CATERING_TAGLINE, DELIVERY, LOADED_TEAS, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
 import type { Locale } from '@/types';
 import type { IProduct } from '@/models/Product';
 import type { IProductCategory } from '@/models/ProductCategory';
-import type { IFlavor } from '@/models/Flavor';
 import type { IAddIn } from '@/models/AddIn';
 import type { IService } from '@/models/Service';
 import type { ITestimonial } from '@/models/Testimonial';
 import type { ISiteSettings } from '@/models/SiteSettings';
 
 const LIFESTYLE_IMAGES = [
-  { url: SITE_IMAGES.megaTea, alt: 'Mega Tea drinks' },
+  { url: SITE_IMAGES.megaTea, alt: 'Loaded Tea drinks' },
   { url: SITE_IMAGES.acaiBowl, alt: 'Açaí bowl' },
   { url: SITE_IMAGES.proteinCoffee, alt: 'Protein coffee' },
   { url: SITE_IMAGES.catering, alt: 'Catering spread' },
@@ -41,7 +37,6 @@ interface HomePageSectionsProps {
   };
   products: IProduct[];
   categories: IProductCategory[];
-  flavors: IFlavor[];
   addIns: IAddIn[];
   services: IService[];
   testimonials: ITestimonial[];
@@ -53,17 +48,19 @@ export function HomePageSections({
   hero,
   products,
   categories,
-  flavors,
   addIns,
   services,
   testimonials,
   settings,
 }: HomePageSectionsProps) {
   const kitProduct = products.find((p) => p.productType === 'kit');
-  const featured = products.filter((p) => p.featured).slice(0, 6);
   const instagram = settings.social?.find((s) => s.platform === 'instagram');
   const heroTitle = getLocalized(hero.title, locale);
   const { fuel: fuelLine, boost: boostLine } = splitBrandSlogan(heroTitle);
+  const addOnLabels =
+    addIns.length > 0
+      ? addIns.map((addIn) => ({ id: String(addIn._id), label: getLocalized(addIn.name, locale) }))
+      : LOADED_TEAS.addOns.map((name) => ({ id: name, label: name }));
 
   return (
     <div className="min-w-0 w-full max-w-full overflow-x-hidden">
@@ -75,84 +72,14 @@ export function HomePageSections({
         backgroundUrl={hero.backgroundImage?.url ?? SITE_IMAGES.heroDrinks}
       />
 
-      {/* 4. Mega Tea showcase */}
+      {/* Menu categories */}
       <SectionReveal>
-        <section className="section-cream py-20">
-          <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 lg:grid-cols-2 lg:px-6">
-            <LiquidMask className="overflow-hidden rounded-2xl">
-              <Image src={SITE_IMAGES.megaTea} alt="Mega Tea" width={600} height={500} className="h-auto w-full max-w-full rounded-2xl object-cover" />
-            </LiquidMask>
-            <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-pink">01 · Loaded Teas</p>
-              <h2 className="font-display mt-2 text-4xl md:text-5xl">{LOADED_TEAS.headline.replace(' For You!', '')}<span className="text-pink"> For You!</span></h2>
-              <p className="mt-4 text-grey">{LOADED_TEAS.sellingPoints.join(' ')}</p>
-              <p className="mt-2 font-semibold text-carbon">{LOADED_TEAS.combinations}</p>
-              <Link href="/products?category=mega-teas" className="mt-6 inline-block text-pink font-semibold hover:underline">View Mega Teas →</Link>
-            </div>
-          </div>
-        </section>
+        <HomeMenuCategoriesSection categories={categories} locale={locale} />
       </SectionReveal>
 
-      {/* 5. Category navigation */}
-      <SectionReveal>
-        <section className="py-16">
-          <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <h2 className="font-display mb-8 text-4xl">Explore the Menu</h2>
-            <CategoryNav categories={categories} locale={locale} />
-            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {categories.slice(0, 6).map((cat) => (
-                <Link key={String(cat._id)} href={`/products?category=${cat.slug}`} className="group relative overflow-hidden rounded-2xl bg-carbon p-6 text-white">
-                  <Image src={getCategoryImage(cat.slug)} alt="" width={400} height={200} className="absolute inset-0 h-full w-full object-cover opacity-40 transition group-hover:scale-105" />
-                  <span className="relative font-display text-2xl">{getLocalized(cat.name, locale)}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      </SectionReveal>
+      {/* Açaí Bowl Event Experience */}      <AcaiBowlEventSection />
 
-      {/* 6. Flavor discovery — pinned horizontal scroll */}
-      <FlavorDiscoverySection flavors={flavors} locale={locale} />
-
-      {/* 7. Açaí Bowl Event Experience */}
-      <SectionReveal>
-        <AcaiBowlEventSection />
-      </SectionReveal>
-
-      {/* 8. Protein coffee & shakes */}
-      <SectionReveal>
-        <section className="section-cream py-20">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 md:grid-cols-2 lg:px-6">
-            <div className="rounded-2xl bg-white p-6 shadow-sm">
-              <Image src={SITE_IMAGES.proteinCoffee} alt="Protein coffee" width={500} height={350} className="h-auto w-full rounded-xl object-cover" />
-              <h3 className="font-display mt-4 text-2xl">Protein Coffee</h3>
-              <p className="mt-2 text-sm text-grey">Caffeine disclosure available. Not recommended for all audiences.</p>
-            </div>
-            <div className="rounded-2xl bg-white p-6 shadow-sm">
-              <Image src={SITE_IMAGES.proteinShake} alt="Protein shake" width={500} height={350} className="h-auto w-full rounded-xl object-cover" />
-              <h3 className="font-display mt-4 text-2xl">Protein Shakes</h3>
-              <p className="mt-2 text-sm text-grey">Protein-forward options with ingredient details on request.</p>
-            </div>
-          </div>
-        </section>
-      </SectionReveal>
-
-      {/* 9. Waffles, donuts, treats */}
-      <SectionReveal>
-        <section className="py-20">
-          <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <h2 className="font-display text-4xl">Treats & More</h2>
-            <div className="mt-8 grid gap-6 sm:grid-cols-3">
-              {[SITE_IMAGES.waffle, SITE_IMAGES.donut, SITE_IMAGES.proteinTreat].map((src) => (
-                <Image key={src} src={src} alt="" width={400} height={300} className="h-56 w-full rounded-2xl object-cover" />
-              ))}
-            </div>
-          </div>
-        </section>
-      </SectionReveal>
-
-      {/* Monthly Tea Club */}
-      <SectionReveal>
+      {/* Monthly Tea Club */}      <SectionReveal>
         <MonthlyTeaClubSection kitHref={kitProduct ? `/products/${kitProduct.slug}` : '/products/mega-tea-kit-builder'} />
       </SectionReveal>
 
@@ -162,17 +89,12 @@ export function HomePageSections({
             <h3 className="font-display text-3xl text-lime">Add-Ons Available</h3>
             <p className="mt-2 text-sm text-white/70">{LOADED_TEAS.combinations}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              {LOADED_TEAS.addOns.map((name) => (
-                <span key={name} className="rounded-full bg-white/10 px-4 py-2 text-sm">{name}</span>
+              {addOnLabels.map(({ id, label }) => (
+                <span key={id} className="rounded-full bg-white/10 px-4 py-2 text-sm text-white/90">
+                  {label}
+                </span>
               ))}
             </div>
-            {addIns.length > 0 && (
-              <div className="mt-6 flex flex-wrap gap-3 border-t border-white/10 pt-6">
-                {addIns.map((a) => (
-                  <span key={String(a._id)} className="rounded-full bg-lime/20 px-4 py-2 text-sm text-lime">{getLocalized(a.name, locale)}</span>
-                ))}
-              </div>
-            )}
           </div>
         </section>
       </SectionReveal>
@@ -230,17 +152,7 @@ export function HomePageSections({
         </section>
       </SectionReveal>
 
-      {/* 16. Featured products */}
-      <SectionReveal>
-        <section className="py-20">
-          <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <h2 className="font-display text-4xl">Featured Products</h2>
-            <div className="mt-8"><ProductGrid products={featured.length ? featured : products.slice(0, 6)} locale={locale} /></div>
-          </div>
-        </section>
-      </SectionReveal>
-
-      {/* 17. Lifestyle montage */}
+      {/* Lifestyle montage */}
       <SectionReveal>
         <section className="section-dark py-20">
           <div className="mx-auto max-w-7xl px-4 lg:px-6">

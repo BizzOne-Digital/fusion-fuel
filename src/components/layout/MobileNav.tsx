@@ -14,28 +14,28 @@ interface MobileNavProps {
 const links = [
   '/',
   '/about',
-  '/products',
+  '/menu',
+  '/cart',
   '/services',
   '/pricing',
   '/booking',
   '/testimonials',
   '/faqs',
   '/contact',
-  '/cart',
   '/account',
 ] as const;
 
 const labelKeys: Record<(typeof links)[number], string> = {
   '/': 'home',
   '/about': 'about',
-  '/products': 'products',
+  '/menu': 'menu',
+  '/cart': 'cart',
   '/services': 'services',
   '/pricing': 'pricing',
   '/booking': 'booking',
   '/testimonials': 'testimonials',
   '/faqs': 'faqs',
   '/contact': 'contact',
-  '/cart': 'cart',
   '/account': 'account',
 };
 
@@ -49,7 +49,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
       <button type="button" className="absolute inset-0 bg-ink/60" onClick={onClose} aria-label="Close menu" />
       <div className="absolute right-0 top-0 flex h-full w-[min(100%,320px)] flex-col bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-grey/15 p-4">
-          <Logo className="h-10 w-auto max-w-[150px] object-contain object-left sm:max-w-[170px]" />
+          <Logo variant="light" className="relative h-12 w-[200px] sm:w-[240px]" />
           <button type="button" onClick={onClose} className="rounded-full p-2 hover:bg-cream" aria-label="Close">
             <X className="h-5 w-5" />
           </button>

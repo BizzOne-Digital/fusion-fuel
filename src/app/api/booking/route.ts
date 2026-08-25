@@ -77,6 +77,15 @@ export async function POST(request: NextRequest) {
     const businessEmail = buildBookingBusinessEmail({
       ...payload,
       details: booking.specialRequests ?? '',
+      phone: parsed.data.phone,
+      organization: parsed.data.organization,
+      venue: venueAddress,
+      alternateDate: parsed.data.alternateDate
+        ? parsed.data.alternateDate.toISOString().split('T')[0]
+        : undefined,
+      startTime: parsed.data.startTime,
+      fulfillmentMethod: parsed.data.fulfillmentMethod,
+      preferredContactMethod: parsed.data.preferredContactMethod,
     });
 
     await sendEmail({ to: parsed.data.email, ...customerEmail });

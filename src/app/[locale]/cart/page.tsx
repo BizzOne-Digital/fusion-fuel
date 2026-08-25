@@ -24,18 +24,26 @@ export default function CartPage() {
         <div className="mt-12 text-center">
           <p className="text-lg font-semibold">{t('empty')}</p>
           <p className="mt-2 text-grey">{t('emptyDescription')}</p>
-          <Link href="/products" className="mt-6 inline-block"><Button>{t('continueShopping')}</Button></Link>
+          <Link href="/menu" className="mt-6 inline-block">
+            <Button>{t('continueShopping')}</Button>
+          </Link>
         </div>
       ) : (
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
           <ul className="space-y-4">
             {items.map((item) => (
-              <CartItemRow key={String((item as { _id?: string })._id ?? item.productId)} item={item} locale={locale} />
+              <CartItemRow
+                key={String((item as { _id?: string })._id ?? item.productId)}
+                item={item}
+                locale={locale}
+              />
             ))}
           </ul>
           <aside className="rounded-2xl border border-grey/15 bg-cream p-6">
             <CartSummary />
-            <Link href="/checkout" className="mt-6 block"><Button className="w-full">{t('checkout')}</Button></Link>
+            <Link href="/checkout" className="mt-6 block">
+              <Button className="w-full">{t('checkout')}</Button>
+            </Link>
           </aside>
         </div>
       )}

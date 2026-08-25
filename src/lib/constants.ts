@@ -25,8 +25,8 @@ export const BRAND_COLORS = {
 } as const;
 
 export const BUSINESS_DEFAULTS = {
-  email: 'hello@fusionfuelboost.com',
-  phone: '+1 (555) 123-4567',
+  email: 'fusionfuelboostco@gmail.com',
+  phone: '+1 813-842-2594',
   address: {
     street: '123 Energy Lane',
     city: 'Austin',

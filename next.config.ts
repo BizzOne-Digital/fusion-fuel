@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
       { pathname: '/images/**' },
       { pathname: '/flavours/**' },
       { pathname: '/brand/**' },
+      { pathname: '/signature flavour collection/**' },
+      { pathname: '/new flavour collection/**' },
+      { pathname: '/fall citrus collection/**' },
+      { pathname: '/fall berry collection/**' },
+      { pathname: '/school fun collection/**' },
     ],
   },
 };

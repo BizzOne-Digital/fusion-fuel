@@ -19,8 +19,22 @@ import ProductCategory from '../src/models/ProductCategory';
 import Promotion from '../src/models/Promotion';
 import Service from '../src/models/Service';
 import SiteSettings from '../src/models/SiteSettings';
-import { SITE_IMAGES, getCategoryImage, getServiceImage, getProductFallbackImage, getFlavorImage, FLAVOR_PHOTO_SLUGS } from '../src/lib/site-images';
+import { SITE_IMAGES, getCategoryImage, getServiceImage, getProductFallbackImage, getFlavorImage } from '../src/lib/site-images';
+import { FLAVOR_IMAGE_BY_SLUG } from '../src/lib/flavor-image-manifest';
 import { CATERING_TAGLINE, CONTACT, DELIVERY, acaiBowlEventServiceHtml, ACAI_BOWL_EVENT, flavorIngredientsHtml, HOME_HERO, LOADED_TEAS, MONTHLY_TEA_CLUB } from '../src/lib/brand-content';
+import { PROTEIN_COFFEE } from '../src/lib/protein-coffee-menu';
+import { MEGA_TEA_KITS_MENU, megaTeaKitDescriptionHtml, megaTeaKitPriceCents, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
+import { LOADED_TEAS_MENU, loadedTeaDescriptionHtml, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
+import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlPriceCents } from '../src/lib/acai-bowls-menu';
+import { WAFFLES_MENU, waffleDescriptionHtml, wafflePriceCents } from '../src/lib/waffles-menu';
+import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
+import {
+  PROTEIN_TREATS_MENU,
+  proteinTreatDescriptionHtml,
+  proteinTreatItemPriceCents,
+  proteinTreatItemVariants,
+  proteinTreatShortDescription,
+} from '../src/lib/protein-treats-menu';
 
 const ES = '[ES - Review Required]';
 
@@ -96,11 +110,11 @@ async function seedSiteSettings(): Promise<void> {
         seo: {
           title: `${BRAND.name} | Premium Fuel for Body and Mind`,
           description:
-            'Monthly Tea Club, Mega Teas, protein coffee, shakes, waffles, donuts, and full-service catering. Local delivery and nationwide shipping.',
+            'Monthly Tea Club, Loaded Teas, protein coffee, waffles, protein treats, and full-service catering. Local delivery and nationwide shipping.',
           keywords: [
             'monthly tea club',
-            'mega tea',
-            'protein shakes',
+            'loaded teas',
+            'protein coffee',
             'acai bowls',
             'catering',
             'fusion fuel boost',
@@ -191,12 +205,12 @@ function buildPages() {
       seo: {
         title: `${BRAND.name} | FUEL YOUR DAY. BOOST YOUR LIFE.`,
         description:
-          'Monthly Tea Club, Mega Teas, protein-forward menu items, and full-service catering.',
+          'Monthly Tea Club, Loaded Teas, protein-forward menu items, and full-service catering.',
       },
       hero: {
         title: loc('FUEL YOUR DAY. BOOST YOUR LIFE.'),
         subtitle: loc(HOME_HERO.description),
-        backgroundImage: img(SITE_IMAGES.heroDrinks, 'Fusion Fuel Mega Tea hero'),
+        backgroundImage: img(SITE_IMAGES.heroDrinks, 'Fusion Fuel Loaded Tea hero'),
         cta: ctaShop,
       },
       sections: [
@@ -205,7 +219,7 @@ function buildPages() {
           type: 'text' as const,
           title: loc('Welcome to Fusion Fuel & Boost Co.'),
           body: rich(
-            '<p>Fusion Fuel & Boost Co. offers a diverse selection of flavorful products designed to complement an active lifestyle. From made-to-order Mega Teas to protein-forward treats and customizable kits, every item is built around bold taste and everyday convenience.</p>'
+            '<p>Fusion Fuel & Boost Co. offers a diverse selection of flavorful products designed to complement an active lifestyle. From made-to-order Loaded Teas to protein-forward treats and customizable kits, every item is built around bold taste and everyday convenience.</p>'
           ),
           order: 0,
           theme: 'light' as const,
@@ -213,11 +227,11 @@ function buildPages() {
         {
           key: 'mega-tea-showcase',
           type: 'image_text' as const,
-          title: loc('Mega Tea Energy'),
+          title: loc('Loaded Tea Energy'),
           body: rich(
-            '<p>Discover vibrant Mega Tea flavors with customizable add-ins. Ingredient and nutrition details are available for each product once confirmed by the business.</p>'
+            '<p>Discover vibrant Loaded Tea flavors with customizable add-ins. Ingredient and nutrition details are available for each product once confirmed by the business.</p>'
           ),
-          images: [img(SITE_IMAGES.megaTea, 'Mega Tea cups')],
+          images: [img(SITE_IMAGES.megaTea, 'Loaded Tea cups')],
           order: 1,
           theme: 'dark' as const,
         },
@@ -330,7 +344,7 @@ function buildPages() {
       status: 'published' as const,
       hero: {
         title: loc('Shop the Menu'),
-        subtitle: loc('Mega Teas, bowls, coffee, shakes, waffles, donuts, treats, and seasonal items.'),
+        subtitle: loc('Loaded Teas, bowls, coffee, waffles, and protein treats.'),
         backgroundImage: img(SITE_IMAGES.productsHero, 'Product menu'),
         cta: ctaShop,
       },
@@ -450,30 +464,31 @@ async function seedPages(): Promise<void> {
 
 async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
   const categories = [
-    { slug: 'mega-teas', name: 'Mega Teas', order: 0 },
+    { slug: 'mega-teas', name: 'Loaded Teas', order: 0 },
     { slug: 'mega-tea-kits', name: 'Mega Tea Kits', order: 1 },
     { slug: 'acai-bowls', name: 'Açaí Bowls', order: 2 },
     { slug: 'protein-coffee', name: 'Protein Coffee', order: 3 },
-    { slug: 'protein-shakes', name: 'Protein Shakes', order: 4 },
-    { slug: 'waffles', name: 'Waffles', order: 5 },
-    { slug: 'donuts', name: 'Donuts', order: 6 },
-    { slug: 'protein-treats', name: 'Protein Treats', order: 7 },
-    { slug: 'add-ins', name: 'Add-ins', order: 8 },
-    { slug: 'new-and-seasonal-items', name: 'New and Seasonal Items', order: 9 },
+    { slug: 'waffles', name: 'Waffles', order: 4 },
+    { slug: 'protein-treats', name: 'Protein Treats', order: 5 },
+    { slug: 'donut-of-the-day', name: 'Donut of the Day', order: 6 },
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
+  const activeSlugs = categories.map((category) => category.slug);
 
   for (const category of categories) {
+    const descriptionHtml =
+      category.slug === 'donut-of-the-day'
+        ? `<p>${DONUT_OF_THE_DAY_MENU.description}</p><p><strong>${donutOfTheDayPricingSummary()}</strong></p><p><em>${DONUT_OF_THE_DAY_MENU.footnote}</em></p>`
+        : `<p>Explore our ${category.name} selection. Ingredient and nutrition details are added when confirmed by the business.</p>`;
+
     const doc = await ProductCategory.findOneAndUpdate(
       { slug: category.slug },
       {
         $set: {
           slug: category.slug,
           name: loc(category.name),
-          description: rich(
-            `<p>Explore our ${category.name} selection. Ingredient and nutrition details are added when confirmed by the business.</p>`
-          ),
+          description: rich(descriptionHtml),
           image: img(getCategoryImage(category.slug), category.name),
           order: category.order,
           status: 'published',
@@ -485,7 +500,12 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
     ids[category.slug] = doc._id;
   }
 
-  console.log('Product categories upserted (10 records).');
+  await ProductCategory.updateMany(
+    { slug: { $nin: activeSlugs }, status: 'published' },
+    { $set: { status: 'archived' } }
+  );
+
+  console.log(`Product categories upserted (${categories.length} records).`);
   return ids;
 }
 
@@ -501,7 +521,7 @@ async function seedFlavors(): Promise<Record<string, Types.ObjectId>> {
 
   for (const [index, flavor] of LOADED_TEAS.flavors.entries()) {
     const displayName = flavor.isNew ? `${flavor.name} — NEW!` : flavor.name;
-    const hasPhoto = FLAVOR_PHOTO_SLUGS.has(flavor.slug);
+    const manifestImage = FLAVOR_IMAGE_BY_SLUG[flavor.slug];
     const doc = await Flavor.findOneAndUpdate(
       { slug: flavor.slug },
       {
@@ -513,11 +533,11 @@ async function seedFlavors(): Promise<Record<string, Types.ObjectId>> {
           description: rich(flavorIngredientsHtml(flavor.ingredients)),
           status: 'published',
           order: index,
-          ...(hasPhoto
-            ? { image: img(getFlavorImage(flavor.slug, displayName).url, `${displayName} loaded tea`) }
+          ...(manifestImage
+            ? { image: img(manifestImage.url, `${displayName} loaded tea`) }
             : {}),
         },
-        ...(hasPhoto ? {} : { $unset: { image: '' } }),
+        ...(manifestImage ? {} : { $unset: { image: '' } }),
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
@@ -532,56 +552,135 @@ async function seedFlavors(): Promise<Record<string, Types.ObjectId>> {
 async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
   const addIns = [
     {
-      slug: 'collagen',
-      name: 'Collagen',
-      category: 'wellness',
-      description: 'Optional collagen add-in for loaded teas and kits.',
+      slug: 'collagen-unflavored',
+      name: 'Collagen — Unflavored',
+      category: 'collagen',
+      description: 'Unflavored collagen add-in for loaded teas and kits.',
+      price: 300,
     },
     {
-      slug: 'nrg-clean-energy',
-      name: 'NRG (Clean Energy)',
-      category: 'wellness',
-      description: 'Clean energy booster add-in.',
+      slug: 'collagen-strawberry-lemonade',
+      name: 'Collagen — Strawberry Lemonade',
+      category: 'collagen',
+      description: 'Strawberry lemonade collagen add-in.',
+      price: 300,
     },
     {
-      slug: 'protein',
-      name: 'Protein',
+      slug: 'extra-b12',
+      name: 'Extra B12',
       category: 'wellness',
-      description: 'Protein add-in for loaded teas and kits.',
+      description: 'Extra B12 wellness booster.',
+      price: 300,
     },
     {
-      slug: 'aloe',
-      name: 'Aloe',
+      slug: 'extra-hydration',
+      name: 'Extra Hydration',
       category: 'wellness',
-      description: 'Aloe add-in — Mandarin, Mango, and other varieties.',
+      description: 'Extra hydration booster for your blend.',
+      price: 300,
     },
     {
-      slug: 'fiber',
-      name: 'Fiber',
+      slug: 'watermelon-hydrate',
+      name: 'Watermelon Hydrate',
       category: 'wellness',
-      description: 'Fiber add-in for loaded teas and kits.',
+      description: 'Watermelon hydration add-in booster.',
+      price: 300,
+    },
+    {
+      slug: 'nrg-regular',
+      name: 'NRG (Regular)',
+      category: 'energy',
+      description: 'NRG clean energy add-in — regular.',
+      price: 300,
+    },
+    {
+      slug: 'nrg-flavor',
+      name: 'NRG (Flavor)',
+      category: 'energy',
+      description: 'NRG clean energy add-in — flavored.',
+      price: 300,
+    },
+    {
+      slug: 'extra-tea-lemon',
+      name: 'Extra Tea — Lemon',
+      category: 'tea',
+      description: 'Extra lemon tea shot for your blend.',
+      price: 300,
+    },
+    {
+      slug: 'extra-tea-raspberry',
+      name: 'Extra Tea — Raspberry',
+      category: 'tea',
+      description: 'Extra raspberry tea shot for your blend.',
+      price: 300,
+    },
+    {
+      slug: 'extra-tea-chai',
+      name: 'Extra Tea — Chai',
+      category: 'tea',
+      description: 'Extra chai tea shot for your blend.',
+      price: 300,
+    },
+    {
+      slug: 'extra-tea-sweet-ginger',
+      name: 'Extra Tea — Sweet Ginger',
+      category: 'tea',
+      description: 'Extra sweet ginger tea shot for your blend.',
+      price: 300,
+    },
+    {
+      slug: 'aloe-mango',
+      name: 'Aloe — Mango',
+      category: 'aloe',
+      description: 'Mango aloe add-in.',
+      price: 300,
+    },
+    {
+      slug: 'aloe-mandarin',
+      name: 'Aloe — Mandarin',
+      category: 'aloe',
+      description: 'Mandarin aloe add-in.',
+      price: 300,
+    },
+    {
+      slug: 'aloe-unflavored',
+      name: 'Aloe — Unflavored',
+      category: 'aloe',
+      description: 'Unflavored aloe add-in.',
+      price: 300,
+    },
+    {
+      slug: 'aloe-grape',
+      name: 'Aloe — Grape',
+      category: 'aloe',
+      description: 'Grape aloe add-in.',
+      price: 300,
+    },
+    {
+      slug: 'cr7',
+      name: 'CR7',
+      category: 'wellness',
+      description: 'CR7 wellness add-in.',
+      price: 300,
+    },
+    {
+      slug: 'immunity',
+      name: 'Immunity',
+      category: 'wellness',
+      description: 'Immunity wellness booster.',
+      price: 200,
     },
     {
       slug: 'probiotics',
       name: 'Probiotics',
       category: 'wellness',
-      description: 'Probiotics add-in for loaded teas and kits.',
-    },
-    {
-      slug: 'beverage-enhancers',
-      name: 'Beverage Enhancers',
-      category: 'customization',
-      description: 'Flavor beverage enhancers for custom blends.',
-    },
-    {
-      slug: 'vitamins-and-more',
-      name: 'Vitamins & More',
-      category: 'wellness',
-      description: 'Vitamins and additional wellness add-ins.',
+      description: 'Probiotics wellness booster.',
+      price: 200,
     },
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
+  const activeSlugs = addIns.map((addIn) => addIn.slug);
 
   for (const [index, addIn] of addIns.entries()) {
     const doc = await AddIn.findOneAndUpdate(
@@ -592,7 +691,7 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
           name: loc(addIn.name),
           category: addIn.category,
           description: rich(`<p>${addIn.description}</p>`),
-          price: 0,
+          price: addIn.price ?? 0,
           status: 'published',
           order: index,
         },
@@ -602,6 +701,11 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
 
     ids[addIn.slug] = doc._id;
   }
+
+  await AddIn.updateMany(
+    { slug: { $nin: activeSlugs }, status: 'published' },
+    { $set: { status: 'archived' } }
+  );
 
   console.log(`Add-ins upserted (${addIns.length} records).`);
   return ids;
@@ -651,7 +755,7 @@ function serviceTemplate(
       {
         title: loc('What We Provide'),
         body: rich(
-          '<p>Made-to-order Mega Teas, protein-forward menu items, and event-friendly formats. Final menus are tailored to your audience and confirmed in writing.</p>'
+          '<p>Made-to-order Loaded Teas, protein-forward menu items, and event-friendly formats. Final menus are tailored to your audience and confirmed in writing.</p>'
         ),
         image: img(getServiceImage(slug), `${name} service`),
         order: 0,
@@ -716,7 +820,7 @@ async function seedServices(): Promise<void> {
     serviceTemplate(
       'corporate-catering',
       'Corporate Catering',
-      'Refresh your team with energizing Mega Teas and protein-forward options.',
+      'Refresh your team with energizing Loaded Teas and protein-forward options.',
       1,
       'Corporate offices and workplace events'
     ),
@@ -788,85 +892,30 @@ async function seedProducts(
   }));
 
   const kitSizes = [
-    { key: '6', name: loc('6 Tea Kit Box'), servings: 6, price: 0 },
-    { key: '12', name: loc('12 Tea Kit Box'), servings: 12, price: 0 },
-    { key: '20', name: loc('20 Tea Kit Box'), servings: 20, price: 0 },
-    { key: '30', name: loc('30 Tea Kit Box'), servings: 30, price: 0 },
+    {
+      key: 'standard',
+      name: loc(MEGA_TEA_KITS_MENU.name),
+      servings: 1,
+      price: megaTeaKitPriceCents(),
+    },
   ];
 
-  const draftProducts = [
-    {
-      slug: 'signature-mega-tea',
-      sku: 'FFB-MTEA-001',
-      name: 'Signature Mega Tea',
-      category: 'mega-teas',
-      productType: 'single' as const,
-      short: 'A customizable Mega Tea made to order. Contact for pricing.',
-      image: getProductFallbackImage('mega-teas'),
-    },
-    {
-      slug: 'tropical-acai-bowl',
-      sku: 'FFB-ACAI-001',
-      name: 'Tropical Açaí Bowl',
-      category: 'acai-bowls',
-      productType: 'single' as const,
-      short: 'Açaí bowl with customizable toppings. Contact for pricing.',
-      image: getProductFallbackImage('acai-bowls'),
-    },
-    {
-      slug: 'protein-cold-brew',
-      sku: 'FFB-PCOF-001',
-      name: 'Protein Cold Brew',
-      category: 'protein-coffee',
-      productType: 'single' as const,
-      short: 'Protein-forward coffee option. Caffeine details to be confirmed.',
-      image: getProductFallbackImage('protein-coffee'),
-    },
-    {
-      slug: 'chocolate-protein-shake',
-      sku: 'FFB-PSHK-001',
-      name: 'Chocolate Protein Shake',
-      category: 'protein-shakes',
-      productType: 'single' as const,
-      short: 'Rich shake format. Nutrition facts to be added by admin.',
-      image: getProductFallbackImage('protein-shakes'),
-    },
-    {
-      slug: 'fusion-waffle',
-      sku: 'FFB-WAFL-001',
-      name: 'Fusion Waffle',
-      category: 'waffles',
-      productType: 'single' as const,
-      short: 'Protein-forward waffle treat. Contact for pricing.',
-      image: getProductFallbackImage('waffles'),
-    },
-    {
-      slug: 'boost-donut',
-      sku: 'FFB-DONT-001',
-      name: 'Boost Donut',
-      category: 'donuts',
-      productType: 'single' as const,
-      short: 'Protein-focused donut option. Contact for pricing.',
-      image: getProductFallbackImage('donuts'),
-    },
-    {
-      slug: 'protein-energy-bite',
-      sku: 'FFB-TRET-001',
-      name: 'Protein Energy Bite',
-      category: 'protein-treats',
-      productType: 'single' as const,
-      short: 'Portable protein treat. Ingredient list pending client confirmation.',
-      image: getProductFallbackImage('protein-treats'),
-    },
-    {
-      slug: 'seasonal-feature',
-      sku: 'FFB-SEAS-001',
-      name: 'Seasonal Feature Item',
-      category: 'new-and-seasonal-items',
-      productType: 'single' as const,
-      short: 'Limited seasonal menu placeholder. Contact for pricing.',
-      image: getProductFallbackImage('new-and-seasonal-items'),
-    },
+  const draftProducts: Array<{
+    slug: string;
+    sku: string;
+    name: string;
+    category: string;
+    productType: 'single';
+    short: string;
+    image: string;
+  }> = [];
+
+  const archivedProductSlugs = [
+    'signature-mega-tea',
+    'chocolate-protein-shake',
+    'boost-donut',
+    'seasonal-feature',
+    'protein-cold-brew',
   ];
 
   for (const [index, product] of draftProducts.entries()) {
@@ -911,22 +960,18 @@ async function seedProducts(
   }
 
   await Product.findOneAndUpdate(
-    { slug: 'mega-tea-kit-builder' },
+    { slug: MEGA_TEA_KITS_MENU.slug },
     {
       $set: {
-        slug: 'mega-tea-kit-builder',
+        slug: MEGA_TEA_KITS_MENU.slug,
         sku: 'FFB-KIT-001',
-        name: loc('Monthly Tea Club Kit Builder'),
-        shortDescription: loc(
-          `${MONTHLY_TEA_CLUB.intro} Choose a 6, 12, 20, or 30 tea kit box. ${MONTHLY_TEA_CLUB.ctaDetail}`
-        ),
-        description: rich(
-          `<p><strong>${MONTHLY_TEA_CLUB.taglines.primary}</strong></p><p>${MONTHLY_TEA_CLUB.taglines.product}</p><ul>${MONTHLY_TEA_CLUB.whatsInside.map((item) => `<li>${item}</li>`).join('')}</ul><p>${DELIVERY.local} ${DELIVERY.nationwide}</p><p>Choose your kit size, select flavors from our catalog, and add optional wellness boosters such as collagen, hydration booster, aloe vera, or an extra flavor shot.</p>`
-        ),
+        name: loc(MEGA_TEA_KITS_MENU.name),
+        shortDescription: loc(megaTeaKitShortDescription()),
+        description: rich(megaTeaKitDescriptionHtml()),
         productType: 'kit',
         categoryId: categoryIds['mega-tea-kits'],
-        images: [img(SITE_IMAGES.megaTeaKit, 'Mega Tea Kit Builder')],
-        basePrice: 0,
+        images: [img(SITE_IMAGES.megaTeaKit, MEGA_TEA_KITS_MENU.name)],
+        basePrice: megaTeaKitPriceCents(),
         variants: [],
         flavorIds: allFlavorIds,
         kitSizes,
@@ -940,11 +985,10 @@ async function seedProducts(
         allergens: [],
         dietaryTags: [],
         seo: {
-          title: `Monthly Tea Club | ${BRAND.name}`,
-          description:
-            `${MONTHLY_TEA_CLUB.taglines.primary} ${MONTHLY_TEA_CLUB.whatsInside.join(', ')}.`,
+          title: `${MEGA_TEA_KITS_MENU.name} | ${BRAND.name}`,
+          description: `${MEGA_TEA_KITS_MENU.name} — ${megaTeaKitShortDescription()}`,
         },
-        status: 'draft',
+        status: 'published',
         featured: true,
         order: 0,
       },
@@ -952,7 +996,360 @@ async function seedProducts(
     { upsert: true, new: true, setDefaultsOnInsert: true }
   );
 
-  console.log('Products upserted (9 draft records including kit builder).');
+  await Product.updateMany(
+    { slug: { $in: archivedProductSlugs } },
+    { $set: { status: 'archived' } }
+  );
+
+  console.log('Products upserted (mega tea kit).');
+}
+
+async function seedProteinCoffeeProducts(categoryIds: Record<string, Types.ObjectId>): Promise<void> {
+  const servingHtml = `<p><strong>Iced/Hot</strong> — 24 oz &amp; 32 oz iced, 10 oz hot.</p>`;
+  const notesHtml = `<ul>${PROTEIN_COFFEE.footerNotes.map((note) => `<li>${note}</li>`).join('')}</ul>`;
+
+  await Product.updateOne(
+    { slug: 'protein-cold-brew' },
+    { $set: { status: 'archived', sku: 'FFB-PCOF-LEGACY' } }
+  );
+
+  for (const [index, flavor] of PROTEIN_COFFEE.flavors.entries()) {
+    const sku = `FFB-PCOF-${String(index + 1).padStart(3, '0')}`;
+    const slug = `protein-coffee-${flavor.slug}`;
+    const productName = `${PROTEIN_COFFEE.headline} — ${flavor.name}`;
+
+    await Product.findOneAndUpdate(
+      { slug },
+      {
+        $set: {
+          slug,
+          sku,
+          name: loc(productName),
+          shortDescription: loc(
+            `${flavor.name} protein coffee. ${PROTEIN_COFFEE.servingNote}. Contact for pricing.`
+          ),
+          description: rich(
+            `<p><strong>${flavor.name}</strong> protein coffee.</p>${servingHtml}${notesHtml}<p>Contains caffeine. Not recommended for all audiences. Contact for pricing.</p>`
+          ),
+          productType: 'single',
+          categoryId: categoryIds['protein-coffee'],
+          images: [],
+          basePrice: 0,
+          variants: [
+            { sku: `${sku}-ICED24`, name: loc('Iced 24 oz'), price: 0, inventory: 0 },
+            { sku: `${sku}-ICED32`, name: loc('Iced 32 oz'), price: 0, inventory: 0 },
+            { sku: `${sku}-HOT10`, name: loc('Hot 10 oz'), price: 0, inventory: 0 },
+          ],
+          flavorIds: [],
+          kitSizes: [],
+          addInOptions: [],
+          inventory: {
+            trackInventory: false,
+            quantity: 0,
+            lowStockThreshold: 5,
+            allowBackorder: false,
+          },
+          allergens: [],
+          dietaryTags: [],
+          seo: {
+            title: `${productName} | ${BRAND.name}`,
+            description: `${flavor.name} protein coffee. ${PROTEIN_COFFEE.servingNote}.`,
+          },
+          status: 'published',
+          featured: index === 0,
+          order: index,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+  }
+
+  console.log(`Protein coffee products upserted (${PROTEIN_COFFEE.flavors.length} records).`);
+}
+
+async function seedLoadedTeaProducts(categoryIds: Record<string, Types.ObjectId>): Promise<void> {
+  const activeSlugs = LOADED_TEAS_MENU.items.map((item) => `loaded-tea-${item.slug}`);
+  const pricingNote = LOADED_TEAS_MENU.sizes
+    .filter((size) => 'price' in size && size.price != null)
+    .map((size) => `${size.name} $${(size as { price: number }).price.toFixed(2)}`)
+    .join(' · ');
+
+  for (const [index, item] of LOADED_TEAS_MENU.items.entries()) {
+    const sku = `FFB-LTEA-${String(index + 1).padStart(3, '0')}`;
+    const slug = `loaded-tea-${item.slug}`;
+    const productName = item.name;
+
+    await Product.findOneAndUpdate(
+      { slug },
+      {
+        $set: {
+          slug,
+          sku,
+          name: loc(productName),
+          shortDescription: loc(
+            `${item.ingredients.join(', ')}. ${LOADED_TEAS_MENU.servingNote}. ${pricingNote}.`
+          ),
+          description: rich(loadedTeaDescriptionHtml(item)),
+          productType: 'single',
+          categoryId: categoryIds['mega-teas'],
+          images: [],
+          basePrice: loadedTeaSizePriceCents('32oz'),
+          variants: LOADED_TEAS_MENU.sizes.map((size) => ({
+            sku: `${sku}-${size.slug.replace('oz', '')}`,
+            name: loc(size.name),
+            price: loadedTeaSizePriceCents(size.slug),
+            inventory: 0,
+          })),
+          flavorIds: [],
+          kitSizes: [],
+          addInOptions: [],
+          inventory: {
+            trackInventory: false,
+            quantity: 0,
+            lowStockThreshold: 5,
+            allowBackorder: false,
+          },
+          allergens: [],
+          dietaryTags: [],
+          seo: {
+            title: `${productName} | ${BRAND.name}`,
+            description: `${productName} loaded tea. ${item.ingredients.join(', ')}.`,
+          },
+          status: 'published',
+          featured: index < 3,
+          order: index,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+  }
+
+  await Product.updateOne({ slug: 'signature-mega-tea' }, { $set: { status: 'archived' } });
+
+  console.log(`Loaded tea products upserted (${LOADED_TEAS_MENU.items.length} records).`);
+}
+
+async function seedAcaiBowlProducts(categoryIds: Record<string, Types.ObjectId>): Promise<void> {
+  const activeSlugs = ACAI_BOWLS_MENU.items.map((item) => `acai-bowl-${item.slug}`);
+
+  await Product.updateOne(
+    { slug: 'tropical-acai-bowl' },
+    { $set: { status: 'archived', sku: 'FFB-ACAI-001-ARCHIVED' } }
+  );
+  await Product.updateOne(
+    { slug: 'acai-bowl-tropical-bowl' },
+    { $set: { status: 'archived', sku: 'FFB-ACAI-TROP-ARCHIVED' } }
+  );
+
+  for (const [index, item] of ACAI_BOWLS_MENU.items.entries()) {
+    const sku = `FFB-ACAI-${String(index + 1).padStart(3, '0')}`;
+    const slug = `acai-bowl-${item.slug}`;
+
+    await Product.findOneAndUpdate(
+      { slug },
+      {
+        $set: {
+          slug,
+          sku,
+          name: loc(item.name),
+          shortDescription: loc(
+            `${item.description} ${'size' in item && item.size ? `${item.size} ` : ''}${
+              'price' in item && item.price != null ? `$${item.price.toFixed(2)}.` : ''
+            } ${ACAI_BOWLS_MENU.footnote}`
+          ),
+          description: rich(acaiBowlDescriptionHtml(item)),
+          productType: 'single',
+          categoryId: categoryIds['acai-bowls'],
+          images:
+            'placeholder' in item && item.placeholder
+              ? []
+              : [img(item.image, item.name)],
+          basePrice: acaiBowlPriceCents(item),
+          variants:
+            'size' in item && item.size
+              ? [
+                  {
+                    sku: `${sku}-12OZ`,
+                    name: loc(item.size),
+                    price: acaiBowlPriceCents(item),
+                    inventory: 0,
+                  },
+                ]
+              : [],
+          flavorIds: [],
+          kitSizes: [],
+          addInOptions: [],
+          inventory: {
+            trackInventory: false,
+            quantity: 0,
+            lowStockThreshold: 5,
+            allowBackorder: false,
+          },
+          allergens: [],
+          dietaryTags: [],
+          seo: {
+            title: `${item.name} | ${BRAND.name}`,
+            description: `${item.name}. ${item.description}`,
+          },
+          status: 'published',
+          featured: index === 0,
+          order: index,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+  }
+
+  const staleAcaiBowls = await Product.find({
+    categoryId: categoryIds['acai-bowls'],
+    slug: { $nin: [...activeSlugs, 'tropical-acai-bowl', 'acai-bowl-tropical-bowl'] },
+    status: 'published',
+  }).select('slug');
+
+  for (const stale of staleAcaiBowls) {
+    await Product.updateOne({ _id: stale._id }, { $set: { status: 'archived' } });
+  }
+
+  console.log(`Açaí bowl products upserted (${ACAI_BOWLS_MENU.items.length} records).`);
+}
+
+async function seedWaffleProducts(categoryIds: Record<string, Types.ObjectId>): Promise<void> {
+  const activeSlugs = WAFFLES_MENU.items.map((item) => `waffle-${item.slug}`);
+
+  await Product.updateOne(
+    { slug: 'fusion-waffle' },
+    { $set: { status: 'archived', sku: 'FFB-WAFL-001-ARCHIVED' } }
+  );
+
+  for (const [index, item] of WAFFLES_MENU.items.entries()) {
+    const sku = `FFB-WAFL-${String(index + 1).padStart(3, '0')}`;
+    const slug = `waffle-${item.slug}`;
+
+    await Product.findOneAndUpdate(
+      { slug },
+      {
+        $set: {
+          slug,
+          sku,
+          name: loc(item.name),
+          shortDescription: loc(
+            `${item.description} $${WAFFLES_MENU.price.toFixed(2)}. ${WAFFLES_MENU.footnote}`
+          ),
+          description: rich(waffleDescriptionHtml(item)),
+          productType: 'single',
+          categoryId: categoryIds['waffles'],
+          images: 'image' in item && item.image ? [img(item.image, item.name)] : [],
+          basePrice: wafflePriceCents(),
+          variants: [
+            {
+              sku: `${sku}-STD`,
+              name: loc('Standard'),
+              price: wafflePriceCents(),
+              inventory: 0,
+            },
+          ],
+          flavorIds: [],
+          kitSizes: [],
+          addInOptions: [],
+          inventory: {
+            trackInventory: false,
+            quantity: 0,
+            lowStockThreshold: 5,
+            allowBackorder: false,
+          },
+          allergens: [],
+          dietaryTags: [],
+          seo: {
+            title: `${item.name} | ${BRAND.name}`,
+            description: `${item.name} protein waffle. ${item.description}`,
+          },
+          status: 'published',
+          featured: index === 0,
+          order: index,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+  }
+
+  const staleWaffles = await Product.find({
+    categoryId: categoryIds['waffles'],
+    slug: { $nin: [...activeSlugs, 'fusion-waffle'] },
+    status: 'published',
+  }).select('slug');
+
+  for (const stale of staleWaffles) {
+    await Product.updateOne({ _id: stale._id }, { $set: { status: 'archived' } });
+  }
+
+  console.log(`Waffle products upserted (${WAFFLES_MENU.items.length} records).`);
+}
+
+async function seedProteinTreatProducts(categoryIds: Record<string, Types.ObjectId>): Promise<void> {
+  const activeSlugs = PROTEIN_TREATS_MENU.items.map((item) => item.slug);
+
+  await Product.updateMany(
+    { slug: 'protein-energy-bite' },
+    { $set: { status: 'archived', sku: 'FFB-TRET-001-ARCHIVED' } }
+  );
+
+  for (const [index, item] of PROTEIN_TREATS_MENU.items.entries()) {
+    const sku = `FFB-TRET-${String(index + 1).padStart(3, '0')}`;
+
+    await Product.findOneAndUpdate(
+      { slug: item.slug },
+      {
+        $set: {
+          slug: item.slug,
+          sku,
+          name: loc(item.name),
+          shortDescription: loc(proteinTreatShortDescription(item)),
+          description: rich(proteinTreatDescriptionHtml(item)),
+          productType: 'single',
+          categoryId: categoryIds['protein-treats'],
+          images: [],
+          basePrice: proteinTreatItemPriceCents(item),
+          variants: proteinTreatItemVariants(item, sku).map((variant) => ({
+            sku: variant.sku,
+            name: loc(variant.name.en),
+            price: variant.price,
+            inventory: variant.inventory,
+          })),
+          flavorIds: [],
+          kitSizes: [],
+          addInOptions: [],
+          inventory: {
+            trackInventory: false,
+            quantity: 0,
+            lowStockThreshold: 5,
+            allowBackorder: false,
+          },
+          allergens: [],
+          dietaryTags: [],
+          seo: {
+            title: `${item.name} | ${BRAND.name}`,
+            description: `${item.name} — ${proteinTreatShortDescription(item)}`,
+          },
+          status: 'published',
+          featured: index === 0,
+          order: index,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+  }
+
+  const staleTreats = await Product.find({
+    categoryId: categoryIds['protein-treats'],
+    slug: { $nin: activeSlugs },
+    status: 'published',
+  }).select('slug');
+
+  for (const stale of staleTreats) {
+    await Product.updateOne({ _id: stale._id }, { $set: { status: 'archived' } });
+  }
+
+  console.log(`Protein treat products upserted (${PROTEIN_TREATS_MENU.items.length} records).`);
 }
 
 async function seedFaqs(): Promise<void> {
@@ -996,7 +1393,7 @@ async function seedFaqs(): Promise<void> {
       category: 'mega-tea-kits',
       question: 'What add-ins are available for kits?',
       answer:
-        'Optional wellness boosters and add-ins may include collagen, hydration booster, aloe vera, and extra flavor shots. Availability and pricing are managed in the admin portal.',
+        'Optional add-ins include collagen (unflavored and strawberry lemonade), extra B12, extra hydration, watermelon hydrate, NRG (regular and flavor), extra tea shots (lemon, raspberry, chai, sweet ginger), aloe (mango, mandarin, unflavored, grape), and CR7. Availability and pricing are managed in the admin portal.',
       order: 3,
     },
     {
@@ -1150,6 +1547,11 @@ async function main(): Promise<void> {
 
   await seedServices();
   await seedProducts(categoryIds, flavorIds, addInIds);
+  await seedProteinCoffeeProducts(categoryIds);
+  await seedLoadedTeaProducts(categoryIds);
+  await seedAcaiBowlProducts(categoryIds);
+  await seedWaffleProducts(categoryIds);
+  await seedProteinTreatProducts(categoryIds);
   await seedFaqs();
   await seedPromotions();
 

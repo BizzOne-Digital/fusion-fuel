@@ -1,14 +1,19 @@
 /** Local brand photography assets (replace in /public/images/ when client supplies final photos). */
+import { FLAVOR_IMAGE_BY_SLUG } from './flavor-image-manifest';
+
 export const SITE_IMAGES = {
   hero: '/images/hero-drinks.png',
+  introPoster: '/brand/fusion-fuel-intro-poster.png',
   heroDrinks: '/images/hero-drinks.png',
   megaTea: '/images/mega-tea.png',
   megaTeaKit: '/images/mega-tea-kit.png',
   acaiBowl: '/images/acai-bowl.png',
   proteinCoffee: '/images/protein-coffee.png',
+  proteinCoffeeMenu: '/brand/protein-coffee-menu.png',
+  loadedTeasMenu: '/brand/loaded-teas-menu.png',
   proteinShake: '/images/protein-shake.png',
   waffle: '/images/waffle.png',
-  donut: '/images/donut.png',
+  donut: '/images/donut-of-the-day.png',
   proteinTreat: '/images/protein-treat.png',
   catering: '/images/catering.png',
   aboutTeam: '/images/about-team.png',
@@ -20,12 +25,13 @@ export const SITE_IMAGES = {
   testimonials: '/images/catering.png',
   categories: {
     'mega-teas': '/images/mega-tea.png',
-    'mega-tea-kits': '/images/mega-tea-kit.png',
+    'mega-tea-kits': '/images/mega-tea-kits-category.png',
     'acai-bowls': '/images/acai-bowl.png',
     'protein-coffee': '/images/protein-coffee.png',
     'protein-shakes': '/images/protein-shake.png',
     waffles: '/images/waffle.png',
-    donuts: '/images/donut.png',
+    'donut-of-the-day': '/images/donut-of-the-day.png',
+    donuts: '/images/donut-of-the-day.png',
     'protein-treats': '/images/protein-treat.png',
     'add-ins': '/images/mega-tea-kit.png',
     'new-and-seasonal-items': '/images/mega-tea.png',
@@ -48,27 +54,14 @@ export const SITE_IMAGES = {
     'protein-coffee': '/images/protein-coffee.png',
     'protein-shakes': '/images/protein-shake.png',
     waffles: '/images/waffle.png',
-    donuts: '/images/donut.png',
+    'donut-of-the-day': '/images/donut-of-the-day.png',
+    donuts: '/images/donut-of-the-day.png',
     'protein-treats': '/images/protein-treat.png',
   } as Record<string, string>,
 } as const;
 
-/** Client flavor photos live in /public/flavours/{slug}.png */
+/** Client flavor photos live in /public/{collection folder}/{flavor name}.png */
 export const FLAVOR_IMAGE_DIR = '/flavours';
-
-/** Legacy flavor slugs that already have photos in /public/flavours/ */
-export const FLAVOR_PHOTO_SLUGS = new Set([
-  'cherry-apple',
-  'cherry-paradise',
-  'passion-island',
-  'pink-dream',
-  'pink-malibu',
-  'strawberry-lemonade',
-  'sunny-island',
-  'sweet-tart',
-  'watermelon-berry',
-  'wonder-woman',
-]);
 
 export function getFlavorImagePath(slug: string): string {
   return `${FLAVOR_IMAGE_DIR}/${slug}.png`;
@@ -82,11 +75,12 @@ export function resolveFlavorImage(
   flavor: { slug: string; image?: { url?: string; alt?: string } },
   name: string
 ) {
+  const manifest = FLAVOR_IMAGE_BY_SLUG[flavor.slug];
+  if (manifest?.url) {
+    return { url: manifest.url, alt: name };
+  }
   if (flavor.image?.url) {
     return { url: flavor.image.url, alt: flavor.image.alt || name };
-  }
-  if (FLAVOR_PHOTO_SLUGS.has(flavor.slug)) {
-    return getFlavorImage(flavor.slug, name);
   }
   return { url: '', alt: name };
 }

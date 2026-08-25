@@ -20,7 +20,7 @@ export async function Footer({ settings, locale }: FooterProps) {
         {
           title: { en: 'Explore', es: 'Explorar' },
           links: [
-            { label: { en: 'Products', es: 'Productos' }, href: '/products' },
+            { label: { en: 'Menu', es: 'Menú' }, href: '/menu' },
             { label: { en: 'Services', es: 'Servicios' }, href: '/services' },
             { label: { en: 'Book Catering', es: 'Reservar catering' }, href: '/booking' },
           ],
@@ -40,7 +40,7 @@ export async function Footer({ settings, locale }: FooterProps) {
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4">
-            <Logo className="h-14 w-auto max-w-[220px] object-contain object-left md:h-16 md:max-w-[260px]" />
+            <Logo className="relative h-16 w-[260px] md:h-20 md:w-[320px]" />
             <p className="max-w-xs text-sm text-white/70">
               {getLocalized(settings.footer?.tagline ?? settings.tagline, locale)}
             </p>
@@ -77,10 +77,10 @@ export async function Footer({ settings, locale }: FooterProps) {
             </div>
           ))}
           <div>
-            <h3 className="font-display mb-4 text-lg text-lime">{tNav('shop')}</h3>
+            <h3 className="font-display mb-4 text-lg text-lime">{tNav('menu')}</h3>
             <ul className="space-y-2 text-sm text-white/75">
-              <li><Link href="/products" className="hover:text-white">{tNav('products')}</Link></li>
-              <li><Link href="/cart" className="hover:text-white">{tNav('cart')}</Link></li>
+              <li><Link href="/menu" className="hover:text-white">{tNav('menu')}</Link></li>
+              <li><Link href="/booking" className="hover:text-white">{tNav('booking')}</Link></li>
               <li><Link href="/account" className="hover:text-white">{tNav('account')}</Link></li>
             </ul>
           </div>

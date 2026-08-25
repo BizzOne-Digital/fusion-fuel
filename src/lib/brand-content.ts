@@ -3,8 +3,8 @@
 import { MENU_FLAVORS } from '@/lib/menu-flavors';
 
 export const CONTACT = {
-  phone: '786-712-2133',
-  email: 'seabreeze.fusion@gmail.com',
+  phone: '+1 813-842-2594',
+  email: 'fusionfuelboostco@gmail.com',
   instagramHandle: '@fusionfuelandboostco',
   instagramUrl: 'https://www.instagram.com/fusionfuelandboostco',
 } as const;
@@ -64,12 +64,12 @@ export const DELIVERY = {
 export const HOME_HERO = {
   eyebrow: 'Made to Order • Flavorful • Customizable',
   description:
-    'Mega Teas, protein-forward favorites, açaí bowls and more—crafted to complement your active lifestyle.',
+    'Loaded Teas, protein-forward favorites, açaí bowls and more—crafted to complement your active lifestyle.',
   ctaPrimary: 'Shop Mega Tea Kits',
   ctaSecondary: 'Explore the Menu',
   ctaTertiary: 'Book Catering',
   features: [
-    { label: '100+ Flavor Combinations', href: '/products?category=mega-teas', icon: 'cup' as const },
+    { label: '100+ Flavor Combinations', href: '/menu?category=mega-teas', icon: 'cup' as const },
     { label: 'Build Your Kit', href: '/products/mega-tea-kit-builder', icon: 'kit' as const },
     { label: 'Catering for Every Occasion', href: '/booking', icon: 'catering' as const },
   ],
@@ -88,14 +88,22 @@ export const LOADED_TEAS = {
     'Delicious flavors. Endless possibilities.',
   ],
   addOns: [
-    'Collagen',
-    'NRG (Clean Energy)',
-    'Protein',
-    'Aloe',
-    'Fiber',
-    'Probiotics',
-    'Beverage Enhancers',
-    'Vitamins & More',
+    'Collagen — Unflavored',
+    'Collagen — Strawberry Lemonade',
+    'Extra B12',
+    'Extra Hydration',
+    'Watermelon Hydrate',
+    'NRG (Regular)',
+    'NRG (Flavor)',
+    'Extra Tea — Lemon',
+    'Extra Tea — Raspberry',
+    'Extra Tea — Chai',
+    'Extra Tea — Sweet Ginger',
+    'Aloe — Mango',
+    'Aloe — Mandarin',
+    'Aloe — Unflavored',
+    'Aloe — Grape',
+    'CR7',
   ],
   flavors: MENU_FLAVORS.map((flavor) => ({
     slug: flavor.slug,

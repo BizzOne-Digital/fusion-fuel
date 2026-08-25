@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Logo } from '@/components/layout/Logo';
-import { BrandTagline } from '@/components/brand/BrandTagline';
 import { Button } from '@/components/ui/Button';
 import { useIntro } from '@/context/IntroContext';
+import { SITE_IMAGES } from '@/lib/site-images';
 
 const INTRO_DURATION_MS = 2800;
 const INTRO_DURATION_MOBILE_MS = 1400;
@@ -34,30 +34,24 @@ export function CinematicIntro() {
     <AnimatePresence onExitComplete={completeIntro}>
       {visible && (
         <motion.div
-          className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-hidden bg-ink px-4 text-white"
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-hidden bg-ink px-3 pb-20 pt-10 text-white sm:px-4 sm:pb-24 sm:pt-12"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: reducedMotion ? 0.01 : 0.55, ease: 'easeInOut' }}
         >
           <motion.div
-            initial={{ scale: 0.88, opacity: 0 }}
+            initial={{ scale: 0.94, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: reducedMotion ? 0.01 : 0.75, ease: 'easeOut' }}
-            className="w-full max-w-full text-center"
+            className="relative h-[min(78svh,720px)] w-full max-w-[min(92vw,640px)] sm:max-w-[min(88vw,720px)]"
           >
-            <div className="mb-6 flex justify-center sm:mb-8 md:mb-10">
-              <Logo
-                className="h-28 w-auto max-w-[min(92vw,480px)] sm:h-36 md:h-44 lg:h-52"
-                priority
-                asLink={false}
-              />
-            </div>
-            <BrandTagline
-              fuelLine="Fuel Your Day."
-              boostLine="Boost Your Life."
-              size="intro"
-              animated={false}
-              boostTone="light"
+            <Image
+              src={SITE_IMAGES.introPoster}
+              alt="Fusion Fuel & Boost Co. — Loaded Teas, Açaí Bowls, Coffee, Catering, Events & Delivery"
+              fill
+              priority
+              sizes="(max-width: 640px) 92vw, 720px"
+              className="object-contain object-center"
             />
           </motion.div>
           <Button

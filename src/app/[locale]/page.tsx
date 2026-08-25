@@ -6,7 +6,6 @@ import {
   getHomeFallback,
   getPublishedProducts,
   getPublishedCategories,
-  getPublishedFlavors,
   getPublishedAddIns,
   getPublishedServices,
   getPublishedTestimonials,
@@ -36,12 +35,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [page, products, categories, flavors, addIns, services, testimonials, settings] =
+  const [page, products, categories, addIns, services, testimonials, settings] =
     await Promise.all([
       getPageByKey('home'),
       getPublishedProducts({ limit: 12 }),
       getPublishedCategories(),
-      getPublishedFlavors(200),
       getPublishedAddIns(),
       getPublishedServices(),
       getPublishedTestimonials(4),
@@ -60,7 +58,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         rawHero.backgroundImage.url.includes('hero-tea.png')
           ? SITE_IMAGES.heroDrinks
           : rawHero.backgroundImage.url,
-      alt: rawHero.backgroundImage?.alt ?? 'Fusion Fuel & Boost Co. Mega Tea drinks',
+      alt: rawHero.backgroundImage?.alt ?? 'Fusion Fuel & Boost Co. Loaded Tea drinks',
     },
   };
 
@@ -70,7 +68,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       hero={hero}
       products={products}
       categories={categories}
-      flavors={flavors}
       addIns={addIns}
       services={services}
       testimonials={testimonials}

@@ -56,27 +56,6 @@ html.intro-active .site-shell {
   max-height: 100vh;
 }
 
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
 body {
   background: var(--background);
   color: var(--foreground);

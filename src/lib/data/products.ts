@@ -61,7 +61,7 @@ export async function getPublishedCategories(): Promise<IProductCategory[]> {
   }
 }
 
-export async function getPublishedFlavors(limit = 100): Promise<IFlavor[]> {
+export async function getPublishedFlavors(limit = 250): Promise<IFlavor[]> {
   try {
     await connectDB();
     return serializeForClient(

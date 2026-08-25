@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx scripts/seed.ts",
+    "test:smtp": "tsx scripts/test-smtp.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

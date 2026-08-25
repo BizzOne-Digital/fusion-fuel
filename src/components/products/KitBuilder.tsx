@@ -5,6 +5,7 @@ import { useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
+import { MEGA_TEA_KITS_MENU } from '@/lib/mega-tea-kits-menu';
 import { Button } from '@/components/ui/Button';
 import { FlavorSelector } from './FlavorSelector';
 import type { IProduct } from '@/models/Product';
@@ -18,6 +19,7 @@ interface KitBuilderProps {
 }
 
 const FLAVOR_LIMITS: Record<string, number> = {
+  standard: MEGA_TEA_KITS_MENU.flavorPickerLimit,
   '6': 3,
   '12': 6,
   '20': 10,
@@ -27,13 +29,13 @@ const FLAVOR_LIMITS: Record<string, number> = {
 export function KitBuilder({ product, flavors, addIns }: KitBuilderProps) {
   const locale = useLocale() as 'en' | 'es';
   const { addItem } = useCart();
-  const [kitSizeKey, setKitSizeKey] = useState(product.kitSizes[0]?.key ?? '6');
+  const [kitSizeKey, setKitSizeKey] = useState(product.kitSizes[0]?.key ?? 'standard');
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
   const [selectedAddIns, setSelectedAddIns] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
 
   const kitSize = product.kitSizes.find((k) => k.key === kitSizeKey);
-  const flavorLimit = FLAVOR_LIMITS[kitSizeKey] ?? 3;
+  const flavorLimit = FLAVOR_LIMITS[kitSizeKey] ?? MEGA_TEA_KITS_MENU.flavorPickerLimit;
 
   const addInTotal = useMemo(
     () =>
@@ -55,13 +57,21 @@ export function KitBuilder({ product, flavors, addIns }: KitBuilderProps) {
       quantity: 1,
       kitSizeKey: kitSize.key,
       flavorIds: selectedFlavors,
-      addIns: Object.entries(selectedAddIns).map(([addInId, quantity]) => ({ addInId, quantity })),
+      addIns: Object.entries(selectedAddIns)
+        .filter(([, quantity]) => quantity > 0)
+        .map(([addInId, quantity]) => ({ addInId, quantity })),
     });
     setLoading(false);
   };
 
   return (
     <div className="space-y-8 rounded-2xl border border-grey/15 bg-cream p-6">
+      <p className="text-sm text-grey">
+        {locale === 'es'
+          ? `Cada kit incluye ${MEGA_TEA_KITS_MENU.includes.join(', ')}.`
+          : `Each kit includes ${MEGA_TEA_KITS_MENU.includes.join(', ')}.`}
+      </p>
+
       <div>
         <h3 className="font-display text-2xl">{locale === 'es' ? 'Tamaño del kit' : 'Kit size'}</h3>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -78,7 +88,7 @@ export function KitBuilder({ product, flavors, addIns }: KitBuilderProps) {
               }`}
             >
               <p className="font-display text-xl">{getLocalized(size.name, locale)}</p>
-              <p className="text-sm text-grey">{size.servings} servings</p>
+              {size.servings > 1 && <p className="text-sm text-grey">{size.servings} servings</p>}
               <p className="mt-2 font-semibold">
                 {hasPrice(size.price) ? formatPrice(size.price, 'USD', locale) : formatPrice(null, 'USD', locale)}
               </p>
@@ -135,19 +145,15 @@ export function KitBuilder({ product, flavors, addIns }: KitBuilderProps) {
             {locale === 'es' ? 'Agregar al carrito' : 'Add to cart'}
           </Button>
         ) : (
-          <Link
-            href="/contact"
-            className="inline-flex items-center justify-center rounded-full border-2 border-carbon px-6 py-3 font-semibold text-carbon hover:bg-carbon hover:text-white"
-          >
-            {locale === 'es' ? 'Consultar precio' : 'Contact for pricing'}
+          <Link href="/contact">
+            <Button variant="outline">{locale === 'es' ? 'Consultar precio' : 'Contact for pricing'}</Button>
           </Link>
         )}
       </div>
-      {!hasPrice(unitPrice) && (
+
+      {!canAdd && hasPrice(unitPrice) && (
         <p className="text-sm text-grey">
-          {locale === 'es'
-            ? 'Los precios se publicarán cuando estén confirmados.'
-            : 'Pricing will appear once confirmed by the business.'}
+          {locale === 'es' ? 'Elige al menos un sabor para continuar.' : 'Select at least one flavor to continue.'}
         </p>
       )}
     </div>

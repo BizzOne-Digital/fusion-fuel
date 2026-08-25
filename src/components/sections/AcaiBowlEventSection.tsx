@@ -1,13 +1,52 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/Button';
 import { ACAI_BOWL_EVENT, CONTACT } from '@/lib/brand-content';
 import { SITE_IMAGES } from '@/lib/site-images';
 
+gsap.registerPlugin(ScrollTrigger);
+
+const PIN_START = 'top 88px';
+
 export function AcaiBowlEventSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const mediaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const media = mediaRef.current;
+    if (!section || !media) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    const mm = gsap.matchMedia();
+
+    mm.add('(min-width: 1024px)', () => {
+      const pin = ScrollTrigger.create({
+        trigger: section,
+        start: PIN_START,
+        end: 'bottom bottom',
+        pin: media,
+        pinSpacing: false,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+      });
+
+      return () => pin.kill();
+    });
+
+    return () => mm.revert();
+  }, []);
+
   return (
-    <section className="w-full overflow-x-hidden py-20">
-      <div className="mx-auto max-w-7xl px-4 lg:px-6">
+    <section className="w-full py-20">
+      <div ref={sectionRef} className="mx-auto max-w-7xl px-4 lg:px-6">
         <div className="grid items-start gap-10 lg:grid-cols-[1fr_420px]">
           <div>
             <p className="text-sm font-bold uppercase tracking-widest text-pink">Açaí Bowl Event Experience</p>
@@ -112,7 +151,10 @@ export function AcaiBowlEventSection() {
             </p>
           </div>
 
-          <div className="space-y-4 lg:sticky lg:top-24">
+          <div
+            ref={mediaRef}
+            className="space-y-4 lg:sticky lg:top-[88px] lg:self-start"
+          >
             <Image
               src={SITE_IMAGES.acaiBowl}
               alt="Fusion Fuel Açaí Bowl Bar"

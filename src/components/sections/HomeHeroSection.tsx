@@ -68,7 +68,7 @@ export function HomeHeroSection({
                 {HOME_HERO.ctaPrimary}
               </Button>
             </Link>
-            <Link href="/products">
+            <Link href="/menu">
               <Button
                 variant="outline"
                 size="lg"

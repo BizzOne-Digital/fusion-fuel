@@ -11,7 +11,7 @@ import {
 
 const INTRO_KEY = 'ffb_intro_seen';
 
-export type IntroPhase = 'pending' | 'intro' | 'done';
+export type IntroPhase = 'intro' | 'done';
 
 interface IntroContextValue {
   phase: IntroPhase;
@@ -28,17 +28,13 @@ function shouldPlayIntro() {
 }
 
 export function IntroProvider({ children }: { children: ReactNode }) {
-  const [phase, setPhase] = useState<IntroPhase>('pending');
+  const [phase, setPhase] = useState<IntroPhase>('done');
 
   useEffect(() => {
-    if (shouldPlayIntro()) {
-      document.documentElement.classList.add('intro-active');
-      setPhase('intro');
-      return;
-    }
+    if (!shouldPlayIntro()) return;
 
-    document.documentElement.classList.remove('intro-active');
-    setPhase('done');
+    document.documentElement.classList.add('intro-active');
+    setPhase('intro');
   }, []);
 
   const completeIntro = useCallback(() => {

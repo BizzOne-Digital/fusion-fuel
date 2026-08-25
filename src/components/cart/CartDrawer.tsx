@@ -32,7 +32,7 @@ export function CartDrawer() {
             <div className="py-12 text-center">
               <p className="font-semibold">{t('empty')}</p>
               <p className="mt-2 text-sm text-grey">{t('emptyDescription')}</p>
-              <Link href="/products" onClick={closeDrawer} className="mt-6 inline-block text-pink hover:underline">
+              <Link href="/menu" onClick={closeDrawer} className="mt-6 inline-block text-pink hover:underline">
                 {t('continueShopping')}
               </Link>
             </div>
@@ -47,6 +47,9 @@ export function CartDrawer() {
         {items.length > 0 && (
           <div className="border-t border-grey/15 p-4">
             <CartSummary />
+            <Link href="/cart" onClick={closeDrawer} className="mt-4 block text-center text-sm text-pink hover:underline">
+              {t('title')}
+            </Link>
             <Link href="/checkout" onClick={closeDrawer} className="mt-4 block">
               <Button className="w-full">{t('checkout')}</Button>
             </Link>

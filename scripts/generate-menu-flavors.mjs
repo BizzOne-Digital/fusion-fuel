@@ -1,14 +1,15 @@
-import { writeFileSync } from 'fs';
+import { existsSync, readdirSync, writeFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const publicDir = join(__dirname, '../public');
 
 const FLAVOR_COLLECTIONS = [
   {
     slug: 'signature-favourites',
     name: 'Signature Favourites',
-    description: 'Mega Tea classics from the Signature Favorites menu (posters 1–3).',
+    description: 'Loaded Tea classics from the Signature Favorites menu (posters 1–3).',
   },
   {
     slug: 'new-flavour-collection',
@@ -126,10 +127,111 @@ const newFlavourCollection = [
   ['Ultimate Berry Fusion', ['Pomegranate Berry Liftoff', 'Raspberry Tea', 'Strawberry', 'Blackberry', 'Wild Berry Mix']],
 ];
 
-// Batch 2 menu posters — add flavor rows when client confirms list from each image.
-const fallCitrusCollection = [];
-const fallBerryCollection = [];
-const schoolFunCollection = [];
+/** School Fun Collection — menu poster 3 (client screenshot). */
+const schoolFunCollection = [
+  { slug: 'blue-berry-a-plus', name: 'Berry Apple A-Plus', ingredients: ['Strawberry-watermelon', 'Grape'] },
+  { slug: 'cloudberry-gossip', name: 'Cloudberry Gossip', ingredients: ['Pink swirl', 'Marshmallow cloud', 'Blue raspberry'] },
+  { slug: 'tropical-final-bell', name: 'Tropical Final Bell', ingredients: ['Blood orange', 'Passion fruit', 'Pineapple'] },
+  { slug: 'green-candy-honors', name: 'Green Candy Honors', ingredients: ['Green apple', 'Cotton candy', 'Watermelon'] },
+  { slug: 'rainbow-pop-quiz', name: 'Rainbow Pop Quiz', ingredients: ['Blue swirl', 'Green apple', 'Watermelon'] },
+];
+
+/** Fall Berry Collection — batch-2 posters 2 & 4 (client screenshots). */
+const fallBerryBase = ['Blackberry Liftoff', 'Raspberry Tea'];
+
+const fallBerryCollection = [
+  { slug: 'strawberry-forest-spark', name: 'Strawberry Forest Spark', ingredients: [...fallBerryBase, 'Strawberry'] },
+  { slug: 'mix-berry-bramble', name: 'Mixed Berry Bramble', ingredients: [...fallBerryBase, 'Mixed berry'] },
+  { slug: 'chrimson-cherry-trail', name: 'Crimson Cherry Trail', ingredients: [...fallBerryBase, 'Cherry'] },
+  { slug: 'harvest-noir', name: 'Harvest Noir', ingredients: [...fallBerryBase, 'Black cherry'] },
+  { slug: 'wildwood-berry', name: 'Wildwood Berry', ingredients: [...fallBerryBase, 'Wild berry'] },
+  { slug: 'blueberry-bonfire', name: 'Blueberry Bonfire', ingredients: [...fallBerryBase, 'Blue raspberry'] },
+  { slug: 'raspberry-cider-pop', name: 'Raspberry Cider Pop', ingredients: [...fallBerryBase, 'Raspberry lemonade'] },
+  { slug: 'cranberry-canopy', name: 'Cranberry Canopy', ingredients: [...fallBerryBase, 'Cranberry'] },
+  { slug: 'grape-twilight', name: 'Grape Twilight', ingredients: [...fallBerryBase, 'Grape'] },
+  { slug: 'apple-brumble', name: 'Apple Bramble', ingredients: [...fallBerryBase, 'Apple'] },
+  { slug: 'tropical-berry-tail', name: 'Tropical Berry Trail', ingredients: [...fallBerryBase, 'Tropical punch'] },
+  { slug: 'peech-mango-hearth', name: 'Peach Mango Hearth', ingredients: [...fallBerryBase, 'Peach mango'] },
+  { slug: 'lemonade-berry-fizz', name: 'Lemonade Berry Fizz', ingredients: [...fallBerryBase, 'Lemonade'] },
+  { slug: 'watermelon-bramble', name: 'Watermelon Bramble', ingredients: [...fallBerryBase, 'Watermelon'] },
+  { slug: 'pasion-berry-night', name: 'Passion Berry Night', ingredients: [...fallBerryBase, 'Passion fruit'] },
+];
+
+/** Fall Citrus Collection — batch-2 poster 1 (client screenshots pages 15–16). */
+const fallCitrusBase = ['Orange Liftoff', 'Lemon Tea'];
+
+const fallCitrusFromPoster = [
+  { slug: 'citrus-grove-glow', name: 'Citrus Grove Glow', ingredients: [...fallCitrusBase, 'Orange'] },
+  { slug: 'strawberry-spice-spark', name: 'Strawberry Spice Spark', ingredients: [...fallCitrusBase, 'Strawberry'] },
+  { slug: 'peech-harvest-glow', name: 'Peach Harvest Glow', ingredients: [...fallCitrusBase, 'Peach'] },
+  { slug: 'pineapple-gold', name: 'Pineapple Gold', ingredients: [...fallCitrusBase, 'Pineapple'] },
+  { slug: 'lemonade-zest', name: 'Lemonade Zest', ingredients: [...fallCitrusBase, 'Lemonade'] },
+  { slug: 'mango-morning', name: 'Mango Morning', ingredients: [...fallCitrusBase, 'Mango'] },
+  { slug: 'apple-orchard-spark', name: 'Apple Orchard Spark', ingredients: [...fallCitrusBase, 'Apple'] },
+  { slug: 'peech-tea-sunset', name: 'Peach Tea Sunset', ingredients: [...fallCitrusBase, 'Peach tea'] },
+  { slug: 'golden-grape', name: 'Golden Grape', ingredients: [...fallCitrusBase, 'Grape'] },
+  { slug: 'tropical-citrus-pop', name: 'Tropical Citrus Pop', ingredients: [...fallCitrusBase, 'Tropical punch'] },
+  { slug: 'raspberry-citrus-twist', name: 'Raspberry Citrus Twist', ingredients: [...fallCitrusBase, 'Raspberry lemonade'] },
+  { slug: 'peech-mango-hyride', name: 'Peach Mango Hayride', ingredients: [...fallCitrusBase, 'Peach mango'] },
+  { slug: 'cranberry-citrus-thanks', name: 'Cranberry Citrus Thanks', ingredients: [...fallCitrusBase, 'Cranberry'] },
+  { slug: 'passion-fruit-fall-fizz', name: 'Passionfruit Fall Fizz', ingredients: [...fallCitrusBase, 'Passion fruit'] },
+];
+
+// Seasonal collections — built from client image folders in /public
+const SEASONAL_IMAGE_DIRS = {
+  'fall-citrus-collection': 'fall citrus collection',
+  'fall-berry-collection': 'fall berry collection',
+  'school-fun-collection': 'school fun collection',
+};
+
+function titleCaseFromSlug(slug) {
+  return slug
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+function flavorsFromImageFolder(collection, folder, usedSlugs) {
+  const dir = join(publicDir, folder);
+  if (!existsSync(dir)) return [];
+
+  return readdirSync(dir)
+    .filter((f) => f.toLowerCase().endsWith('.png'))
+    .sort()
+    .map((file) => {
+      const slug = slugify(file.replace(/\.png$/i, ''));
+      return [slug, titleCaseFromSlug(slug), ['Loaded tea blend — ingredients available in-store.']];
+    })
+    .filter(([slug]) => {
+      if (usedSlugs.has(slug)) return false;
+      usedSlugs.add(slug);
+      return true;
+    })
+    .map(([, name, ingredients]) => [name, ingredients]);
+}
+
+const usedSlugs = new Set([
+  ...signatureFavourites.map(([name]) => slugify(name)),
+  ...newFlavourCollection.map(([name]) => slugify(name)),
+  ...schoolFunCollection.map((f) => f.slug),
+  ...fallBerryCollection.map((f) => f.slug),
+  ...fallCitrusFromPoster.map((f) => f.slug),
+]);
+
+const fallCitrusRemainder = flavorsFromImageFolder(
+  'fall-citrus-collection',
+  SEASONAL_IMAGE_DIRS['fall-citrus-collection'],
+  usedSlugs
+);
+
+const fallCitrusCollection = [
+  ...fallCitrusFromPoster,
+  ...fallCitrusRemainder.map(([name, ingredients]) => ({
+    slug: slugify(name),
+    name,
+    ingredients,
+  })),
+];
 
 const COLORS = ['#E8F000', '#FF3F72', '#FFE500', '#CDDC39', '#FF4081', '#A4C639'];
 
@@ -148,16 +250,31 @@ function pack(collection, rows, startIndex = 0) {
   }));
 }
 
+function packExplicit(collection, rows, startIndex = 0) {
+  return rows.map((row, i) => ({
+    slug: row.slug,
+    name: row.name,
+    collection,
+    color: COLORS[(startIndex + i) % COLORS.length],
+    isNew: false,
+    ingredients: row.ingredients,
+  }));
+}
+
 const MENU_FLAVORS = [
   ...pack('signature-favourites', signatureFavourites),
   ...pack('new-flavour-collection', newFlavourCollection, signatureFavourites.length),
-  ...pack('fall-citrus-collection', fallCitrusCollection, signatureFavourites.length + newFlavourCollection.length),
-  ...pack(
+  ...packExplicit(
+    'fall-citrus-collection',
+    fallCitrusCollection,
+    signatureFavourites.length + newFlavourCollection.length
+  ),
+  ...packExplicit(
     'fall-berry-collection',
     fallBerryCollection,
     signatureFavourites.length + newFlavourCollection.length + fallCitrusCollection.length
   ),
-  ...pack(
+  ...packExplicit(
     'school-fun-collection',
     schoolFunCollection,
     signatureFavourites.length +
@@ -174,7 +291,7 @@ if (dupes.length) {
 }
 
 const lines = [];
-lines.push('/** Mega Tea menu flavors sourced from client menu posters. */');
+lines.push('/** Loaded Tea menu flavors sourced from client menu posters. */');
 lines.push('');
 lines.push('export const FLAVOR_COLLECTIONS = [');
 for (const c of FLAVOR_COLLECTIONS) {

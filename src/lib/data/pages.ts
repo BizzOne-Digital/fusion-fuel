@@ -57,12 +57,12 @@ export function getHomeFallback(locale: Locale) {
         es: 'IMPULSA TU DÍA. POTENCIA TU VIDA.',
       },
       subtitle: {
-        en: `${MONTHLY_TEA_CLUB.taglines.primary} Mega Teas, Monthly Tea Club kits, and catering — ${MONTHLY_TEA_CLUB.taglines.secondary}`,
-        es: `${MONTHLY_TEA_CLUB.taglines.primary} Mega Teas, kits del Monthly Tea Club y catering — ${MONTHLY_TEA_CLUB.taglines.secondary}`,
+        en: `${MONTHLY_TEA_CLUB.taglines.primary} Loaded Teas, Monthly Tea Club kits, and catering — ${MONTHLY_TEA_CLUB.taglines.secondary}`,
+        es: `${MONTHLY_TEA_CLUB.taglines.primary} Loaded Teas, kits del Monthly Tea Club y catering — ${MONTHLY_TEA_CLUB.taglines.secondary}`,
       },
       backgroundImage: {
         url: SITE_IMAGES.hero,
-        alt: locale === 'es' ? 'Bebidas Mega Tea' : 'Mega Tea drinks',
+        alt: locale === 'es' ? 'Bebidas Loaded Tea' : 'Loaded Tea drinks',
       },
       cta: {
         label: { en: MONTHLY_TEA_CLUB.cta, es: MONTHLY_TEA_CLUB.cta },
@@ -74,7 +74,7 @@ export function getHomeFallback(locale: Locale) {
     seo: {
       title: 'Fusion Fuel & Boost Co. | Premium Fuel for Body and Mind',
       description:
-        `${MONTHLY_TEA_CLUB.name}, Mega Teas, and loaded tea kits. ${CATERING_TAGLINE} ${DELIVERY.local}`,
+        `${MONTHLY_TEA_CLUB.name}, Loaded Teas, and loaded tea kits. ${CATERING_TAGLINE} ${DELIVERY.local}`,
     },
   };
 }
