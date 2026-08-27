@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 import { setRequestLocale } from 'next-intl/server';
 import { getProductBySlug, getPublishedFlavors, getPublishedAddIns } from '@/lib/data';
 import { getLocalized, sanitizeHtml } from '@/lib/utils';
@@ -7,6 +6,7 @@ import {
   inferProductCategorySlug,
   productUsesPlaceholderCard,
 } from '@/lib/product-placeholder';
+import { ProductImageGallery } from '@/components/products/ProductImageGallery';
 import { ProductPlaceholderVisual } from '@/components/products/ProductPlaceholderVisual';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { KitBuilder } from '@/components/products/KitBuilder';
@@ -33,9 +33,9 @@ export default async function ProductDetailPage({
   const name = getLocalized(product.name, typedLocale);
   const shortDescription = getLocalized(product.shortDescription, typedLocale);
   const categorySlug = inferProductCategorySlug(product.slug);
-  const usePlaceholder = productUsesPlaceholderCard(product);
   const productAddIns = resolveProductAddIns(product, addIns);
-  const image = product.images[0];
+  const galleryImages = product.images.filter((image) => image.url?.trim());
+  const usePlaceholder = productUsesPlaceholderCard(product);
 
   return (
     <>
@@ -43,22 +43,18 @@ export default async function ProductDetailPage({
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Menu', href: '/menu' }, { label: name }]} />
         <div className="grid gap-12 lg:grid-cols-2">
-          <div className="relative aspect-square overflow-hidden rounded-2xl bg-cream">
+          <div>
             {usePlaceholder ? (
-              <ProductPlaceholderVisual
-                name={name}
-                subtitle={shortDescription}
-                categorySlug={categorySlug}
-                locale={typedLocale}
-              />
+              <div className="relative aspect-square overflow-hidden rounded-2xl bg-cream">
+                <ProductPlaceholderVisual
+                  name={name}
+                  subtitle={shortDescription}
+                  categorySlug={categorySlug}
+                  locale={typedLocale}
+                />
+              </div>
             ) : (
-              <Image
-                src={image.url}
-                alt={image.alt || name}
-                fill
-                className="object-cover"
-                priority
-              />
+              <ProductImageGallery images={galleryImages} name={name} />
             )}
           </div>
           <div>

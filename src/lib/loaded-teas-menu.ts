@@ -4,12 +4,24 @@ function formatUsd(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }
 
+export const LOADED_TEA_STANDARD_PRICES = {
+  '24oz': 6.9,
+  '32oz': 8.9,
+} as const;
+
+export const LOADED_TEA_PREMIUM_SLUGS = ['mango-breeze', 'yellowstone'] as const;
+
+export const LOADED_TEA_PREMIUM_PRICES = {
+  '24oz': 10.99,
+  '32oz': 12.99,
+} as const;
+
 export const LOADED_TEAS_MENU = {
   headline: 'Refreshers / Loaded Teas',
   servingNote: '24 oz & 32 oz',
   sizes: [
-    { slug: '24oz', name: '24 oz' },
-    { slug: '32oz', name: '32 oz', price: 8 },
+    { slug: '24oz', name: '24 oz', price: LOADED_TEA_STANDARD_PRICES['24oz'] },
+    { slug: '32oz', name: '32 oz', price: LOADED_TEA_STANDARD_PRICES['32oz'] },
   ] as const,
   items: [
     {
@@ -114,18 +126,45 @@ export const LOADED_TEAS_MENU = {
 
 export type LoadedTeaMenuItem = (typeof LOADED_TEAS_MENU.items)[number];
 
-export function loadedTeaSizePriceCents(sizeSlug: string): number {
-  const size = LOADED_TEAS_MENU.sizes.find((entry) => entry.slug === sizeSlug);
-  return size && 'price' in size && size.price != null ? Math.round(size.price * 100) : 0;
+export function loadedTeaIsPremium(itemSlug: string): boolean {
+  return (LOADED_TEA_PREMIUM_SLUGS as readonly string[]).includes(itemSlug);
+}
+
+export function loadedTeaSizePriceCents(sizeSlug: string, itemSlug?: string): number {
+  const isPremium = itemSlug ? loadedTeaIsPremium(itemSlug) : false;
+  const prices = isPremium ? LOADED_TEA_PREMIUM_PRICES : LOADED_TEA_STANDARD_PRICES;
+  const price = prices[sizeSlug as keyof typeof prices];
+  return price != null ? Math.round(price * 100) : 0;
+}
+
+export function loadedTeaItemPricingNote(itemSlug: string): string {
+  const sizes = loadedTeaIsPremium(itemSlug) ? LOADED_TEA_PREMIUM_PRICES : LOADED_TEA_STANDARD_PRICES;
+  return Object.entries(sizes)
+    .map(([slug, price]) => {
+      const label = slug === '24oz' ? '24 oz' : '32 oz';
+      return `${label} ${formatUsd(price)}`;
+    })
+    .join(' · ');
+}
+
+export function loadedTeaPricingSummary(): string {
+  const standard = Object.entries(LOADED_TEA_STANDARD_PRICES)
+    .map(([slug, price]) => {
+      const label = slug === '24oz' ? '24 oz' : '32 oz';
+      return `${label} ${formatUsd(price)}`;
+    })
+    .join(' · ');
+  const premium = Object.entries(LOADED_TEA_PREMIUM_PRICES)
+    .map(([slug, price]) => {
+      const label = slug === '24oz' ? '24 oz' : '32 oz';
+      return `${label} ${formatUsd(price)}`;
+    })
+    .join(' · ');
+  return `Most teas: ${standard} · Mango Breeze & Yellowstone: ${premium}`;
 }
 
 export function loadedTeaPricingNote(): string {
-  const priced = LOADED_TEAS_MENU.sizes.filter(
-    (size): size is (typeof LOADED_TEAS_MENU.sizes)[number] & { price: number } =>
-      'price' in size && size.price != null
-  );
-  if (priced.length === 0) return 'Contact for pricing.';
-  return priced.map((size) => `${size.name} ${formatUsd(size.price)}`).join(' · ');
+  return loadedTeaPricingSummary();
 }
 
 export function loadedTeaDescriptionHtml(item: LoadedTeaMenuItem): string {
@@ -140,6 +179,6 @@ export function loadedTeaDescriptionHtml(item: LoadedTeaMenuItem): string {
     `<p><strong>Sizes:</strong> ${LOADED_TEAS_MENU.servingNote}</p>`,
     ingredientsHtml,
     boostNote,
-    `<p><strong>Pricing:</strong> ${loadedTeaPricingNote()}</p>`,
+    `<p><strong>Pricing:</strong> ${loadedTeaItemPricingNote(item.slug)}</p>`,
   ].join('');
 }

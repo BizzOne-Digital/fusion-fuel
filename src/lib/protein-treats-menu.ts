@@ -16,6 +16,24 @@ export const PROTEIN_TREATS_MENU = {
     slug: 'pie-in-a-cup',
     name: 'Pie in a Cup',
     description: 'Creamy protein treat — pick your flavor.',
+    images: [
+      {
+        url: '/images/pie-in-a-cup/oreo.png',
+        alt: 'Pie in a Cup — Oreo flavor with cookie crumbles',
+      },
+      {
+        url: '/images/pie-in-a-cup/snickerdoodle.png',
+        alt: 'Pie in a Cup — Snickerdoodle with cinnamon crumb topping',
+      },
+      {
+        url: '/images/pie-in-a-cup/strawberry-cheesecake.png',
+        alt: 'Pie in a Cup — Strawberry Cheesecake with berry layers',
+      },
+      {
+        url: '/images/pie-in-a-cup/smores.png',
+        alt: "Pie in a Cup — S'mores with marshmallows and chocolate",
+      },
+    ] as const,
     sizes: [
       { slug: '9oz', name: '9 oz', price: 4.99 },
       { slug: '16oz', name: '16 oz', price: 8.99 },

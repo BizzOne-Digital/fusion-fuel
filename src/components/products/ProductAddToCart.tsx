@@ -18,7 +18,8 @@ interface ProductAddToCartProps {
 
 export function ProductAddToCart({ product, addIns, locale }: ProductAddToCartProps) {
   const { addItem } = useCart();
-  const [variantSku, setVariantSku] = useState(product.variants[0]?.sku ?? '');
+  const pricedVariants = product.variants.filter((variant) => variant.price > 0);
+  const [variantSku, setVariantSku] = useState(pricedVariants[0]?.sku ?? product.variants[0]?.sku ?? '');
   const [selectedAddIns, setSelectedAddIns] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
 
@@ -53,11 +54,13 @@ export function ProductAddToCart({ product, addIns, locale }: ProductAddToCartPr
 
   return (
     <div className="space-y-6 rounded-2xl border border-grey/15 bg-cream p-6">
-      {product.variants.length > 1 && (
+      {product.variants.filter((variant) => variant.price > 0).length > 1 && (
         <div>
           <h3 className="font-display text-2xl">{locale === 'es' ? 'Tamaño' : 'Size'}</h3>
           <div className="mt-4 flex flex-wrap gap-3">
-            {product.variants.map((variant) => (
+            {product.variants
+              .filter((variant) => variant.price > 0)
+              .map((variant) => (
               <button
                 key={variant.sku}
                 type="button"

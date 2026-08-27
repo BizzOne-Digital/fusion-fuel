@@ -9,6 +9,20 @@ export const WAFFLES_MENU = {
   footnote: 'Gluten free Granola & Protein available for additional fee.',
   price: 12.99,
   buildYourOwnMax: 7,
+  galleryImages: [
+    {
+      url: '/images/waffles/berry-nutella.png',
+      alt: 'Protein waffle with berries, Nutella drizzle, whipped cream, and condensed milk',
+    },
+    {
+      url: '/images/waffle-birthday-cake.png',
+      alt: 'Birthday Cake protein waffle with rainbow sprinkles and whipped cream',
+    },
+    {
+      url: '/images/waffle-crunchy-monkey.png',
+      alt: 'Crunchy Monkey protein waffle with bananas, walnuts, and caramel',
+    },
+  ] as const,
   toppingGroups: [
     {
       label: 'Fruit',
@@ -73,6 +87,7 @@ export const WAFFLES_MENU = {
       description: 'Pick up to 7 toppings from our waffle bar.',
       placeholder: true,
       picks: { max: 7 },
+      image: '/images/waffles/berry-nutella.png',
     },
   ],
 } as const;

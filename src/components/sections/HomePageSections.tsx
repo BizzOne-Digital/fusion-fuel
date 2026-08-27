@@ -9,7 +9,7 @@ import { AcaiBowlEventSection } from '@/components/sections/AcaiBowlEventSection
 import { MonthlyTeaClubSection } from '@/components/sections/MonthlyTeaClubSection';
 import { SITE_IMAGES } from '@/lib/site-images';
 import { Button } from '@/components/ui/Button';
-import { CATERING_TAGLINE, DELIVERY, LOADED_TEAS, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
+import { CATERING_TAGLINE, CONTACT, DELIVERY, LOADED_TEAS, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
 import type { Locale } from '@/types';
 import type { IProduct } from '@/models/Product';
 import type { IProductCategory } from '@/models/ProductCategory';
@@ -52,6 +52,7 @@ export function HomePageSections({
 }: HomePageSectionsProps) {
   const kitProduct = products.find((p) => p.productType === 'kit');
   const instagram = settings.social?.find((s) => s.platform === 'instagram');
+  const facebook = settings.social?.find((s) => s.platform === 'facebook');
   const heroTitle = getLocalized(hero.title, locale);
   const { fuel: fuelLine, boost: boostLine } = splitBrandSlogan(heroTitle);
   const addOnLabels =
@@ -166,13 +167,53 @@ export function HomePageSections({
       {/* 20. Instagram CTA */}
       <SectionReveal>
         <section className="gradient-boost py-16 text-white">
-          <div className="mx-auto max-w-7xl px-4 text-center lg:px-6">
-            <h2 className="font-display text-4xl">Follow the Energy</h2>
-            {instagram ? (
-              <a href={instagram.url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block max-w-full break-all text-lg underline">@{instagram.url.split('/').filter(Boolean).pop()}</a>
-            ) : (
-              <p className="mt-4 text-white/80">Connect with us on Instagram for updates.</p>
-            )}
+          <div className="mx-auto max-w-7xl px-4 lg:px-6">
+            <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 text-center md:flex-row md:text-left">
+              <div className="relative h-44 w-44 shrink-0 overflow-hidden rounded-2xl bg-white/10 shadow-lg">
+                <Image
+                  src={CONTACT.instagramQrImage}
+                  alt={`Scan to follow ${CONTACT.instagramHandle} on Instagram`}
+                  fill
+                  className="object-cover"
+                  sizes="176px"
+                />
+              </div>
+              <div>
+                <h2 className="font-display text-4xl">Follow the Energy</h2>
+                <p className="mt-2 text-white/85">Scan the code or tap below to follow us on social.</p>
+                <div className="mt-4 flex flex-wrap justify-center gap-4 md:justify-start">
+                  {instagram ? (
+                    <a
+                      href={instagram.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-lg font-semibold underline"
+                    >
+                      {instagram.label ?? CONTACT.instagramHandle}
+                    </a>
+                  ) : null}
+                  {facebook ? (
+                    <a
+                      href={facebook.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-lg font-semibold underline"
+                    >
+                      {facebook.label ?? 'Facebook'}
+                    </a>
+                  ) : (
+                    <a
+                      href={CONTACT.facebookUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-lg font-semibold underline"
+                    >
+                      {CONTACT.facebookLabel}
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </SectionReveal>

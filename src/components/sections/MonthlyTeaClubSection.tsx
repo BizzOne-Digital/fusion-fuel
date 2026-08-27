@@ -262,6 +262,17 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
                     {CONTACT.instagramHandle}
                   </a>
                 </li>
+                <li>
+                  <span className="text-white/55">Facebook: </span>
+                  <a
+                    href={CONTACT.facebookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-white hover:text-lime"
+                  >
+                    {CONTACT.facebookLabel}
+                  </a>
+                </li>
               </ul>
               <Link href="/contact" className="mt-6 inline-block">
                 <Button size="sm" className="rounded-md text-xs font-bold uppercase tracking-[0.1em]">

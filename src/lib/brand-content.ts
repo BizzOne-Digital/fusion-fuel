@@ -5,8 +5,11 @@ import { MENU_FLAVORS } from '@/lib/menu-flavors';
 export const CONTACT = {
   phone: '+1 813-842-2594',
   email: 'fusionfuelboostco@gmail.com',
-  instagramHandle: '@fusionfuelandboostco',
-  instagramUrl: 'https://www.instagram.com/fusionfuelandboostco',
+  instagramHandle: '@fusionfuelboost2025',
+  instagramUrl: 'https://www.instagram.com/fusionfuelboost2025/',
+  instagramQrImage: '/brand/instagram-qr.png',
+  facebookUrl: 'https://www.facebook.com/share/1SyawX94pF/',
+  facebookLabel: 'Fusion Fuel & Boost Co.',
 } as const;
 
 export const MONTHLY_TEA_CLUB = {
@@ -91,6 +94,7 @@ export const LOADED_TEAS = {
     'Delicious flavors. Endless possibilities.',
   ],
   addOns: [
+    'Flavor Enhancer',
     'Collagen — Unflavored',
     'Collagen — Strawberry Lemonade',
     'Extra B12',

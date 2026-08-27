@@ -18,6 +18,23 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
           <dl className="mt-8 space-y-4">
             <div><dt className="text-sm text-grey">Email</dt><dd className="font-semibold">{settings.contactEmail}</dd></div>
             <div><dt className="text-sm text-grey">Phone</dt><dd className="font-semibold">{settings.contactPhone}</dd></div>
+            {settings.social?.map((link) => (
+              <div key={link.url}>
+                <dt className="text-sm text-grey">
+                  {link.platform === 'instagram' ? 'Instagram' : link.platform === 'facebook' ? 'Facebook' : link.platform}
+                </dt>
+                <dd>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-pink hover:underline"
+                  >
+                    {link.label ?? link.url}
+                  </a>
+                </dd>
+              </div>
+            ))}
           </dl>
         </div>
         <ContactForm />

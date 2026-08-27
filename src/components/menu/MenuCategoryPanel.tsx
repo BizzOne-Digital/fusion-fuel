@@ -2,8 +2,8 @@ import Image from 'next/image';
 import { getLocalized } from '@/lib/utils';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import { FlavorCollectionsExplorer } from '@/components/products/FlavorCollectionsExplorer';
-import { PROTEIN_COFFEE } from '@/lib/protein-coffee-menu';
-import { LOADED_TEAS_MENU } from '@/lib/loaded-teas-menu';
+import { PROTEIN_COFFEE, proteinCoffeePricingSummary } from '@/lib/protein-coffee-menu';
+import { LOADED_TEAS_MENU, loadedTeaPricingSummary } from '@/lib/loaded-teas-menu';
 import {
   MEGA_TEA_KITS_MENU,
   megaTeaKitIncludesSummary,
@@ -43,22 +43,20 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
     return (
       <div className="mb-6 max-w-2xl space-y-2 text-grey">
         <p>{PROTEIN_COFFEE.servingNote}</p>
+        <p className="text-sm">{proteinCoffeePricingSummary()}</p>
+        <p className="text-sm">
+          Iced add-on: {PROTEIN_COFFEE.icedAddOn.name} — ${PROTEIN_COFFEE.icedAddOn.price.toFixed(2)}
+        </p>
         <p className="text-sm">{PROTEIN_COFFEE.footerNotes.join(' · ')}</p>
       </div>
     );
   }
   if (category.slug === 'mega-teas') {
-    const pricingNote = LOADED_TEAS_MENU.sizes
-      .filter((size) => 'price' in size && size.price != null)
-      .map((size) => `${size.name} $${(size as { price: number }).price.toFixed(2)}`)
-      .join(' · ');
-
     return (
       <div className="mb-6 max-w-2xl space-y-2 text-grey">
         <p>{LOADED_TEAS_MENU.headline}</p>
         <p className="text-sm">
-          Available in {LOADED_TEAS_MENU.servingNote}
-          {pricingNote ? ` · ${pricingNote}` : ''}
+          Available in {LOADED_TEAS_MENU.servingNote} · {loadedTeaPricingSummary()}
         </p>
       </div>
     );
@@ -156,6 +154,75 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
   return null;
 }
 
+function ProteinCoffeeGallery() {
+  const images = PROTEIN_COFFEE.galleryImages;
+
+  return (
+    <div className="mt-6 grid max-w-4xl gap-3 sm:grid-cols-2">
+      {images.map((image) => (
+        <div
+          key={image.url}
+          className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-cream shadow-sm"
+        >
+          <Image
+            src={image.url}
+            alt={image.alt}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, 400px"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function WaffleGallery() {
+  const images = WAFFLES_MENU.galleryImages;
+
+  return (
+    <div className="mt-6 grid max-w-4xl gap-3 sm:grid-cols-3">
+      {images.map((image) => (
+        <div
+          key={image.url}
+          className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-cream shadow-sm"
+        >
+          <Image
+            src={image.url}
+            alt={image.alt}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, 320px"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PieInACupGallery() {
+  const images = PROTEIN_TREATS_MENU.pieInACup.images;
+
+  return (
+    <div className="mt-6 grid max-w-4xl gap-3 sm:grid-cols-2">
+      {images.map((image) => (
+        <div
+          key={image.url}
+          className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-cream shadow-sm"
+        >
+          <Image
+            src={image.url}
+            alt={image.alt}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, 400px"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function DonutOfTheDaySpotlight({ locale }: { locale: Locale }) {
   return (
     <div className="relative mt-6 aspect-[16/10] max-w-3xl overflow-hidden rounded-2xl bg-cream shadow-sm">
@@ -235,6 +302,21 @@ export function MenuCategoryPanel({
           />
         ) : category.slug === 'donut-of-the-day' ? (
           <DonutOfTheDaySpotlight locale={locale} />
+        ) : category.slug === 'protein-coffee' ? (
+          <>
+            <ProteinCoffeeGallery />
+            <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
+          </>
+        ) : category.slug === 'waffles' ? (
+          <>
+            <WaffleGallery />
+            <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
+          </>
+        ) : category.slug === 'protein-treats' ? (
+          <>
+            <PieInACupGallery />
+            <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
+          </>
         ) : (
           <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
         )}
@@ -265,6 +347,21 @@ export function MenuCategoryPanel({
               />
             ) : cat.slug === 'donut-of-the-day' ? (
               <DonutOfTheDaySpotlight locale={locale} />
+            ) : cat.slug === 'protein-coffee' ? (
+              <>
+                <ProteinCoffeeGallery />
+                <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
+              </>
+            ) : cat.slug === 'waffles' ? (
+              <>
+                <WaffleGallery />
+                <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
+              </>
+            ) : cat.slug === 'protein-treats' ? (
+              <>
+                <PieInACupGallery />
+                <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
+              </>
             ) : (
               <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
             )}

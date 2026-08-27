@@ -48,19 +48,19 @@ export async function Footer({ settings, locale }: FooterProps) {
               <p>{settings.contactEmail}</p>
               <p>{settings.contactPhone}</p>
             </div>
-            {settings.social?.map((s) =>
-              s.platform === 'instagram' ? (
+            <div className="flex flex-wrap gap-4">
+              {settings.social?.map((s) => (
                 <a
                   key={s.url}
                   href={s.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-lime hover:underline"
+                  className="text-sm text-lime hover:underline"
                 >
-                  Instagram
+                  {s.label ?? (s.platform === 'instagram' ? 'Instagram' : s.platform === 'facebook' ? 'Facebook' : s.platform)}
                 </a>
-              ) : null
-            )}
+              ))}
+            </div>
           </div>
           {columns.map((col, i) => (
             <div key={i}>
