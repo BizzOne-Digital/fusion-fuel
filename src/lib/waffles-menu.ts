@@ -9,20 +9,6 @@ export const WAFFLES_MENU = {
   price: 12.99,
   additionalToppingPrice: 1,
   buildYourOwnMax: 5,
-  galleryImages: [
-    {
-      url: '/images/waffles/berry-nutella.png',
-      alt: 'Protein waffle with berries, Nutella drizzle, whipped cream, and condensed milk',
-    },
-    {
-      url: '/images/waffle-birthday-cake.png',
-      alt: 'Birthday Cake protein waffle with rainbow sprinkles and whipped cream',
-    },
-    {
-      url: '/images/waffles/crunchy-monkey.png',
-      alt: 'Crunchy Monkey protein waffle with bananas, walnuts, caramel, and whipped cream',
-    },
-  ] as const,
   toppingGroups: [
     {
       label: 'Fruit',

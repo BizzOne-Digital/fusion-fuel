@@ -45,6 +45,9 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
         <p>{PROTEIN_COFFEE.servingNote}</p>
         <p className="text-sm">{proteinCoffeePricingSummary()}</p>
         <p className="text-sm">
+          {PROTEIN_COFFEE.flavors.length} flavors — select yours on the product page.
+        </p>
+        <p className="text-sm">
           Iced add-on: {PROTEIN_COFFEE.icedAddOn.name} — ${PROTEIN_COFFEE.icedAddOn.price.toFixed(2)}
         </p>
         <p className="text-sm">{PROTEIN_COFFEE.footerNotes.join(' · ')}</p>
@@ -128,17 +131,14 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
         <p className="font-semibold text-carbon">{PROTEIN_TREATS_MENU.headline}</p>
         <ul className="list-inside list-disc space-y-2 text-sm">
           <li>
-            <span className="font-semibold text-carbon">{pieInACup.name}</span> — {pieSizes}
+            <span className="font-semibold text-carbon">{pieInACup.name}</span> — {pieSizes} · Flavors:{' '}
+            {pieInACup.flavors.join(', ')}
           </li>
           <li>
             <span className="font-semibold text-carbon">{proteinTruffles.name}</span> —{' '}
             {proteinTruffles.pack.count} for ${proteinTruffles.pack.price.toFixed(2)}
           </li>
         </ul>
-        <p>
-          <span className="font-semibold text-carbon">{pieInACup.name} flavors: </span>
-          {pieInACup.flavors.join(', ')}
-        </p>
         <p className="text-sm">
           Add-ons ${addOnPricing.standard.toFixed(2)} each — flavor add-ons
           {standardAddOns.length > 0 ? `, ${standardAddOns.join(', ')}` : ''} · {wellnessAddOns.join(' & ')} $
@@ -160,81 +160,9 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
   return null;
 }
 
-function ProteinCoffeeGallery() {
-  const images = PROTEIN_COFFEE.galleryImages;
-
-  return (
-    <div className="mt-6 grid max-w-4xl gap-3 sm:grid-cols-2">
-      {images.map((image) => (
-        <div
-          key={image.url}
-          className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-cream shadow-sm"
-        >
-          <Image
-            src={image.url}
-            alt={image.alt}
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, 400px"
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function WaffleGallery() {
-  const images = WAFFLES_MENU.galleryImages;
-
-  return (
-    <div className="mt-6 grid max-w-4xl gap-3 sm:grid-cols-3">
-      {images.map((image) => (
-        <div
-          key={image.url}
-          className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-cream shadow-sm"
-        >
-          <Image
-            src={image.url}
-            alt={image.alt}
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, 320px"
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ProteinTreatsGallery() {
-  const { pieInACup, proteinTruffles } = PROTEIN_TREATS_MENU;
-  const images = [proteinTruffles.image, ...pieInACup.images];
-
-  return (
-    <div className="mt-6 grid max-w-4xl gap-3 sm:grid-cols-2">
-      {images.map((image) => (
-        <div
-          key={image.url}
-          className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-cream shadow-sm"
-        >
-          <Image
-            src={image.url}
-            alt={image.alt}
-            fill
-            className={
-              image.url === proteinTruffles.image.url ? 'object-contain p-2' : 'object-cover'
-            }
-            sizes="(max-width: 640px) 100vw, 400px"
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function DonutOfTheDaySpotlight({ locale }: { locale: Locale }) {
   return (
-    <div className="relative mt-6 aspect-[16/10] max-w-3xl overflow-hidden rounded-2xl bg-cream shadow-sm">
+    <div className="relative mt-6 aspect-[16/10] max-w-[45.6rem] overflow-hidden rounded-2xl bg-cream shadow-sm">
       <Image
         src={DONUT_OF_THE_DAY_MENU.image}
         alt={
@@ -244,7 +172,7 @@ function DonutOfTheDaySpotlight({ locale }: { locale: Locale }) {
         }
         fill
         className="object-cover"
-        sizes="(max-width: 768px) 100vw, 768px"
+        sizes="(max-width: 768px) 100vw, 730px"
       />
     </div>
   );
@@ -312,20 +240,9 @@ export function MenuCategoryPanel({
         ) : category.slug === 'donut-of-the-day' ? (
           <DonutOfTheDaySpotlight locale={locale} />
         ) : category.slug === 'protein-coffee' ? (
-          <>
-            <ProteinCoffeeGallery />
-            <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
-          </>
+          <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
         ) : category.slug === 'waffles' ? (
-          <>
-            <WaffleGallery />
-            <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
-          </>
-        ) : category.slug === 'protein-treats' ? (
-          <>
-            <ProteinTreatsGallery />
-            <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
-          </>
+          <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
         ) : (
           <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
         )}
@@ -357,20 +274,9 @@ export function MenuCategoryPanel({
             ) : cat.slug === 'donut-of-the-day' ? (
               <DonutOfTheDaySpotlight locale={locale} />
             ) : cat.slug === 'protein-coffee' ? (
-              <>
-                <ProteinCoffeeGallery />
-                <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
-              </>
+              <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
             ) : cat.slug === 'waffles' ? (
-              <>
-                <WaffleGallery />
-                <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
-              </>
-            ) : cat.slug === 'protein-treats' ? (
-              <>
-                <ProteinTreatsGallery />
-                <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
-              </>
+              <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
             ) : (
               <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
             )}

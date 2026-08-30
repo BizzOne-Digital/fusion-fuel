@@ -4,6 +4,8 @@ function formatUsd(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }
 
+export const PROTEIN_COFFEE_PRODUCT_SLUG = 'protein-coffee';
+
 export const PROTEIN_COFFEE = {
   headline: 'Protein Coffee',
   servingNote: 'Iced only — 24 oz & 32 oz',
@@ -55,6 +57,29 @@ export function proteinCoffeePricingSummary(): string {
   return PROTEIN_COFFEE.icedSizes
     .map((size) => `${size.name} ${formatUsd(size.price)}`)
     .join(' · ');
+}
+
+export function isProteinCoffeeProduct(slug: string): boolean {
+  return slug === PROTEIN_COFFEE_PRODUCT_SLUG;
+}
+
+export function proteinCoffeeFlavorNote(flavorName: string): string {
+  return `Flavor: ${flavorName}`;
+}
+
+export function proteinCoffeeProductDescriptionHtml(): string {
+  const { icedAddOn, icedSizes, flavors } = PROTEIN_COFFEE;
+  const sizeLines = icedSizes
+    .map((size) => `<li><strong>${size.name}</strong> — ${formatUsd(size.price)}</li>`)
+    .join('');
+
+  return [
+    `<p><strong>${PROTEIN_COFFEE.headline}</strong> — iced only.</p>`,
+    `<p><strong>Iced sizes:</strong></p><ul>${sizeLines}</ul>`,
+    `<p><strong>Flavors:</strong> ${flavors.map((flavor) => flavor.name).join(', ')}.</p>`,
+    `<p><strong>Iced add-on:</strong> ${icedAddOn.name} — ${formatUsd(icedAddOn.price)} (${icedAddOn.note})</p>`,
+    `<p>Contains caffeine. Not recommended for all audiences.</p>`,
+  ].join('');
 }
 
 export function proteinCoffeeDescriptionHtml(flavorName: string): string {

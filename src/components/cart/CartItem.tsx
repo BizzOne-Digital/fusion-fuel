@@ -22,6 +22,7 @@ export function CartItemRow({ item, locale }: CartItemRowProps) {
         {item.variantName && (
           <p className="text-sm text-grey">{getLocalized(item.variantName, locale)}</p>
         )}
+        {item.notes && <p className="text-sm text-grey">{item.notes}</p>}
         {item.kitConfig && (
           <p className="text-sm text-grey">
             {getLocalized(item.kitConfig.kitSizeName, locale)} · {item.kitConfig.servings} servings

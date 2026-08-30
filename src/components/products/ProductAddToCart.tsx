@@ -5,6 +5,8 @@ import { Link } from '@/i18n/navigation';
 import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
+import { PROTEIN_COFFEE, isProteinCoffeeProduct, proteinCoffeeFlavorNote } from '@/lib/protein-coffee-menu';
+import { Select } from '@/components/ui/Select';
 import { AddInSelector } from '@/components/products/AddInSelector';
 import type { IProduct } from '@/models/Product';
 import type { IAddIn } from '@/models/AddIn';
@@ -20,6 +22,7 @@ export function ProductAddToCart({ product, addIns, locale }: ProductAddToCartPr
   const { addItem } = useCart();
   const pricedVariants = product.variants.filter((variant) => variant.price > 0);
   const [variantSku, setVariantSku] = useState(pricedVariants[0]?.sku ?? product.variants[0]?.sku ?? '');
+  const [flavorSlug, setFlavorSlug] = useState('');
   const [selectedAddIns, setSelectedAddIns] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
 
@@ -35,16 +38,23 @@ export function ProductAddToCart({ product, addIns, locale }: ProductAddToCartPr
     [selectedAddIns, addIns]
   );
 
+  const requiresFlavor = isProteinCoffeeProduct(product.slug);
+  const selectedFlavor = PROTEIN_COFFEE.flavors.find((flavor) => flavor.slug === flavorSlug);
+
   const unitPrice = basePrice + addInTotal;
-  const canAdd = hasPrice(unitPrice);
+  const canAdd = hasPrice(unitPrice) && (!requiresFlavor || Boolean(selectedFlavor));
 
   const handleAdd = async () => {
     if (!canAdd) return;
+    if (requiresFlavor && !selectedFlavor) return;
     setLoading(true);
     await addItem({
       productId: String(product._id),
       quantity: 1,
       ...(variantSku ? { variantSku } : {}),
+      ...(requiresFlavor && selectedFlavor
+        ? { notes: proteinCoffeeFlavorNote(selectedFlavor.name) }
+        : {}),
       addIns: Object.entries(selectedAddIns)
         .filter(([, quantity]) => quantity > 0)
         .map(([addInId, quantity]) => ({ addInId, quantity })),
@@ -54,6 +64,29 @@ export function ProductAddToCart({ product, addIns, locale }: ProductAddToCartPr
 
   return (
     <div className="space-y-6 rounded-2xl border border-grey/15 bg-cream p-6">
+      {requiresFlavor && (
+        <div>
+          <h3 className="font-display text-2xl">{locale === 'es' ? 'Sabor' : 'Flavor'}</h3>
+          <div className="mt-4">
+            <Select
+              name="protein-coffee-flavor"
+              value={flavorSlug}
+              onChange={(event) => setFlavorSlug(event.target.value)}
+              options={[
+                {
+                  value: '',
+                  label: locale === 'es' ? 'Selecciona un sabor' : 'Select a flavor',
+                },
+                ...PROTEIN_COFFEE.flavors.map((flavor) => ({
+                  value: flavor.slug,
+                  label: flavor.name,
+                })),
+              ]}
+            />
+          </div>
+        </div>
+      )}
+
       {product.variants.filter((variant) => variant.price > 0).length > 1 && (
         <div>
           <h3 className="font-display text-2xl">{locale === 'es' ? 'Tamaño' : 'Size'}</h3>
@@ -89,12 +122,18 @@ export function ProductAddToCart({ product, addIns, locale }: ProductAddToCartPr
 
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-grey/15 pt-6">
         <p className="font-display text-2xl">
-          {canAdd ? formatPrice(unitPrice, 'USD', locale) : formatPrice(null, 'USD', locale)}
+          {hasPrice(unitPrice) ? formatPrice(unitPrice, 'USD', locale) : formatPrice(null, 'USD', locale)}
         </p>
-        {canAdd ? (
-          <Button onClick={handleAdd} loading={loading}>
-            {locale === 'es' ? 'Agregar al carrito' : 'Add to cart'}
-          </Button>
+        {hasPrice(unitPrice) ? (
+          canAdd ? (
+            <Button onClick={handleAdd} loading={loading}>
+              {locale === 'es' ? 'Agregar al carrito' : 'Add to cart'}
+            </Button>
+          ) : (
+            <Button disabled>
+              {locale === 'es' ? 'Selecciona un sabor' : 'Select a flavor'}
+            </Button>
+          )
         ) : (
           <Link href="/contact">
             <Button variant="outline">{locale === 'es' ? 'Consultar precio' : 'Contact for pricing'}</Button>

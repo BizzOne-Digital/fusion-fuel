@@ -16,12 +16,7 @@ export const SITE_IMAGES = {
   waffle: '/images/waffles/berry-nutella.png',
   donut: '/images/donut-of-the-day.png',
   proteinTreat: '/images/pie-in-a-cup/oreo.png',
-  pieInACup: [
-    '/images/pie-in-a-cup/oreo.png',
-    '/images/pie-in-a-cup/snickerdoodle.png',
-    '/images/pie-in-a-cup/strawberry-cheesecake.png',
-    '/images/pie-in-a-cup/smores.png',
-  ],
+  pieInACup: '/images/pie-in-a-cup/oreo.png',
   catering: '/images/catering.png',
   aboutTeam: '/images/about-team.png',
   productsHero: '/images/mega-tea.png',

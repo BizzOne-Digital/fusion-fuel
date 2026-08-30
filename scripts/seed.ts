@@ -22,7 +22,7 @@ import SiteSettings from '../src/models/SiteSettings';
 import { SITE_IMAGES, getCategoryImage, getServiceImage, getProductFallbackImage, getFlavorImage } from '../src/lib/site-images';
 import { FLAVOR_IMAGE_BY_SLUG } from '../src/lib/flavor-image-manifest';
 import { CATERING_TAGLINE, CONTACT, DELIVERY, acaiBowlEventServiceHtml, ACAI_BOWL_EVENT, flavorIngredientsHtml, HOME_HERO, LOADED_TEAS, MONTHLY_TEA_CLUB } from '../src/lib/brand-content';
-import { PROTEIN_COFFEE, proteinCoffeeDescriptionHtml, proteinCoffeeIcedPriceCents, proteinCoffeePricingSummary } from '../src/lib/protein-coffee-menu';
+import { PROTEIN_COFFEE, proteinCoffeeIcedPriceCents, proteinCoffeePricingSummary, proteinCoffeeProductDescriptionHtml, PROTEIN_COFFEE_PRODUCT_SLUG } from '../src/lib/protein-coffee-menu';
 import { MEGA_TEA_KITS_MENU, megaTeaKitDescriptionHtml, megaTeaKitPriceCents, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
 import { LOADED_TEAS_MENU, loadedTeaDescriptionHtml, loadedTeaShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
 import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlPriceCents } from '../src/lib/acai-bowls-menu';
@@ -1034,65 +1034,68 @@ async function seedProteinCoffeeProducts(
   categoryIds: Record<string, Types.ObjectId>,
   addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
 ): Promise<void> {
-  const { galleryImages } = PROTEIN_COFFEE;
+  const { galleryImages, headline } = PROTEIN_COFFEE;
   const productImages = galleryImages.map((image) => img(image.url, image.alt));
+  const legacyFlavorSlugs = PROTEIN_COFFEE.flavors.map((flavor) => `protein-coffee-${flavor.slug}`);
 
   await Product.updateOne(
     { slug: 'protein-cold-brew' },
     { $set: { status: 'archived', sku: 'FFB-PCOF-LEGACY' } }
   );
+  await Product.updateMany(
+    { slug: { $in: legacyFlavorSlugs } },
+    { $set: { status: 'archived' } }
+  );
 
-  for (const [index, flavor] of PROTEIN_COFFEE.flavors.entries()) {
-    const sku = `FFB-PCOF-${String(index + 1).padStart(3, '0')}`;
-    const slug = `protein-coffee-${flavor.slug}`;
-    const productName = `${PROTEIN_COFFEE.headline} — ${flavor.name}`;
+  const sku = 'FFB-PCOF';
+  const slug = PROTEIN_COFFEE_PRODUCT_SLUG;
+  const flavorList = PROTEIN_COFFEE.flavors.map((flavor) => flavor.name).join(', ');
 
-    await Product.findOneAndUpdate(
-      { slug },
-      {
-        $set: {
-          slug,
-          sku,
-          name: loc(productName),
-          shortDescription: loc(
-            `${flavor.name} protein coffee. ${proteinCoffeePricingSummary()}.`
-          ),
-          description: rich(proteinCoffeeDescriptionHtml(flavor.name)),
-          productType: 'single',
-          categoryId: categoryIds['protein-coffee'],
-          images: productImages,
-          basePrice: proteinCoffeeIcedPriceCents('24oz'),
-          variants: PROTEIN_COFFEE.icedSizes.map((size) => ({
-            sku: `${sku}-${size.variantSuffix}`,
-            name: loc(size.name),
-            price: proteinCoffeeIcedPriceCents(size.slug),
-            inventory: 0,
-          })),
-          flavorIds: [],
-          kitSizes: [],
-          addInOptions,
-          inventory: {
-            trackInventory: false,
-            quantity: 0,
-            lowStockThreshold: 5,
-            allowBackorder: false,
-          },
-          allergens: [],
-          dietaryTags: [],
-          seo: {
-            title: `${productName} | ${BRAND.name}`,
-            description: `${flavor.name} protein coffee. ${PROTEIN_COFFEE.servingNote}.`,
-          },
-          status: 'published',
-          featured: index === 0,
-          order: index,
+  await Product.findOneAndUpdate(
+    { slug },
+    {
+      $set: {
+        slug,
+        sku,
+        name: loc(headline),
+        shortDescription: loc(
+          `Iced protein coffee. ${proteinCoffeePricingSummary()}. Flavors: ${flavorList}.`
+        ),
+        description: rich(proteinCoffeeProductDescriptionHtml()),
+        productType: 'single',
+        categoryId: categoryIds['protein-coffee'],
+        images: productImages,
+        basePrice: proteinCoffeeIcedPriceCents('24oz'),
+        variants: PROTEIN_COFFEE.icedSizes.map((size) => ({
+          sku: `${sku}-${size.variantSuffix}`,
+          name: loc(size.name),
+          price: proteinCoffeeIcedPriceCents(size.slug),
+          inventory: 0,
+        })),
+        flavorIds: [],
+        kitSizes: [],
+        addInOptions,
+        inventory: {
+          trackInventory: false,
+          quantity: 0,
+          lowStockThreshold: 5,
+          allowBackorder: false,
         },
+        allergens: [],
+        dietaryTags: [],
+        seo: {
+          title: `${headline} | ${BRAND.name}`,
+          description: `${headline}. ${PROTEIN_COFFEE.servingNote}.`,
+        },
+        status: 'published',
+        featured: true,
+        order: 0,
       },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
-  }
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
-  console.log(`Protein coffee products upserted (${PROTEIN_COFFEE.flavors.length} records).`);
+  console.log('Protein coffee product upserted (1 record).');
 }
 
 async function seedLoadedTeaProducts(
@@ -1339,12 +1342,21 @@ async function seedProteinTreatProducts(
     { slug: 'protein-energy-bite' },
     { $set: { status: 'archived', sku: 'FFB-TRET-001-ARCHIVED' } }
   );
+  await Product.updateMany(
+    { slug: { $in: ['oreo-pie-in-a-cup', 'pie-in-a-cup-oreo'] } },
+    { $set: { status: 'archived' } }
+  );
 
   for (const [index, item] of PROTEIN_TREATS_MENU.items.entries()) {
     const sku = `FFB-TRET-${String(index + 1).padStart(3, '0')}`;
-    const pieImages =
+    const productImages =
       item.kind === 'pie-in-a-cup'
-        ? PROTEIN_TREATS_MENU.pieInACup.images.map((image) => img(image.url, image.alt))
+        ? [
+            img(
+              PROTEIN_TREATS_MENU.pieInACup.image.url,
+              PROTEIN_TREATS_MENU.pieInACup.image.alt
+            ),
+          ]
         : item.kind === 'protein-truffles'
           ? [
               img(
@@ -1365,7 +1377,7 @@ async function seedProteinTreatProducts(
           description: rich(proteinTreatDescriptionHtml(item)),
           productType: 'single',
           categoryId: categoryIds['protein-treats'],
-          images: pieImages,
+          images: productImages,
           basePrice: proteinTreatItemPriceCents(item),
           variants: proteinTreatItemVariants(item, sku).map((variant) => ({
             sku: variant.sku,
