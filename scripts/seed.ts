@@ -24,7 +24,7 @@ import { FLAVOR_IMAGE_BY_SLUG } from '../src/lib/flavor-image-manifest';
 import { CATERING_TAGLINE, CONTACT, DELIVERY, acaiBowlEventServiceHtml, ACAI_BOWL_EVENT, flavorIngredientsHtml, HOME_HERO, LOADED_TEAS, MONTHLY_TEA_CLUB } from '../src/lib/brand-content';
 import { PROTEIN_COFFEE, proteinCoffeeDescriptionHtml, proteinCoffeeIcedPriceCents, proteinCoffeePricingSummary } from '../src/lib/protein-coffee-menu';
 import { MEGA_TEA_KITS_MENU, megaTeaKitDescriptionHtml, megaTeaKitPriceCents, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
-import { LOADED_TEAS_MENU, loadedTeaDescriptionHtml, loadedTeaItemPricingNote, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
+import { LOADED_TEAS_MENU, loadedTeaDescriptionHtml, loadedTeaShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
 import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlPriceCents } from '../src/lib/acai-bowls-menu';
 import { WAFFLES_MENU, waffleDescriptionHtml, wafflePriceCents } from '../src/lib/waffles-menu';
 import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
@@ -690,6 +690,13 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
       price: 200,
     },
     {
+      slug: 'additional-topping',
+      name: 'Additional Topping',
+      category: 'topping',
+      description: 'Extra topping for açaí bowls and waffles.',
+      price: 100,
+    },
+    {
       slug: 'fat-reducing-donut-shot-dulce-de-leche',
       name: 'Fat Reducing Donut Shot — Dulce de Leche',
       category: 'coffee',
@@ -1027,7 +1034,7 @@ async function seedProteinCoffeeProducts(
   categoryIds: Record<string, Types.ObjectId>,
   addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
 ): Promise<void> {
-  const { hotSize, icedAddOn, galleryImages } = PROTEIN_COFFEE;
+  const { galleryImages } = PROTEIN_COFFEE;
   const productImages = galleryImages.map((image) => img(image.url, image.alt));
 
   await Product.updateOne(
@@ -1055,20 +1062,12 @@ async function seedProteinCoffeeProducts(
           categoryId: categoryIds['protein-coffee'],
           images: productImages,
           basePrice: proteinCoffeeIcedPriceCents('24oz'),
-          variants: [
-            ...PROTEIN_COFFEE.icedSizes.map((size) => ({
-              sku: `${sku}-${size.variantSuffix}`,
-              name: loc(size.name),
-              price: proteinCoffeeIcedPriceCents(size.slug),
-              inventory: 0,
-            })),
-            {
-              sku: `${sku}-${hotSize.variantSuffix}`,
-              name: loc(hotSize.name),
-              price: 0,
-              inventory: 0,
-            },
-          ],
+          variants: PROTEIN_COFFEE.icedSizes.map((size) => ({
+            sku: `${sku}-${size.variantSuffix}`,
+            name: loc(size.name),
+            price: proteinCoffeeIcedPriceCents(size.slug),
+            inventory: 0,
+          })),
           flavorIds: [],
           kitSizes: [],
           addInOptions,
@@ -1106,7 +1105,7 @@ async function seedLoadedTeaProducts(
     const sku = `FFB-LTEA-${String(index + 1).padStart(3, '0')}`;
     const slug = `loaded-tea-${item.slug}`;
     const productName = item.name;
-    const itemPricing = loadedTeaItemPricingNote(item.slug);
+    const teaImages = 'image' in item && item.image ? [img(item.image, `${item.name} loaded tea`)] : [];
 
     await Product.findOneAndUpdate(
       { slug },
@@ -1115,13 +1114,11 @@ async function seedLoadedTeaProducts(
           slug,
           sku,
           name: loc(productName),
-          shortDescription: loc(
-            `${item.ingredients.join(', ')}. ${LOADED_TEAS_MENU.servingNote}. ${itemPricing}.`
-          ),
+          shortDescription: loc(loadedTeaShortDescription(item)),
           description: rich(loadedTeaDescriptionHtml(item)),
           productType: 'single',
           categoryId: categoryIds['mega-teas'],
-          images: [],
+          images: teaImages,
           basePrice: loadedTeaSizePriceCents('32oz', item.slug),
           variants: LOADED_TEAS_MENU.sizes.map((size) => ({
             sku: `${sku}-${size.slug.replace('oz', '')}`,
@@ -1158,8 +1155,19 @@ async function seedLoadedTeaProducts(
   console.log(`Loaded tea products upserted (${LOADED_TEAS_MENU.items.length} records).`);
 }
 
-async function seedAcaiBowlProducts(categoryIds: Record<string, Types.ObjectId>): Promise<void> {
+async function seedAcaiBowlProducts(
+  categoryIds: Record<string, Types.ObjectId>,
+  addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
+): Promise<void> {
   const activeSlugs = ACAI_BOWLS_MENU.items.map((item) => `acai-bowl-${item.slug}`);
+
+  const acaiBowlSkuBySlug: Record<string, string> = {
+    'dubai-acai-bowl': 'FFB-ACAI-DUBAI',
+    'regular-acai-bowl': 'FFB-ACAI-REG',
+    'protein-bowl-crunchy-monkey': 'FFB-ACAI-CRUNCHY',
+    'tropical-acai-bowl': 'FFB-ACAI-TROP',
+    'protein-bowl-berry': 'FFB-ACAI-BERRY',
+  };
 
   await Product.updateOne(
     { slug: 'tropical-acai-bowl' },
@@ -1169,9 +1177,13 @@ async function seedAcaiBowlProducts(categoryIds: Record<string, Types.ObjectId>)
     { slug: 'acai-bowl-tropical-bowl' },
     { $set: { status: 'archived', sku: 'FFB-ACAI-TROP-ARCHIVED' } }
   );
+  await Product.updateOne(
+    { slug: 'acai-bowl-protein-bowl-tropical' },
+    { $set: { status: 'archived', sku: 'FFB-ACAI-TROP-PROT-ARCHIVED' } }
+  );
 
   for (const [index, item] of ACAI_BOWLS_MENU.items.entries()) {
-    const sku = `FFB-ACAI-${String(index + 1).padStart(3, '0')}`;
+    const sku = acaiBowlSkuBySlug[item.slug] ?? `FFB-ACAI-${String(index + 1).padStart(3, '0')}`;
     const slug = `acai-bowl-${item.slug}`;
 
     await Product.findOneAndUpdate(
@@ -1209,7 +1221,7 @@ async function seedAcaiBowlProducts(categoryIds: Record<string, Types.ObjectId>)
               : [],
           flavorIds: [],
           kitSizes: [],
-          addInOptions: [],
+          addInOptions,
           inventory: {
             trackInventory: false,
             quantity: 0,
@@ -1233,7 +1245,7 @@ async function seedAcaiBowlProducts(categoryIds: Record<string, Types.ObjectId>)
 
   const staleAcaiBowls = await Product.find({
     categoryId: categoryIds['acai-bowls'],
-    slug: { $nin: [...activeSlugs, 'tropical-acai-bowl', 'acai-bowl-tropical-bowl'] },
+    slug: { $nin: [...activeSlugs, 'tropical-acai-bowl', 'acai-bowl-tropical-bowl', 'acai-bowl-protein-bowl-tropical'] },
     status: 'published',
   }).select('slug');
 
@@ -1244,7 +1256,10 @@ async function seedAcaiBowlProducts(categoryIds: Record<string, Types.ObjectId>)
   console.log(`Açaí bowl products upserted (${ACAI_BOWLS_MENU.items.length} records).`);
 }
 
-async function seedWaffleProducts(categoryIds: Record<string, Types.ObjectId>): Promise<void> {
+async function seedWaffleProducts(
+  categoryIds: Record<string, Types.ObjectId>,
+  addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
+): Promise<void> {
   const activeSlugs = WAFFLES_MENU.items.map((item) => `waffle-${item.slug}`);
 
   await Product.updateOne(
@@ -1263,9 +1278,7 @@ async function seedWaffleProducts(categoryIds: Record<string, Types.ObjectId>): 
           slug,
           sku,
           name: loc(item.name),
-          shortDescription: loc(
-            `${item.description} $${WAFFLES_MENU.price.toFixed(2)}. ${WAFFLES_MENU.footnote}`
-          ),
+          shortDescription: loc(`${item.description} $${WAFFLES_MENU.price.toFixed(2)}.`),
           description: rich(waffleDescriptionHtml(item)),
           productType: 'single',
           categoryId: categoryIds['waffles'],
@@ -1281,7 +1294,7 @@ async function seedWaffleProducts(categoryIds: Record<string, Types.ObjectId>): 
           ],
           flavorIds: [],
           kitSizes: [],
-          addInOptions: [],
+          addInOptions,
           inventory: {
             trackInventory: false,
             quantity: 0,
@@ -1332,7 +1345,14 @@ async function seedProteinTreatProducts(
     const pieImages =
       item.kind === 'pie-in-a-cup'
         ? PROTEIN_TREATS_MENU.pieInACup.images.map((image) => img(image.url, image.alt))
-        : [];
+        : item.kind === 'protein-truffles'
+          ? [
+              img(
+                PROTEIN_TREATS_MENU.proteinTruffles.image.url,
+                PROTEIN_TREATS_MENU.proteinTruffles.image.alt
+              ),
+            ]
+          : [];
 
     await Product.findOneAndUpdate(
       { slug: item.slug },
@@ -1596,13 +1616,22 @@ async function main(): Promise<void> {
         },
       ]
     : [];
+  const bowlToppingAddInOptions = addInIds['additional-topping']
+    ? [
+        {
+          addInId: addInIds['additional-topping'],
+          maxQuantity: 10,
+          included: false,
+        },
+      ]
+    : [];
 
   await seedServices();
   await seedProducts(categoryIds, flavorIds, addInIds);
   await seedProteinCoffeeProducts(categoryIds, proteinCoffeeAddInOptions);
   await seedLoadedTeaProducts(categoryIds, addInOptions);
-  await seedAcaiBowlProducts(categoryIds);
-  await seedWaffleProducts(categoryIds);
+  await seedAcaiBowlProducts(categoryIds, bowlToppingAddInOptions);
+  await seedWaffleProducts(categoryIds, bowlToppingAddInOptions);
   await seedProteinTreatProducts(categoryIds, addInOptions);
   await seedFaqs();
   await seedPromotions();

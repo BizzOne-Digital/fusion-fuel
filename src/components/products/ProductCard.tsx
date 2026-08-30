@@ -28,7 +28,6 @@ export function ProductCard({ product, locale, categorySlug }: ProductCardProps)
           {usePlaceholder ? (
             <ProductPlaceholderVisual
               name={name}
-              subtitle={subtitle}
               categorySlug={resolvedCategory}
               compact
               locale={locale}

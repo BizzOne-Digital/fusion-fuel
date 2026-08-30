@@ -6,9 +6,9 @@ function formatUsd(amount: number): string {
 
 export const WAFFLES_MENU = {
   headline: 'Protein Waffles',
-  footnote: 'Gluten free Granola & Protein available for additional fee.',
   price: 12.99,
-  buildYourOwnMax: 7,
+  additionalToppingPrice: 1,
+  buildYourOwnMax: 5,
   galleryImages: [
     {
       url: '/images/waffles/berry-nutella.png',
@@ -19,8 +19,8 @@ export const WAFFLES_MENU = {
       alt: 'Birthday Cake protein waffle with rainbow sprinkles and whipped cream',
     },
     {
-      url: '/images/waffle-crunchy-monkey.png',
-      alt: 'Crunchy Monkey protein waffle with bananas, walnuts, and caramel',
+      url: '/images/waffles/crunchy-monkey.png',
+      alt: 'Crunchy Monkey protein waffle with bananas, walnuts, caramel, and whipped cream',
     },
   ] as const,
   toppingGroups: [
@@ -79,14 +79,14 @@ export const WAFFLES_MENU = {
         'Caramel drizzle',
         'Condensed Milk',
       ] as const,
-      image: '/images/waffle-crunchy-monkey.png',
+      image: '/images/waffles/crunchy-monkey.png',
     },
     {
       slug: 'build-your-own',
       name: 'Create Your Own Waffle',
-      description: 'Pick up to 7 toppings from our waffle bar.',
+      description: 'Pick up to 5 toppings from our waffle bar.',
       placeholder: true,
-      picks: { max: 7 },
+      picks: { max: 5 },
       image: '/images/waffles/berry-nutella.png',
     },
   ],
@@ -103,7 +103,7 @@ export function wafflePriceCents(): number {
 }
 
 export function wafflePricingSummary(): string {
-  return `All waffles ${formatUsd(WAFFLES_MENU.price)}`;
+  return `All waffles ${formatUsd(WAFFLES_MENU.price)} · Additional toppings ${formatUsd(WAFFLES_MENU.additionalToppingPrice)} each`;
 }
 
 export function waffleDescriptionHtml(item: WaffleMenuItem): string {
@@ -124,6 +124,9 @@ export function waffleDescriptionHtml(item: WaffleMenuItem): string {
     }
   }
 
-  parts.push(`<p><em>${WAFFLES_MENU.footnote}</em></p>`);
+  parts.push(
+    `<p>Additional toppings beyond your selection: <strong>${formatUsd(WAFFLES_MENU.additionalToppingPrice)} each</strong>.</p>`
+  );
+
   return parts.join('');
 }

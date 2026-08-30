@@ -55,9 +55,7 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
     return (
       <div className="mb-6 max-w-2xl space-y-2 text-grey">
         <p>{LOADED_TEAS_MENU.headline}</p>
-        <p className="text-sm">
-          Available in {LOADED_TEAS_MENU.servingNote} · {loadedTeaPricingSummary()}
-        </p>
+        <p className="text-sm">{loadedTeaPricingSummary()}</p>
       </div>
     );
   }
@@ -82,12 +80,18 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
         <p className="font-semibold text-carbon">{ACAI_BOWLS_MENU.headline}</p>
         <p className="text-sm">{acaiBowlPricingSummary()}</p>
         <p>
-          <span className="font-semibold text-carbon">Pick 3 fruits: </span>
-          {ACAI_BOWLS_MENU.fruits.join(', ')}
+          <span className="font-semibold text-carbon">Dubai Açaí Bowl: </span>
+          pick 2 fruits — includes pistachio sauce &amp; Nutella.
+        </p>
+        <p>
+          <span className="font-semibold text-carbon">Other bowls: </span>
+          pick 3 fruits (Regular) or 2 fruits (Tropical &amp; protein bowls) from{' '}
+          {ACAI_BOWLS_MENU.fruits.join(', ')}.
         </p>
         <p>
           <span className="font-semibold text-carbon">Pick 2 toppings: </span>
-          {ACAI_BOWLS_MENU.toppings.join(', ')}
+          {ACAI_BOWLS_MENU.toppings.join(', ')} (Dubai toppings included). Additional toppings $
+          {ACAI_BOWLS_MENU.additionalToppingPrice.toFixed(2)} each.
         </p>
         <p className="text-sm italic">{ACAI_BOWLS_MENU.footnote}</p>
       </div>
@@ -107,7 +111,9 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
             {group.items.join(', ')}
           </p>
         ))}
-        <p className="text-sm italic">{WAFFLES_MENU.footnote}</p>
+        <p className="text-sm">
+          Additional toppings ${WAFFLES_MENU.additionalToppingPrice.toFixed(2)} each.
+        </p>
       </div>
     );
   }
@@ -200,8 +206,9 @@ function WaffleGallery() {
   );
 }
 
-function PieInACupGallery() {
-  const images = PROTEIN_TREATS_MENU.pieInACup.images;
+function ProteinTreatsGallery() {
+  const { pieInACup, proteinTruffles } = PROTEIN_TREATS_MENU;
+  const images = [proteinTruffles.image, ...pieInACup.images];
 
   return (
     <div className="mt-6 grid max-w-4xl gap-3 sm:grid-cols-2">
@@ -214,7 +221,9 @@ function PieInACupGallery() {
             src={image.url}
             alt={image.alt}
             fill
-            className="object-cover"
+            className={
+              image.url === proteinTruffles.image.url ? 'object-contain p-2' : 'object-cover'
+            }
             sizes="(max-width: 640px) 100vw, 400px"
           />
         </div>
@@ -314,7 +323,7 @@ export function MenuCategoryPanel({
           </>
         ) : category.slug === 'protein-treats' ? (
           <>
-            <PieInACupGallery />
+            <ProteinTreatsGallery />
             <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
           </>
         ) : (
@@ -359,7 +368,7 @@ export function MenuCategoryPanel({
               </>
             ) : cat.slug === 'protein-treats' ? (
               <>
-                <PieInACupGallery />
+                <ProteinTreatsGallery />
                 <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
               </>
             ) : (

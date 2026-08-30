@@ -52,6 +52,10 @@ export const PROTEIN_TREATS_MENU = {
     slug: 'protein-truffles',
     name: 'Protein Truffles',
     description: 'Bite-size protein truffles.',
+    image: {
+      url: '/images/protein-treats/protein-truffles.png',
+      alt: 'Protein truffles — bite-size treats in paper cups on a white plate',
+    },
     pack: { count: 2, price: 3 },
   },
   items: [

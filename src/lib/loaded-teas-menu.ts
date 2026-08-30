@@ -28,16 +28,19 @@ export const LOADED_TEAS_MENU = {
       slug: 'bloom',
       name: 'Bloom',
       ingredients: ['Blackberry', 'Strawberry', 'Cucumber'],
+      image: '/images/loaded-teas/bloom.png',
     },
     {
       slug: 'cherry-sunset',
       name: 'Cherry Sunset',
       ingredients: ['Orange', 'Cherry'],
+      image: '/images/loaded-teas/cherry-sunset.png',
     },
     {
       slug: 'flamingo',
       name: 'Flamingo',
       ingredients: ['Lemon Lime', 'Strawberry', 'Cherry'],
+      image: '/images/loaded-teas/flamingo.png',
     },
     {
       slug: 'good-vibes',
@@ -48,6 +51,7 @@ export const LOADED_TEAS_MENU = {
       slug: 'island-oasis',
       name: 'Island Oasis',
       ingredients: ['Orange', 'Strawberry'],
+      image: '/images/loaded-teas/island-oasis.png',
     },
     {
       slug: 'mai-tai',
@@ -58,46 +62,55 @@ export const LOADED_TEAS_MENU = {
       slug: 'summer-vibes',
       name: 'Summer Vibes',
       ingredients: ['Passion fruit', 'Pineapple'],
+      image: '/images/loaded-teas/summer-vibes.png',
     },
     {
       slug: 'mermaid-tail',
       name: 'Mermaid Tail',
       ingredients: ['Lemon Lime', 'Blueberry', 'Pineapple', 'Cotton Candy'],
+      image: '/images/loaded-teas/mermaid-tail.png',
     },
     {
       slug: 'sweet-lava',
       name: 'Sweet Lava',
       ingredients: ['Pomegranate', 'Strawberry'],
+      image: '/images/loaded-teas/sweet-lava.png',
     },
     {
       slug: 'sun-kissed',
       name: 'Sun Kissed',
       ingredients: ['Lemon Lime', 'Fruit Punch', 'Orange'],
+      image: '/images/loaded-teas/sun-kissed.png',
     },
     {
       slug: 'sunny-dayz',
       name: 'Sunny Dayz',
       ingredients: ['Pineapple', 'Mango', 'Coconut'],
+      image: '/images/loaded-teas/sunny-dayz.png',
     },
     {
       slug: 'wonder-woman',
       name: 'Wonder Woman',
       ingredients: ['Pomegranate', 'Blueberry'],
+      image: '/images/loaded-teas/wonder-woman.png',
     },
     {
       slug: 'watermelon-berry',
       name: 'Watermelon Berry',
       ingredients: ['Pomegranate', 'Watermelon'],
+      image: '/images/loaded-teas/watermelon-berry.png',
     },
     {
       slug: 'strawberry-lemonade',
       name: 'Strawberry/Lemonade',
       ingredients: ['Lemon Lime', 'Strawberry lemonade'],
+      image: '/images/loaded-teas/strawberry-lemonade.png',
     },
     {
       slug: 'south-shore-wave',
       name: 'South Shore Wave',
       ingredients: ['Lemon Lime', 'Blueberry', 'Green Apple'],
+      image: '/images/loaded-teas/south-shore-wave.png',
     },
     {
       slug: 'tropical-breeze',
@@ -108,18 +121,27 @@ export const LOADED_TEAS_MENU = {
       slug: 'sweet-tart',
       name: 'Sweet Tart',
       ingredients: ['Lemon Lime', 'Strawberry/lemonade', 'Blueberry'],
+      image: '/images/loaded-teas/sweet-tart.png',
     },
     {
       slug: 'mango-breeze',
       name: 'Mango Breeze',
       ingredients: ['Mango/Peach', 'Cherry', 'Collagen', 'Protein', 'Energy'],
       boosted: true,
+      image: '/images/loaded-teas/mango-breeze.png',
     },
     {
       slug: 'yellowstone',
       name: 'Yellowstone',
       ingredients: ['Mango/Peach', 'Pineapple', 'Collagen', 'Protein', 'Energy'],
       boosted: true,
+      image: '/images/loaded-teas/yellowstone.png',
+    },
+    {
+      slug: 'detox',
+      name: 'Detox',
+      ingredients: ['Lemon', 'Ginger', 'Green Tea'],
+      image: '/images/loaded-teas/detox.png',
     },
   ],
 } as const;
@@ -145,6 +167,10 @@ export function loadedTeaItemPricingNote(itemSlug: string): string {
       return `${label} ${formatUsd(price)}`;
     })
     .join(' · ');
+}
+
+export function loadedTeaShortDescription(item: LoadedTeaMenuItem): string {
+  return `${item.ingredients.join(', ')}. ${loadedTeaItemPricingNote(item.slug)}.`;
 }
 
 export function loadedTeaPricingSummary(): string {
@@ -176,9 +202,9 @@ export function loadedTeaDescriptionHtml(item: LoadedTeaMenuItem): string {
 
   return [
     `<p><strong>${item.name}</strong> — ${LOADED_TEAS_MENU.headline}.</p>`,
-    `<p><strong>Sizes:</strong> ${LOADED_TEAS_MENU.servingNote}</p>`,
     ingredientsHtml,
     boostNote,
-    `<p><strong>Pricing:</strong> ${loadedTeaItemPricingNote(item.slug)}</p>`,
-  ].join('');
+  ]
+    .filter(Boolean)
+    .join('');
 }

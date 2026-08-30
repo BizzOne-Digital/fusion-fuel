@@ -1,4 +1,4 @@
-/** Protein coffee menu from client poster — iced/hot sizes and flavor list. */
+/** Protein coffee menu from client poster — iced sizes and flavor list. */
 
 function formatUsd(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
@@ -6,7 +6,7 @@ function formatUsd(amount: number): string {
 
 export const PROTEIN_COFFEE = {
   headline: 'Protein Coffee',
-  servingNote: 'Iced/Hot — 24 oz & 32 oz iced, 10 oz hot',
+  servingNote: 'Iced only — 24 oz & 32 oz',
   galleryImages: [
     {
       url: '/images/protein-coffee/iced-lineup.png',
@@ -21,7 +21,6 @@ export const PROTEIN_COFFEE = {
     { slug: '24oz', name: '24 oz Iced', price: 6.99, variantSuffix: 'ICED24' },
     { slug: '32oz', name: '32 oz Iced', price: 8.99, variantSuffix: 'ICED32' },
   ] as const,
-  hotSize: { name: '10 oz Hot', variantSuffix: 'HOT10' },
   icedAddOn: {
     slug: 'fat-reducing-donut-shot-dulce-de-leche',
     name: 'Fat Reducing Donut Shot — Dulce de Leche',
@@ -41,6 +40,7 @@ export const PROTEIN_COFFEE = {
     { slug: 'brown-sugar-cinnamon', name: 'Brown Sugar Cinnamon' },
     { slug: 'caramel-macchiato', name: 'Caramel Macchiato' },
     { slug: 'mocha', name: 'Mocha' },
+    { slug: 'dirty-vanilla-chai', name: 'Dirty Vanilla Chai' },
   ],
 } as const;
 
@@ -58,7 +58,7 @@ export function proteinCoffeePricingSummary(): string {
 }
 
 export function proteinCoffeeDescriptionHtml(flavorName: string): string {
-  const { icedAddOn, icedSizes, hotSize } = PROTEIN_COFFEE;
+  const { icedAddOn, icedSizes } = PROTEIN_COFFEE;
   const sizeLines = icedSizes
     .map((size) => `<li><strong>${size.name}</strong> — ${formatUsd(size.price)}</li>`)
     .join('');
@@ -66,7 +66,6 @@ export function proteinCoffeeDescriptionHtml(flavorName: string): string {
   return [
     `<p><strong>${flavorName}</strong> protein coffee.</p>`,
     `<p><strong>Iced sizes:</strong></p><ul>${sizeLines}</ul>`,
-    `<p><strong>Hot:</strong> ${hotSize.name} — contact for pricing.</p>`,
     `<p><strong>Iced add-on:</strong> ${icedAddOn.name} — ${formatUsd(icedAddOn.price)} (${icedAddOn.note})</p>`,
     `<p>Contains caffeine. Not recommended for all audiences.</p>`,
   ].join('');

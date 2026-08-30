@@ -36,6 +36,8 @@ export default async function ProductDetailPage({
   const productAddIns = resolveProductAddIns(product, addIns);
   const galleryImages = product.images.filter((image) => image.url?.trim());
   const usePlaceholder = productUsesPlaceholderCard(product);
+  const pricedVariants = product.variants.filter((variant) => variant.price > 0);
+  const showListedPrice = hasPrice(product.basePrice) && pricedVariants.length <= 1;
 
   return (
     <>
@@ -60,7 +62,7 @@ export default async function ProductDetailPage({
           <div>
             <h1 className="font-display text-5xl">{name}</h1>
             <p className="mt-2 text-grey">{shortDescription}</p>
-            {hasPrice(product.basePrice) && (
+            {showListedPrice && (
               <p className="mt-4 font-display text-3xl text-pink">
                 {formatPrice(product.basePrice, 'USD', typedLocale)}
               </p>
