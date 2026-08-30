@@ -139,7 +139,14 @@ export const LOADED_TEAS_MENU = {
     {
       slug: 'detox',
       name: 'Detox',
-      ingredients: ['Lemon', 'Ginger', 'Green Tea'],
+      ingredients: [
+        'Fiber',
+        'Collagen',
+        'Raspberry herbal tea',
+        'Probiotics',
+        'Aloe mandarin',
+      ],
+      servingNote: 'Hot / Cold',
       image: '/images/loaded-teas/detox.png',
     },
   ],
@@ -169,7 +176,9 @@ export function loadedTeaItemPricingNote(itemSlug: string): string {
 }
 
 export function loadedTeaShortDescription(item: LoadedTeaMenuItem): string {
-  return `${item.ingredients.join(', ')}. ${loadedTeaItemPricingNote(item.slug)}.`;
+  const serving =
+    'servingNote' in item && item.servingNote ? ` (${item.servingNote})` : '';
+  return `${item.ingredients.join(', ')}${serving}. ${loadedTeaItemPricingNote(item.slug)}.`;
 }
 
 export function loadedTeaPricingSummary(): string {
@@ -194,6 +203,10 @@ export function loadedTeaPricingNote(): string {
 
 export function loadedTeaDescriptionHtml(item: LoadedTeaMenuItem): string {
   const ingredientsHtml = `<p><strong>Ingredients:</strong></p><ul>${item.ingredients.map((ingredient) => `<li>${ingredient}</li>`).join('')}</ul>`;
+  const servingHtml =
+    'servingNote' in item && item.servingNote
+      ? `<p><strong>Served:</strong> ${item.servingNote}</p>`
+      : '';
   const boostNote =
     'boosted' in item && item.boosted
       ? '<p><em>Includes collagen, protein &amp; energy boost.</em></p>'
@@ -202,6 +215,7 @@ export function loadedTeaDescriptionHtml(item: LoadedTeaMenuItem): string {
   return [
     `<p><strong>${item.name}</strong> — ${LOADED_TEAS_MENU.headline}.</p>`,
     ingredientsHtml,
+    servingHtml,
     boostNote,
   ]
     .filter(Boolean)

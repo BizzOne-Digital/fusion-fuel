@@ -1142,7 +1142,7 @@ async function seedLoadedTeaProducts(
           dietaryTags: [],
           seo: {
             title: `${productName} | ${BRAND.name}`,
-            description: `${productName} loaded tea. ${item.ingredients.join(', ')}.`,
+            description: `${productName} loaded tea. ${item.ingredients.join(', ')}.${'servingNote' in item && item.servingNote ? ` ${item.servingNote}.` : ''}`,
           },
           status: 'published',
           featured: index < 3,
