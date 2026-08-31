@@ -20,6 +20,9 @@ export function ProductCard({ product, locale, categorySlug }: ProductCardProps)
   const subtitle = getLocalized(product.shortDescription, locale);
   const resolvedCategory = categorySlug ?? inferProductCategorySlug(product.slug);
   const usePlaceholder = productUsesPlaceholderCard(product);
+  const images = product.images?.filter((image) => image.url?.trim()) ?? [];
+  const primaryImage = images[0];
+  const hoverImage = images[1];
 
   return (
     <article className="group overflow-hidden rounded-2xl border border-grey/15 bg-white transition hover:shadow-lg">
@@ -32,15 +35,30 @@ export function ProductCard({ product, locale, categorySlug }: ProductCardProps)
               compact
               locale={locale}
             />
-          ) : (
-            <Image
-              src={product.images[0].url}
-              alt={product.images[0].alt || name}
-              fill
-              className="object-cover transition duration-500 group-hover:scale-105"
-              sizes="(max-width:768px) 100%, 33vw"
-            />
-          )}
+          ) : primaryImage ? (
+            <>
+              <Image
+                src={primaryImage.url}
+                alt={primaryImage.alt || name}
+                fill
+                className={`object-cover transition duration-500 ${
+                  hoverImage
+                    ? 'opacity-100 group-hover:opacity-0 group-hover:scale-105'
+                    : 'group-hover:scale-105'
+                }`}
+                sizes="(max-width:768px) 100%, 33vw"
+              />
+              {hoverImage && (
+                <Image
+                  src={hoverImage.url}
+                  alt={hoverImage.alt || `${name} alternate view`}
+                  fill
+                  className="absolute inset-0 object-cover opacity-0 transition duration-500 group-hover:opacity-100 group-hover:scale-105"
+                  sizes="(max-width:768px) 100%, 33vw"
+                />
+              )}
+            </>
+          ) : null}
           {product.featured && (
             <span className="absolute left-3 top-3 z-10 rounded-full bg-lime px-3 py-1 text-xs font-bold uppercase text-ink">
               Featured

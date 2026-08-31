@@ -20,6 +20,10 @@ export const PROTEIN_TREATS_MENU = {
       url: '/images/pie-in-a-cup/oreo.png',
       alt: 'Pie in a Cup — Oreo flavor with cookie crumbles',
     },
+    hoverImage: {
+      url: '/images/pie-in-a-cup/snickerdoodle.png',
+      alt: 'Pie in a Cup — Snickerdoodle with cinnamon crumb topping',
+    },
     sizes: [
       { slug: '9oz', name: '9 oz', price: 4.99 },
       { slug: '16oz', name: '16 oz', price: 8.99 },

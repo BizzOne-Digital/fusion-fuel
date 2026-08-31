@@ -50,6 +50,13 @@ function img(url: string, alt: string) {
   return { url, alt, width: 1200, height: 800 };
 }
 
+function menuImages(name: string, primary?: string, hover?: string) {
+  const images: ReturnType<typeof img>[] = [];
+  if (primary) images.push(img(primary, name));
+  if (hover) images.push(img(hover, `${name} alternate view`));
+  return images;
+}
+
 async function connect(): Promise<void> {
   const uri = process.env.MONGODB_URI;
   if (!uri) {
@@ -1108,7 +1115,11 @@ async function seedLoadedTeaProducts(
     const sku = `FFB-LTEA-${String(index + 1).padStart(3, '0')}`;
     const slug = `loaded-tea-${item.slug}`;
     const productName = item.name;
-    const teaImages = 'image' in item && item.image ? [img(item.image, `${item.name} loaded tea`)] : [];
+    const teaImages = menuImages(
+      `${item.name} loaded tea`,
+      'image' in item ? item.image : undefined,
+      'hoverImage' in item ? item.hoverImage : undefined
+    );
 
     await Product.findOneAndUpdate(
       { slug },
@@ -1207,9 +1218,11 @@ async function seedAcaiBowlProducts(
           images:
             'placeholder' in item && item.placeholder
               ? []
-              : 'image' in item && item.image
-                ? [img(item.image, item.name)]
-                : [],
+              : menuImages(
+                  item.name,
+                  'image' in item ? item.image : undefined,
+                  'hoverImage' in item ? item.hoverImage : undefined
+                ),
           basePrice: acaiBowlPriceCents(item),
           variants:
             'size' in item && item.size
@@ -1285,7 +1298,11 @@ async function seedWaffleProducts(
           description: rich(waffleDescriptionHtml(item)),
           productType: 'single',
           categoryId: categoryIds['waffles'],
-          images: 'image' in item && item.image ? [img(item.image, item.name)] : [],
+          images: menuImages(
+            item.name,
+            'image' in item ? item.image : undefined,
+            'hoverImage' in item ? item.hoverImage : undefined
+          ),
           basePrice: wafflePriceCents(),
           variants: [
             {
@@ -1355,6 +1372,10 @@ async function seedProteinTreatProducts(
             img(
               PROTEIN_TREATS_MENU.pieInACup.image.url,
               PROTEIN_TREATS_MENU.pieInACup.image.alt
+            ),
+            img(
+              PROTEIN_TREATS_MENU.pieInACup.hoverImage.url,
+              PROTEIN_TREATS_MENU.pieInACup.hoverImage.alt
             ),
           ]
         : item.kind === 'protein-truffles'
