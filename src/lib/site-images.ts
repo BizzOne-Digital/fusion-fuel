@@ -7,7 +7,7 @@ export const SITE_IMAGES = {
   monthlyTeaClubPoster: '/brand/monthly-tea-club-poster.png',
   heroDrinks: '/images/hero-drinks.png',
   megaTea: '/images/mega-tea.png',
-  megaTeaKit: '/images/mega-tea-kit.png',
+  megaTeaKit: '/images/mega-tea-kits/hero.jpg',
   acaiBowl: '/images/acai-bowl.png',
   proteinCoffee: '/images/protein-coffee/iced-lineup.png',
   proteinCoffeeMenu: '/brand/protein-coffee-menu.png',
@@ -27,7 +27,7 @@ export const SITE_IMAGES = {
   testimonials: '/images/catering.png',
   categories: {
     'mega-teas': '/images/mega-tea.png',
-    'mega-tea-kits': '/images/mega-tea-kits-category.png',
+    'mega-tea-kits': '/images/mega-tea-kits/hero.jpg',
     'acai-bowls': '/images/acai-bowl.png',
     'protein-coffee': '/images/protein-coffee/iced-lineup.png',
     'protein-shakes': '/images/protein-shake.png',
@@ -50,7 +50,7 @@ export const SITE_IMAGES = {
   } as Record<string, string>,
   productDefaults: {
     default: '/images/mega-tea.png',
-    kit: '/images/mega-tea-kit.png',
+    kit: '/images/mega-tea-kits/hero.jpg',
     'mega-teas': '/images/mega-tea.png',
     'acai-bowls': '/images/acai-bowl.png',
     'protein-coffee': '/images/protein-coffee/iced-lineup.png',

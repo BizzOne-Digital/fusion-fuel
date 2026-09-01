@@ -10,6 +10,8 @@ import { ProductImageGallery } from '@/components/products/ProductImageGallery';
 import { ProductPlaceholderVisual } from '@/components/products/ProductPlaceholderVisual';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { KitBuilder } from '@/components/products/KitBuilder';
+import { MegaTeaKitProductDetail } from '@/components/products/MegaTeaKitProductDetail';
+import { isMegaTeaKitProduct } from '@/lib/mega-tea-kits-menu';
 import { ProductAddToCart } from '@/components/products/ProductAddToCart';
 import { resolveProductAddIns } from '@/lib/product-add-ins';
 import { ProductJsonLd } from '@/components/seo/ProductJsonLd';
@@ -39,11 +41,16 @@ export default async function ProductDetailPage({
   const pricedVariants = product.variants.filter((variant) => variant.price > 0);
   const showListedPrice = hasPrice(product.basePrice) && pricedVariants.length <= 1;
 
+  const isMegaTeaKit = isMegaTeaKitProduct(slug);
+
   return (
     <>
       <ProductJsonLd product={product} locale={typedLocale} />
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Menu', href: '/menu' }, { label: name }]} />
+        {isMegaTeaKit ? (
+          <MegaTeaKitProductDetail product={product} flavors={flavors} locale={typedLocale} />
+        ) : (
         <div className="grid gap-12 lg:grid-cols-2">
           <div>
             {usePlaceholder ? (
@@ -71,9 +78,9 @@ export default async function ProductDetailPage({
             {product.caffeineMg != null && (
               <p className="mt-4 rounded-xl bg-cream p-4 text-sm">Contains caffeine (~{product.caffeineMg}mg). Not recommended for all audiences.</p>
             )}
-            {product.productType === 'kit' ? (
+            {product.productType === 'kit' && !isMegaTeaKit ? (
               <div className="mt-8"><KitBuilder product={product} flavors={flavors} addIns={addIns} /></div>
-            ) : hasPrice(product.basePrice) ? (
+            ) : product.productType !== 'kit' && hasPrice(product.basePrice) ? (
               <div className="mt-8 space-y-4">
                 <ProductAddToCart product={product} addIns={productAddIns} locale={typedLocale} />
                 <Link href="/booking">
@@ -98,6 +105,7 @@ export default async function ProductDetailPage({
             )}
           </div>
         </div>
+        )}
       </div>
     </>
   );

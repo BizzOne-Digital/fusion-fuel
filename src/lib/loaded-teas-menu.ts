@@ -28,6 +28,7 @@ export const LOADED_TEAS_MENU = {
       slug: 'bloom',
       name: 'Bloom',
       ingredients: ['Blackberry', 'Strawberry', 'Cucumber'],
+      image: '/images/loaded-teas/bloom.png',
     },
     {
       slug: 'cherry-sunset',

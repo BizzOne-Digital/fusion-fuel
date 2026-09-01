@@ -1009,7 +1009,9 @@ async function seedProducts(
         description: rich(megaTeaKitDescriptionHtml()),
         productType: 'kit',
         categoryId: categoryIds['mega-tea-kits'],
-        images: [img(SITE_IMAGES.megaTeaKit, MEGA_TEA_KITS_MENU.name)],
+        images: [
+          img(MEGA_TEA_KITS_MENU.heroImage.url, MEGA_TEA_KITS_MENU.heroImage.alt),
+        ],
         basePrice: megaTeaKitPriceCents(),
         variants: [],
         flavorIds: allFlavorIds,

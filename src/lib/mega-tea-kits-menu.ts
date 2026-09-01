@@ -4,12 +4,18 @@ function formatUsd(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }
 
+export const MEGA_TEA_KIT_PRODUCT_SLUG = 'mega-tea-kit-builder';
+
 export const MEGA_TEA_KITS_MENU = {
   headline: 'Mega Tea Kits',
-  slug: 'mega-tea-kit-builder',
+  slug: MEGA_TEA_KIT_PRODUCT_SLUG,
   name: 'Mega Tea Kit',
   description: 'Make loaded teas at home with premium boosters and your choice of flavor enhancer.',
-  price: 10,
+  price: 12,
+  heroImage: {
+    url: '/images/mega-tea-kits/hero.jpg',
+    alt: 'Mega Tea Kit with colorful flavor pouches and an iced loaded tea',
+  },
   includes: [
     'Lift Off',
     'Aloe Vera',
@@ -43,8 +49,16 @@ export function megaTeaKitDescriptionHtml(): string {
     `<p><strong>Price:</strong> ${formatUsd(MEGA_TEA_KITS_MENU.price)}</p>`,
     `<p><strong>Each kit includes:</strong></p>`,
     `<ul>${includesList}</ul>`,
-    `<p>Pick your flavor enhancer from our flavor collections when you build your kit.</p>`,
+    `<p>Choose your flavor enhancer on this page — the preview image updates when you select a flavor.</p>`,
   ].join('');
+}
+
+export function isMegaTeaKitProduct(slug: string): boolean {
+  return slug === MEGA_TEA_KIT_PRODUCT_SLUG;
+}
+
+export function megaTeaKitFlavorNote(flavorName: string): string {
+  return `Flavor: ${flavorName}`;
 }
 
 export function megaTeaKitShortDescription(): string {

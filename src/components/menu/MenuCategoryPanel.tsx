@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import { getLocalized } from '@/lib/utils';
 import { ProductGrid } from '@/components/products/ProductGrid';
-import { FlavorCollectionsExplorer } from '@/components/products/FlavorCollectionsExplorer';
 import { PROTEIN_COFFEE, proteinCoffeeFlavorList, proteinCoffeePricingSummary } from '@/lib/protein-coffee-menu';
 import { LOADED_TEAS_MENU, loadedTeaPricingSummary } from '@/lib/loaded-teas-menu';
 import {
@@ -73,8 +72,8 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
         </p>
         <p className="text-sm">
           {locale === 'es'
-            ? 'Explora nuestras 5 colecciones de sabores — nombre e ingredientes de cada té.'
-            : 'Browse our 5 flavor collections — each tea listed with its ingredients.'}
+            ? 'Un kit con tu sabor favorito — selecciónalo en la página del producto.'
+            : 'One kit — pick your flavor on the product page. The preview image updates when you select.'}
         </p>
       </div>
     );
@@ -184,40 +183,7 @@ function DonutOfTheDaySpotlight({ locale }: { locale: Locale }) {
 }
 
 function isMenuSpotlightCategory(slug: string): boolean {
-  return slug === 'mega-tea-kits' || slug === 'donut-of-the-day';
-}
-
-function MegaTeaKitsExplorer({
-  flavors,
-  locale,
-  kitProductId,
-  kitHref,
-  compact,
-}: {
-  flavors: IFlavor[];
-  locale: Locale;
-  kitProductId?: string;
-  kitHref: string;
-  compact?: boolean;
-}) {
-  return (
-    <FlavorCollectionsExplorer
-      flavors={flavors}
-      locale={locale}
-      kitProductId={kitProductId}
-      kitHref={kitHref}
-      title={compact ? undefined : locale === 'es' ? 'Colecciones Mega Tea' : 'Mega Tea Collections'}
-      subtitle={
-        compact
-          ? undefined
-          : locale === 'es'
-            ? '100+ combinaciones — elige tus sabores favoritos.'
-            : '100+ combinations — pick your favorite flavors.'
-      }
-      showCollectionNav={!compact}
-      textOnly
-    />
-  );
+  return slug === 'donut-of-the-day';
 }
 
 export function MenuCategoryPanel({
@@ -237,12 +203,7 @@ export function MenuCategoryPanel({
         <h2 className="font-display text-3xl md:text-4xl">{getLocalized(category.name, locale)}</h2>
         <CategoryIntro category={category} locale={locale} />
         {category.slug === 'mega-tea-kits' ? (
-          <MegaTeaKitsExplorer
-            flavors={flavors}
-            locale={locale}
-            kitProductId={kitProductId}
-            kitHref={kitHref}
-          />
+          <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
         ) : category.slug === 'donut-of-the-day' ? (
           <DonutOfTheDaySpotlight locale={locale} />
         ) : category.slug === 'protein-coffee' ? (
@@ -270,13 +231,7 @@ export function MenuCategoryPanel({
             <h2 className="font-display text-3xl">{getLocalized(cat.name, locale)}</h2>
             <CategoryIntro category={cat} locale={locale} />
             {isKits ? (
-              <MegaTeaKitsExplorer
-                flavors={flavors}
-                locale={locale}
-                kitProductId={kitProductId}
-                kitHref={kitHref}
-                compact
-              />
+              <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
             ) : cat.slug === 'donut-of-the-day' ? (
               <DonutOfTheDaySpotlight locale={locale} />
             ) : cat.slug === 'protein-coffee' ? (
