@@ -121,7 +121,7 @@ interface FlavorCollectionsExplorerProps {
 export function FlavorCollectionsExplorer({
   flavors,
   locale,
-  kitHref = '/products/mega-tea-kit-builder',
+  kitHref = '/menu?category=mega-tea-kits',
   title,
   subtitle,
   showCollectionNav = true,

@@ -76,7 +76,7 @@ export const HOME_HERO = {
   ctaTertiary: 'Book Catering',
   features: [
     { label: '100+ Flavor Combinations', href: '/menu?category=mega-teas', icon: 'cup' as const },
-    { label: 'Build Your Kit', href: '/products/mega-tea-kit-builder', icon: 'kit' as const },
+    { label: 'Build Your Kit', href: '/menu?category=mega-tea-kits', icon: 'kit' as const },
     { label: 'Catering for Every Occasion', href: '/booking', icon: 'catering' as const },
   ],
 } as const;

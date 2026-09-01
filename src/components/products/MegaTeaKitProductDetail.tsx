@@ -10,6 +10,7 @@ import { Select } from '@/components/ui/Select';
 import {
   MEGA_TEA_KITS_MENU,
   isMegaTeaKitProduct,
+  megaTeaKitCollectionFromProduct,
   megaTeaKitFlavorNote,
 } from '@/lib/mega-tea-kits-menu';
 import { resolveFlavorImage } from '@/lib/site-images';
@@ -34,20 +35,20 @@ export function MegaTeaKitProductDetail({ product, flavors, locale }: MegaTeaKit
   const kitSize = product.kitSizes[0];
   const unitPrice = kitSize?.price ?? product.basePrice;
 
-  const allowedFlavorIds = useMemo(
-    () => new Set(product.flavorIds?.map((id) => String(id)) ?? []),
-    [product.flavorIds]
-  );
+  const collectionSlug = megaTeaKitCollectionFromProduct(product.slug);
 
   const kitFlavors = useMemo(() => {
-    const list =
-      allowedFlavorIds.size > 0
-        ? flavors.filter((flavor) => allowedFlavorIds.has(String(flavor._id)))
-        : flavors;
+    const list = flavors.filter((flavor) => {
+      const inProduct =
+        product.flavorIds?.length === 0 ||
+        product.flavorIds?.some((id) => String(id) === String(flavor._id));
+      const inCollection = collectionSlug ? flavor.category === collectionSlug : true;
+      return inProduct && inCollection;
+    });
     return [...list].sort((a, b) =>
       getLocalized(a.name, locale).localeCompare(getLocalized(b.name, locale))
     );
-  }, [allowedFlavorIds, flavors, locale]);
+  }, [collectionSlug, flavors, locale, product.flavorIds]);
 
   const selectedFlavor = kitFlavors.find((flavor) => String(flavor._id) === flavorId);
   const selectedFlavorName = selectedFlavor ? getLocalized(selectedFlavor.name, locale) : '';

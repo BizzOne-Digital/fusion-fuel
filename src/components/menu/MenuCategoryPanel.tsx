@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { getLocalized } from '@/lib/utils';
 import { ProductGrid } from '@/components/products/ProductGrid';
+import { MegaTeaKitsCategoryExplorer } from '@/components/menu/MegaTeaKitsCategoryExplorer';
 import { PROTEIN_COFFEE, proteinCoffeeFlavorList, proteinCoffeePricingSummary } from '@/lib/protein-coffee-menu';
 import { LOADED_TEAS_MENU, loadedTeaPricingSummary } from '@/lib/loaded-teas-menu';
 import {
@@ -25,6 +26,7 @@ interface MenuCategoryPanelProps {
   locale: Locale;
   kitProductId?: string;
   kitHref: string;
+  kitCollection?: string;
 }
 
 function productsForCategory(
@@ -72,8 +74,8 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
         </p>
         <p className="text-sm">
           {locale === 'es'
-            ? 'Un kit con tu sabor favorito — selecciónalo en la página del producto.'
-            : 'One kit — pick your flavor on the product page. The preview image updates when you select.'}
+            ? 'Elige una colección, luego selecciona tu sabor en la página del kit.'
+            : 'Pick a collection, then choose your flavor on the kit page.'}
         </p>
       </div>
     );
@@ -192,8 +194,7 @@ export function MenuCategoryPanel({
   products,
   flavors,
   locale,
-  kitProductId,
-  kitHref,
+  kitCollection,
 }: MenuCategoryPanelProps) {
   if (category) {
     const categoryProducts = productsForCategory(products, categories, category.slug);
@@ -203,7 +204,12 @@ export function MenuCategoryPanel({
         <h2 className="font-display text-3xl md:text-4xl">{getLocalized(category.name, locale)}</h2>
         <CategoryIntro category={category} locale={locale} />
         {category.slug === 'mega-tea-kits' ? (
-          <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
+          <MegaTeaKitsCategoryExplorer
+            products={categoryProducts}
+            flavors={flavors}
+            locale={locale}
+            activeCollection={kitCollection}
+          />
         ) : category.slug === 'donut-of-the-day' ? (
           <DonutOfTheDaySpotlight locale={locale} />
         ) : category.slug === 'protein-coffee' ? (
@@ -231,7 +237,12 @@ export function MenuCategoryPanel({
             <h2 className="font-display text-3xl">{getLocalized(cat.name, locale)}</h2>
             <CategoryIntro category={cat} locale={locale} />
             {isKits ? (
-              <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
+              <MegaTeaKitsCategoryExplorer
+                products={categoryProducts}
+                flavors={flavors}
+                locale={locale}
+                activeCollection={kitCollection}
+              />
             ) : cat.slug === 'donut-of-the-day' ? (
               <DonutOfTheDaySpotlight locale={locale} />
             ) : cat.slug === 'protein-coffee' ? (

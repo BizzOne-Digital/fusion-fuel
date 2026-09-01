@@ -23,7 +23,7 @@ export function getDefaultSettings(): Partial<ISiteSettings> {
         en: 'Mega Tea Kits • 100+ Flavor Combinations',
         es: 'Kits Mega Tea • Más de 100 combinaciones',
       },
-      link: '/products/mega-tea-kit-builder',
+      link: '/menu?category=mega-tea-kits',
       backgroundColor: '#E8F000',
       textColor: '#07090A',
     },

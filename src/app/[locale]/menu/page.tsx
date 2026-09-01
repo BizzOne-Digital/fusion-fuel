@@ -3,7 +3,6 @@ import {
   getPublishedCategories,
   getPublishedFlavors,
   getPublishedProducts,
-  getKitProducts,
 } from '@/lib/data';
 import { MenuCategorySidebar } from '@/components/products/MenuCategorySidebar';
 import { MenuCategoryPanel } from '@/components/menu/MenuCategoryPanel';
@@ -15,24 +14,20 @@ export default async function MenuPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; kitCollection?: string }>;
 }) {
   const { locale } = await params;
-  const { category } = await searchParams;
+  const { category, kitCollection } = await searchParams;
   setRequestLocale(locale);
   const typedLocale = locale as Locale;
 
-  const [flavors, categories, products, kitProducts] = await Promise.all([
+  const [flavors, categories, products] = await Promise.all([
     getPublishedFlavors(250),
     getPublishedCategories(),
     getPublishedProducts(),
-    getKitProducts(),
   ]);
 
-  const kitProduct =
-    kitProducts.find((product) => product.slug === 'mega-tea-kit-builder') ?? kitProducts[0];
-  const kitHref = kitProduct ? `/products/${kitProduct.slug}` : '/products/mega-tea-kit-builder';
-  const kitProductId = kitProduct ? String(kitProduct._id) : undefined;
+  const kitHref = '/menu?category=mega-tea-kits';
 
   const activeCategory = category
     ? categories.find((cat) => cat.slug === category)
@@ -67,8 +62,8 @@ export default async function MenuPage({
               products={products}
               flavors={flavors}
               locale={typedLocale}
-              kitProductId={kitProductId}
               kitHref={kitHref}
+              kitCollection={kitCollection}
             />
           </div>
         </div>

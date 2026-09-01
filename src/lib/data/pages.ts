@@ -66,7 +66,7 @@ export function getHomeFallback(locale: Locale) {
       },
       cta: {
         label: { en: MONTHLY_TEA_CLUB.cta, es: MONTHLY_TEA_CLUB.cta },
-        href: '/products/mega-tea-kit-builder',
+        href: '/menu?category=mega-tea-kits',
         variant: 'primary' as const,
       },
     },

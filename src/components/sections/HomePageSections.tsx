@@ -17,6 +17,8 @@ import type { IAddIn } from '@/models/AddIn';
 import type { IService } from '@/models/Service';
 import type { ISiteSettings } from '@/models/SiteSettings';
 
+const MEGA_TEA_KITS_MENU_HREF = '/menu?category=mega-tea-kits';
+
 const LIFESTYLE_IMAGES = [
   { url: SITE_IMAGES.megaTea, alt: 'Loaded Tea drinks' },
   { url: SITE_IMAGES.acaiBowl, alt: 'Açaí bowl' },
@@ -50,7 +52,6 @@ export function HomePageSections({
   services,
   settings,
 }: HomePageSectionsProps) {
-  const kitProduct = products.find((p) => p.productType === 'kit');
   const instagram = settings.social?.find((s) => s.platform === 'instagram');
   const facebook = settings.social?.find((s) => s.platform === 'facebook');
   const heroTitle = getLocalized(hero.title, locale);
@@ -66,7 +67,7 @@ export function HomePageSections({
       <HomeHeroSection
         fuelLine={fuelLine}
         boostLine={boostLine || undefined}
-        kitHref={kitProduct ? `/products/${kitProduct.slug}` : '/products/mega-tea-kit-builder'}
+        kitHref={MEGA_TEA_KITS_MENU_HREF}
         backgroundUrl={hero.backgroundImage?.url ?? SITE_IMAGES.heroDrinks}
       />
 
@@ -78,7 +79,7 @@ export function HomePageSections({
       {/* Açaí Bowl Event Experience */}      <AcaiBowlEventSection />
 
       {/* Monthly Tea Club */}      <SectionReveal>
-        <MonthlyTeaClubSection kitHref={kitProduct ? `/products/${kitProduct.slug}` : '/products/mega-tea-kit-builder'} />
+        <MonthlyTeaClubSection kitHref={MEGA_TEA_KITS_MENU_HREF} />
       </SectionReveal>
 
       <SectionReveal>
@@ -224,7 +225,7 @@ export function HomePageSections({
           <div className="mx-auto max-w-4xl px-4 text-center lg:px-6">
             <h2 className="font-display text-5xl text-lime">{MONTHLY_TEA_CLUB.taglines.secondary}</h2>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Link href={kitProduct ? `/products/${kitProduct.slug}` : '/products/mega-tea-kit-builder'}>
+              <Link href={MEGA_TEA_KITS_MENU_HREF}>
                 <Button size="lg">{MONTHLY_TEA_CLUB.cta}</Button>
               </Link>
               <Link href="/booking"><Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-ink">Book Catering</Button></Link>
