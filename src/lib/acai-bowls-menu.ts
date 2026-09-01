@@ -9,7 +9,7 @@ export const ACAI_BOWLS_MENU = {
   footnote: 'Gluten free Granola & Protein available for additional fee.',
   additionalToppingPrice: 1,
   defaultSize: '12 oz',
-  fruits: ['Strawberry', 'Banana', 'Blueberries', 'Kiwi', 'Raspberries'] as const,
+  fruits: ['Strawberry', 'Banana', 'Blueberry', 'Kiwi'] as const,
   toppings: [
     'Granola',
     'Nutella',
@@ -31,8 +31,9 @@ export const ACAI_BOWLS_MENU = {
       slug: 'dubai-acai-bowl',
       name: 'Dubai Açaí Bowl',
       kind: 'acai' as const,
-      description: 'Pick 2 fruits — includes pistachio sauce & Nutella as your 2 toppings.',
-      picks: { fruits: 2, toppings: 2 },
+      description:
+        'Pick 2 fruits — includes pistachio sauce & Nutella, then pick 1 more topping.',
+      picks: { fruits: 2, toppings: 1 },
       includes: ['Pistachio sauce', 'Nutella'],
       image: '/images/acai-dubai-bowl.png',
       size: '12 oz',
@@ -62,8 +63,8 @@ export const ACAI_BOWLS_MENU = {
       slug: 'tropical-acai-bowl',
       name: 'Tropical Açaí Bowl',
       kind: 'acai' as const,
-      description: 'Tropical açaí bowl — pick 2 fruits and 2 toppings.',
-      picks: { fruits: 2, toppings: 2 },
+      description: 'Tropical açaí bowl — pick 3 fruits and 2 toppings.',
+      picks: { fruits: 3, toppings: 2 },
       image: '/images/acai-tropical-bowl.png',
       size: '12 oz',
       price: 11.99,
@@ -109,6 +110,11 @@ export function acaiBowlDescriptionHtml(item: AcaiBowlMenuItem): string {
 
   if ('includes' in item && item.includes?.length) {
     parts.push(`<p>Includes: ${item.includes.join(' & ')}.</p>`);
+    if ('toppings' in item.picks && item.picks.toppings) {
+      parts.push(
+        `<p>Then choose <strong>${item.picks.toppings} more topping${item.picks.toppings > 1 ? 's' : ''}</strong> from: ${ACAI_BOWLS_MENU.toppings.join(', ')}.</p>`
+      );
+    }
   } else if ('toppings' in item.picks && item.picks.toppings) {
     parts.push(
       `<p>Choose <strong>${item.picks.toppings} topping${item.picks.toppings > 1 ? 's' : ''}</strong> from: ${ACAI_BOWLS_MENU.toppings.join(', ')}.</p>`

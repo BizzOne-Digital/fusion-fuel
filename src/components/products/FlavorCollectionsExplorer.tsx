@@ -10,26 +10,40 @@ import { FlavorCollectionNav } from '@/components/products/FlavorCollectionNav';
 import type { IFlavor } from '@/models/Flavor';
 import type { Locale } from '@/types';
 
-function FlavorScrollCard({ flavor, locale }: { flavor: IFlavor; locale: Locale }) {
+function FlavorScrollCard({
+  flavor,
+  locale,
+  textOnly,
+}: {
+  flavor: IFlavor;
+  locale: Locale;
+  textOnly?: boolean;
+}) {
   const name = getLocalized(flavor.name, locale);
   const isNew = name.toLowerCase().includes('new');
   const image = resolveFlavorImage(flavor, name);
 
   return (
-    <article className="flex w-[min(72vw,260px)] shrink-0 snap-start flex-col rounded-2xl border border-white/10 bg-white/95 p-4 sm:w-[280px] sm:p-5">
-      <div
-        className="relative mx-auto aspect-square w-full max-w-[200px] overflow-hidden rounded-2xl bg-cream"
-        style={{ boxShadow: `inset 0 0 0 4px ${flavor.color}` }}
-      >
-        {image.url ? (
-          <Image src={image.url} alt={image.alt} fill className="object-cover" sizes="200px" />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-sm font-bold text-carbon/35">
-            Photo soon
-          </div>
-        )}
-      </div>
-      <div className="mt-4 flex min-w-0 flex-1 flex-col">
+    <article
+      className={`flex w-[min(72vw,260px)] shrink-0 snap-start flex-col rounded-2xl border border-white/10 bg-white/95 p-4 sm:w-[280px] sm:p-5 ${
+        textOnly ? 'sm:w-[min(72vw,320px)]' : ''
+      }`}
+    >
+      {!textOnly && (
+        <div
+          className="relative mx-auto aspect-square w-full max-w-[200px] overflow-hidden rounded-2xl bg-cream"
+          style={{ boxShadow: `inset 0 0 0 4px ${flavor.color}` }}
+        >
+          {image.url ? (
+            <Image src={image.url} alt={image.alt} fill className="object-cover" sizes="200px" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-sm font-bold text-carbon/35">
+              Photo soon
+            </div>
+          )}
+        </div>
+      )}
+      <div className={textOnly ? 'flex min-w-0 flex-1 flex-col' : 'mt-4 flex min-w-0 flex-1 flex-col'}>
         <div className="flex flex-wrap items-center gap-2">
           <span className="font-display text-lg leading-tight text-carbon sm:text-xl">
             {name.replace(/\s*—\s*NEW!$/i, '')}
@@ -101,6 +115,7 @@ interface FlavorCollectionsExplorerProps {
   title?: string;
   subtitle?: string;
   showCollectionNav?: boolean;
+  textOnly?: boolean;
 }
 
 export function FlavorCollectionsExplorer({
@@ -110,6 +125,7 @@ export function FlavorCollectionsExplorer({
   title,
   subtitle,
   showCollectionNav = true,
+  textOnly = false,
 }: FlavorCollectionsExplorerProps) {
   const collectionGroups = useMemo(
     () =>
@@ -143,7 +159,12 @@ export function FlavorCollectionsExplorer({
               locale={locale}
             >
               {groupFlavors.map((flavor) => (
-                <FlavorScrollCard key={String(flavor._id)} flavor={flavor} locale={locale} />
+                <FlavorScrollCard
+                  key={String(flavor._id)}
+                  flavor={flavor}
+                  locale={locale}
+                  textOnly={textOnly}
+                />
               ))}
             </CollectionRow>
           ))}

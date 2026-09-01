@@ -40,9 +40,9 @@ export const PROTEIN_COFFEE = {
     { slug: 'french-vanilla', name: 'French Vanilla' },
     { slug: 'white-chocolate', name: 'White Chocolate' },
     { slug: 'brown-sugar-cinnamon', name: 'Brown Sugar Cinnamon' },
+    { slug: 'dirty-vanilla-chai', name: 'Dirty Vanilla Chai' },
     { slug: 'caramel-macchiato', name: 'Caramel Macchiato' },
     { slug: 'mocha', name: 'Mocha' },
-    { slug: 'dirty-vanilla-chai', name: 'Dirty Vanilla Chai' },
   ],
 } as const;
 
@@ -67,17 +67,24 @@ export function proteinCoffeeFlavorNote(flavorName: string): string {
   return `Flavor: ${flavorName}`;
 }
 
+export function proteinCoffeeFlavorList(): string {
+  return PROTEIN_COFFEE.flavors.map((flavor) => flavor.name).join(', ');
+}
+
 export function proteinCoffeeProductDescriptionHtml(): string {
-  const { icedAddOn, icedSizes, flavors } = PROTEIN_COFFEE;
+  const { icedAddOn, icedSizes } = PROTEIN_COFFEE;
   const sizeLines = icedSizes
     .map((size) => `<li><strong>${size.name}</strong> — ${formatUsd(size.price)}</li>`)
+    .join('');
+  const flavorLines = PROTEIN_COFFEE.flavors
+    .map((flavor) => `<li>${flavor.name}</li>`)
     .join('');
 
   return [
     `<p><strong>${PROTEIN_COFFEE.headline}</strong> — iced only.</p>`,
     `<p><strong>Iced sizes:</strong></p><ul>${sizeLines}</ul>`,
-    `<p><strong>Flavors:</strong> ${flavors.map((flavor) => flavor.name).join(', ')}.</p>`,
-    `<p><strong>Iced add-on:</strong> ${icedAddOn.name} — ${formatUsd(icedAddOn.price)} (${icedAddOn.note})</p>`,
+    `<p><strong>Flavors:</strong></p><ul>${flavorLines}</ul>`,
+    `<p><strong>Add-on:</strong> ${icedAddOn.name} — ${formatUsd(icedAddOn.price)} (${icedAddOn.note})</p>`,
     `<p>Contains caffeine. Not recommended for all audiences.</p>`,
   ].join('');
 }

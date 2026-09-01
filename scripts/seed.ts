@@ -57,6 +57,12 @@ function menuImages(name: string, primary?: string, hover?: string) {
   return images;
 }
 
+function menuItemImage(item: Record<string, unknown>, name: string) {
+  const primary = typeof item.image === 'string' ? item.image : undefined;
+  const hover = typeof item.hoverImage === 'string' ? item.hoverImage : undefined;
+  return menuImages(name, primary, hover);
+}
+
 async function connect(): Promise<void> {
   const uri = process.env.MONGODB_URI;
   if (!uri) {
@@ -1115,11 +1121,7 @@ async function seedLoadedTeaProducts(
     const sku = `FFB-LTEA-${String(index + 1).padStart(3, '0')}`;
     const slug = `loaded-tea-${item.slug}`;
     const productName = item.name;
-    const teaImages = menuImages(
-      `${item.name} loaded tea`,
-      'image' in item ? item.image : undefined,
-      'hoverImage' in item ? item.hoverImage : undefined
-    );
+    const teaImages = menuItemImage(item, `${item.name} loaded tea`);
 
     await Product.findOneAndUpdate(
       { slug },
@@ -1218,11 +1220,7 @@ async function seedAcaiBowlProducts(
           images:
             'placeholder' in item && item.placeholder
               ? []
-              : menuImages(
-                  item.name,
-                  'image' in item ? item.image : undefined,
-                  'hoverImage' in item ? item.hoverImage : undefined
-                ),
+              : menuItemImage(item, item.name),
           basePrice: acaiBowlPriceCents(item),
           variants:
             'size' in item && item.size
@@ -1298,11 +1296,7 @@ async function seedWaffleProducts(
           description: rich(waffleDescriptionHtml(item)),
           productType: 'single',
           categoryId: categoryIds['waffles'],
-          images: menuImages(
-            item.name,
-            'image' in item ? item.image : undefined,
-            'hoverImage' in item ? item.hoverImage : undefined
-          ),
+          images: menuItemImage(item, item.name),
           basePrice: wafflePriceCents(),
           variants: [
             {

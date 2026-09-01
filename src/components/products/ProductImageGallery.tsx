@@ -14,6 +14,24 @@ export function ProductImageGallery({ images, name }: ProductImageGalleryProps) 
 
   if (!active) return null;
 
+  if (images.length === 2) {
+    return (
+      <div className="grid gap-4 sm:grid-cols-2">
+        {images.map((image) => (
+          <div key={image.url} className="relative aspect-square overflow-hidden rounded-2xl bg-cream">
+            <Image
+              src={image.url}
+              alt={image.alt || name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, 50vw"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="relative aspect-square overflow-hidden rounded-2xl bg-cream">
@@ -25,7 +43,7 @@ export function ProductImageGallery({ images, name }: ProductImageGalleryProps) 
           priority
         />
       </div>
-      {images.length > 1 && (
+      {images.length > 2 && (
         <div className="grid grid-cols-4 gap-2">
           {images.map((image, index) => (
             <button

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { getLocalized } from '@/lib/utils';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import { FlavorCollectionsExplorer } from '@/components/products/FlavorCollectionsExplorer';
-import { PROTEIN_COFFEE, proteinCoffeePricingSummary } from '@/lib/protein-coffee-menu';
+import { PROTEIN_COFFEE, proteinCoffeeFlavorList, proteinCoffeePricingSummary } from '@/lib/protein-coffee-menu';
 import { LOADED_TEAS_MENU, loadedTeaPricingSummary } from '@/lib/loaded-teas-menu';
 import {
   MEGA_TEA_KITS_MENU,
@@ -40,17 +40,19 @@ function productsForCategory(
 
 function CategoryIntro({ category, locale }: { category: IProductCategory; locale: Locale }) {
   if (category.slug === 'protein-coffee') {
+    const { icedAddOn } = PROTEIN_COFFEE;
     return (
-      <div className="mb-6 max-w-2xl space-y-2 text-grey">
+      <div className="mb-6 max-w-3xl space-y-3 text-grey">
         <p>{PROTEIN_COFFEE.servingNote}</p>
         <p className="text-sm">{proteinCoffeePricingSummary()}</p>
-        <p className="text-sm">
-          {PROTEIN_COFFEE.flavors.length} flavors — select yours on the product page.
+        <p>
+          <span className="font-semibold text-carbon">Flavors: </span>
+          {proteinCoffeeFlavorList()}
         </p>
         <p className="text-sm">
-          Iced add-on: {PROTEIN_COFFEE.icedAddOn.name} — ${PROTEIN_COFFEE.icedAddOn.price.toFixed(2)}
+          <span className="font-semibold text-carbon">Add-on: </span>
+          {icedAddOn.name} — ${icedAddOn.price.toFixed(2)} ({icedAddOn.note})
         </p>
-        <p className="text-sm">{PROTEIN_COFFEE.footerNotes.join(' · ')}</p>
       </div>
     );
   }
@@ -71,8 +73,8 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
         </p>
         <p className="text-sm">
           {locale === 'es'
-            ? 'Explora nuestras 5 colecciones de sabores y elige tu potenciador de sabor.'
-            : 'Browse our 5 flavor collections and pick your flavor enhancer.'}
+            ? 'Explora nuestras 5 colecciones de sabores — nombre e ingredientes de cada té.'
+            : 'Browse our 5 flavor collections — each tea listed with its ingredients.'}
         </p>
       </div>
     );
@@ -84,16 +86,19 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
         <p className="text-sm">{acaiBowlPricingSummary()}</p>
         <p>
           <span className="font-semibold text-carbon">Dubai Açaí Bowl: </span>
-          pick 2 fruits — includes pistachio sauce &amp; Nutella.
+          pick 2 fruits — includes pistachio sauce &amp; Nutella, then pick 1 more topping.
         </p>
         <p>
-          <span className="font-semibold text-carbon">Other bowls: </span>
-          pick 3 fruits (Regular) or 2 fruits (Tropical &amp; protein bowls) from{' '}
+          <span className="font-semibold text-carbon">Regular &amp; Tropical Açaí Bowls: </span>
+          pick 3 fruits and 2 toppings.
+        </p>
+        <p>
+          <span className="font-semibold text-carbon">Fruits: </span>
           {ACAI_BOWLS_MENU.fruits.join(', ')}.
         </p>
         <p>
-          <span className="font-semibold text-carbon">Pick 2 toppings: </span>
-          {ACAI_BOWLS_MENU.toppings.join(', ')} (Dubai toppings included). Additional toppings $
+          <span className="font-semibold text-carbon">Toppings: </span>
+          {ACAI_BOWLS_MENU.toppings.join(', ')}. Additional toppings $
           {ACAI_BOWLS_MENU.additionalToppingPrice.toFixed(2)} each.
         </p>
         <p className="text-sm italic">{ACAI_BOWLS_MENU.footnote}</p>
@@ -210,6 +215,7 @@ function MegaTeaKitsExplorer({
             : '100+ combinations — pick your favorite flavors.'
       }
       showCollectionNav={!compact}
+      textOnly
     />
   );
 }
