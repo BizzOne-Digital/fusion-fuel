@@ -6,7 +6,8 @@ import { Link } from '@/i18n/navigation';
 import { BRAND } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
-const LOGO_HEADER_SRC = '/brand/fusion-fuel-boost-logo-header.png';
+const LOGO_HEADER_SRC = '/brand/fusion-fuel-boost-logo.png';
+const LOGO_HEADER_ALT_SRC = '/brand/fusion-fuel-boost-logo-trimmed-transparent.png';
 const LOGO_PRIMARY_SRC = '/brand/fusion-fuel-boost-logo.png';
 const LOGO_FALLBACK_SRC = '/brand/final-logo.png';
 
@@ -41,7 +42,11 @@ export function Logo({
       sizes={isHeader ? '(max-width: 1024px) 360px, 760px' : '320px'}
       onError={() => {
         if (src === LOGO_HEADER_SRC) {
-          setSrc(LOGO_PRIMARY_SRC);
+          setSrc(LOGO_HEADER_ALT_SRC);
+          return;
+        }
+        if (src === LOGO_HEADER_ALT_SRC) {
+          setSrc(LOGO_FALLBACK_SRC);
           return;
         }
         if (src !== LOGO_FALLBACK_SRC) setSrc(LOGO_FALLBACK_SRC);
