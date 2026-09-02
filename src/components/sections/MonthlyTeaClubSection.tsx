@@ -26,18 +26,13 @@ interface MonthlyTeaClubSectionProps {
 
 export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
   return (
-    <section className="relative w-full overflow-x-hidden section-pink-bold text-white">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-lime/10 blur-3xl" />
-        <div className="absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-pink/15 blur-3xl" />
-      </div>
-
+    <section className="relative w-full overflow-x-hidden bg-white text-carbon">
       <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-24">
         {/* Intro */}
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16">
           <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
-            <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-lime/30 via-transparent to-pink/30 blur-2xl" />
-            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/20 bg-white/10 shadow-2xl shadow-pink/20">
+            <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-lime/20 via-transparent to-pink/20 blur-2xl" />
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-grey/15 bg-white shadow-xl">
               <Image
                 src={MONTHLY_TEA_CLUB.posterImage}
                 alt="Monthly Tea Club — Fusion Fuel & Boost Co."
@@ -54,16 +49,16 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
           </div>
 
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#F5FF00]">
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-pink">
               {MONTHLY_TEA_CLUB.intro}
             </p>
-            <h2 className="font-display mt-3 text-5xl leading-none text-white md:text-6xl lg:text-7xl">
+            <h2 className="font-display mt-3 text-5xl leading-none text-carbon md:text-6xl lg:text-7xl">
               {MONTHLY_TEA_CLUB.name}
             </h2>
             <div className="mt-6 space-y-3">
-              <p className="text-xl font-semibold text-white md:text-2xl">{MONTHLY_TEA_CLUB.taglines.primary}</p>
+              <p className="text-xl font-semibold text-carbon md:text-2xl">{MONTHLY_TEA_CLUB.taglines.primary}</p>
               <p className="text-lg italic text-pink">{MONTHLY_TEA_CLUB.taglines.secondary}</p>
-              <p className="max-w-xl text-base text-white/70">{MONTHLY_TEA_CLUB.taglines.product}</p>
+              <p className="max-w-xl text-base text-grey">{MONTHLY_TEA_CLUB.taglines.product}</p>
             </div>
             <Link href={kitHref} className="mt-8 inline-block">
               <Button
@@ -73,7 +68,7 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
                 {MONTHLY_TEA_CLUB.cta}
               </Button>
             </Link>
-            <p className="mt-4 text-sm text-white/55">{MONTHLY_TEA_CLUB.ctaDetail}</p>
+            <p className="mt-4 text-sm text-grey">{MONTHLY_TEA_CLUB.ctaDetail}</p>
           </div>
         </div>
 
@@ -81,8 +76,8 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
         <div className="mt-20 lg:mt-24">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.28em] text-pink">Membership Benefits</p>
-            <h3 className="font-display mt-3 text-4xl text-white md:text-5xl">Why Join?</h3>
-            <p className="mt-3 text-base text-white/65">
+            <h3 className="font-display mt-3 text-4xl text-carbon md:text-5xl">Why Join?</h3>
+            <p className="mt-3 text-base text-grey">
               A monthly box built for flavor lovers who want energy, variety, and convenience.
             </p>
           </div>
@@ -93,17 +88,17 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
               return (
                 <article
                   key={feature.title}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.02] p-6 transition hover:border-lime/40 hover:shadow-[0_0_40px_rgba(232,240,0,0.12)]"
+                  className="group relative overflow-hidden rounded-2xl border border-grey/15 bg-white p-6 shadow-sm transition hover:border-lime/50 hover:shadow-md"
                 >
                   <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-lime via-yellow to-pink opacity-80" />
-                  <span className="font-display text-5xl leading-none text-white/10 transition group-hover:text-lime/20">
+                  <span className="font-display text-5xl leading-none text-carbon/10 transition group-hover:text-lime/30">
                     0{index + 1}
                   </span>
-                  <div className="mt-4 inline-flex rounded-xl bg-lime/15 p-3">
-                    <Icon className="h-5 w-5 text-[#F5FF00]" aria-hidden />
+                  <div className="mt-4 inline-flex rounded-xl bg-lime/20 p-3">
+                    <Icon className="h-5 w-5 text-carbon" aria-hidden />
                   </div>
-                  <h4 className="font-display mt-4 text-2xl leading-tight text-white">{feature.title}</h4>
-                  <p className="mt-3 text-sm leading-relaxed text-white/65">{feature.description}</p>
+                  <h4 className="font-display mt-4 text-2xl leading-tight text-carbon">{feature.title}</h4>
+                  <p className="mt-3 text-sm leading-relaxed text-grey">{feature.description}</p>
                 </article>
               );
             })}
@@ -111,13 +106,13 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
         </div>
 
         {/* What's Inside */}
-        <div className="mt-20 rounded-[1.75rem] border border-white/20 bg-white/10 p-6 md:p-8 lg:mt-24 lg:p-10">
+        <div className="mt-20 rounded-[1.75rem] border border-grey/15 bg-white p-6 shadow-sm md:p-8 lg:mt-24 lg:p-10">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-lime">Unbox the Good Stuff</p>
-              <h3 className="font-display mt-2 text-4xl text-white md:text-5xl">What&apos;s Inside?</h3>
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-pink">Unbox the Good Stuff</p>
+              <h3 className="font-display mt-2 text-4xl text-carbon md:text-5xl">What&apos;s Inside?</h3>
             </div>
-            <p className="max-w-md text-sm text-white/60 lg:text-right">{MONTHLY_TEA_CLUB.taglines.value}</p>
+            <p className="max-w-md text-sm text-grey lg:text-right">{MONTHLY_TEA_CLUB.taglines.value}</p>
           </div>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
@@ -126,12 +121,12 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
               return (
                 <div
                   key={item}
-                  className="flex min-h-[148px] flex-col rounded-2xl border border-white/20 bg-white/10 p-5 transition hover:border-lime/50 hover:bg-white/15"
+                  className="flex min-h-[148px] flex-col rounded-2xl border border-grey/15 bg-cream/40 p-5 transition hover:border-lime/50 hover:bg-lime/10"
                 >
                   <div className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-pink/15">
                     <Icon className="h-5 w-5 text-pink" aria-hidden />
                   </div>
-                  <p className="mt-4 text-sm font-semibold leading-snug text-white">{item}</p>
+                  <p className="mt-4 text-sm font-semibold leading-snug text-carbon">{item}</p>
                 </div>
               );
             })}
@@ -141,9 +136,9 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
         {/* Choose Your Plan */}
         <div className="mt-20 lg:mt-24">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#F5FF00]">Flexible Sizes</p>
-            <h3 className="font-display mt-3 text-4xl text-white md:text-5xl">Choose Your Plan</h3>
-            <p className="mt-3 text-base text-white/65">{MONTHLY_TEA_CLUB.taglines.value}</p>
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-pink">Flexible Sizes</p>
+            <h3 className="font-display mt-3 text-4xl text-carbon md:text-5xl">Choose Your Plan</h3>
+            <p className="mt-3 text-base text-grey">{MONTHLY_TEA_CLUB.taglines.value}</p>
           </div>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -156,8 +151,8 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
                   className={cn(
                     'group relative flex flex-col rounded-[1.5rem] border p-6 text-center transition duration-300',
                     isFeatured
-                      ? 'border-lime bg-gradient-to-b from-lime/20 via-lime/10 to-transparent shadow-[0_0_50px_rgba(232,240,0,0.15)] hover:-translate-y-1'
-                      : 'border-white/10 bg-white/[0.04] hover:border-white/25 hover:bg-white/[0.07]'
+                      ? 'border-lime bg-lime/15 shadow-md hover:-translate-y-1'
+                      : 'border-grey/15 bg-white shadow-sm hover:border-pink/30 hover:shadow-md'
                   )}
                 >
                   {isFeatured && (
@@ -166,26 +161,26 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
                     </span>
                   )}
                   {!isFeatured && (
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-grey">
                       {PLAN_BADGES[index]}
                     </span>
                   )}
                   <p
                     className={cn(
                       'font-display mt-3 text-6xl leading-none',
-                      isFeatured ? 'text-lime' : 'text-white'
+                      isFeatured ? 'text-pink' : 'text-carbon'
                     )}
                   >
                     {plan.servings}
                   </p>
-                  <p className="mt-2 text-sm font-semibold uppercase tracking-[0.14em] text-white/70">
+                  <p className="mt-2 text-sm font-semibold uppercase tracking-[0.14em] text-grey">
                     Tea Kit Box
                   </p>
-                  <p className="mt-4 text-xs leading-relaxed text-white/55">{plan.label}</p>
+                  <p className="mt-4 text-xs leading-relaxed text-grey">{plan.label}</p>
                   <span
                     className={cn(
                       'mt-6 inline-flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.14em] transition',
-                      isFeatured ? 'text-lime' : 'text-white/70 group-hover:text-white'
+                      isFeatured ? 'text-pink' : 'text-carbon group-hover:text-pink'
                     )}
                   >
                     Select Plan
@@ -208,7 +203,7 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
             </Link>
             <Link
               href="/contact"
-              className="text-sm font-semibold uppercase tracking-[0.14em] text-white/75 transition hover:text-[#F5FF00]"
+              className="text-sm font-semibold uppercase tracking-[0.14em] text-pink transition hover:text-carbon"
             >
               Questions? Contact Us
             </Link>
@@ -216,59 +211,59 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
         </div>
 
         {/* Delivery, shipping & join */}
-        <div className="mt-20 rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-pink/10 via-transparent to-lime/10 p-6 md:p-8 lg:mt-24">
+        <div className="mt-20 rounded-[1.75rem] border border-grey/15 bg-cream/30 p-6 md:p-8 lg:mt-24">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.24em] text-pink">{MONTHLY_TEA_CLUB.joinHeadline}</p>
-              <p className="mt-3 text-lg text-white/85">{MONTHLY_TEA_CLUB.ctaDetail}</p>
-              <ul className="mt-6 space-y-3 text-sm text-white/70">
+              <p className="mt-3 text-lg text-carbon">{MONTHLY_TEA_CLUB.ctaDetail}</p>
+              <ul className="mt-6 space-y-3 text-sm text-grey">
                 <li className="flex gap-2">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-lime" aria-hidden />
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-pink" aria-hidden />
                   {DELIVERY.local}
                 </li>
                 <li className="flex gap-2">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-lime" aria-hidden />
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-pink" aria-hidden />
                   {DELIVERY.nationwide}
                 </li>
                 <li className="flex gap-2">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-lime" aria-hidden />
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-pink" aria-hidden />
                   {CATERING_TAGLINE}
                 </li>
               </ul>
             </div>
-            <div className="rounded-2xl border border-white/20 bg-white/10 p-6">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/50">Get in Touch</p>
+            <div className="rounded-2xl border border-grey/15 bg-white p-6 shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-grey">Get in Touch</p>
               <ul className="mt-4 space-y-3 text-sm">
                 <li>
-                  <span className="text-white/55">Phone: </span>
-                  <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`} className="font-semibold text-white hover:text-lime">
+                  <span className="text-grey">Phone: </span>
+                  <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`} className="font-semibold text-carbon hover:text-pink">
                     {CONTACT.phone}
                   </a>
                 </li>
                 <li>
-                  <span className="text-white/55">Email: </span>
-                  <a href={`mailto:${CONTACT.email}`} className="font-semibold text-white hover:text-lime">
+                  <span className="text-grey">Email: </span>
+                  <a href={`mailto:${CONTACT.email}`} className="font-semibold text-carbon hover:text-pink">
                     {CONTACT.email}
                   </a>
                 </li>
                 <li>
-                  <span className="text-white/55">Instagram: </span>
+                  <span className="text-grey">Instagram: </span>
                   <a
                     href={CONTACT.instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-semibold text-white hover:text-lime"
+                    className="font-semibold text-carbon hover:text-pink"
                   >
                     {CONTACT.instagramHandle}
                   </a>
                 </li>
                 <li>
-                  <span className="text-white/55">Facebook: </span>
+                  <span className="text-grey">Facebook: </span>
                   <a
                     href={CONTACT.facebookUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-semibold text-white hover:text-lime"
+                    className="font-semibold text-carbon hover:text-pink"
                   >
                     {CONTACT.facebookLabel}
                   </a>

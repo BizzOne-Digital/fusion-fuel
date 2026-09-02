@@ -9,9 +9,9 @@ import { cn } from '@/lib/utils';
 const LOGO_PRIMARY_SRC = '/brand/fusion-fuel-boost-logo.png';
 const LOGO_FALLBACK_SRC = '/brand/final-logo.png';
 
-/** Wide horizontal logo box for the header row. */
+/** Wide horizontal logo box for the centered header row. */
 export const HEADER_LOGO_BOX_CLASS =
-  'relative h-11 w-[200px] shrink-0 sm:h-12 sm:w-[240px] md:h-[3.25rem] md:w-[280px] lg:h-14 lg:w-[320px]';
+  'relative h-14 w-[260px] shrink-0 sm:h-16 sm:w-[320px] md:h-[4.5rem] md:w-[400px] lg:h-20 lg:w-[480px] xl:h-[5.5rem] xl:w-[560px]';
 
 interface LogoProps {
   className?: string;
@@ -35,9 +35,9 @@ export function Logo({
       src={src}
       alt={BRAND.name}
       fill
-      className="object-contain object-left"
+      className={cn('object-contain', isHeader ? 'object-center' : 'object-left')}
       priority={priority}
-      sizes={isHeader ? '(max-width: 640px) 200px, 320px' : '320px'}
+      sizes={isHeader ? '(max-width: 640px) 260px, 560px' : '320px'}
       onError={() => {
         if (src !== LOGO_FALLBACK_SRC) setSrc(LOGO_FALLBACK_SRC);
       }}
@@ -62,7 +62,7 @@ export function Logo({
   }
 
   return (
-    <Link href="/" className="inline-flex shrink-0 items-center" aria-label={`${BRAND.name} home`}>
+    <Link href="/" className="inline-flex shrink-0 items-center justify-center" aria-label={`${BRAND.name} home`}>
       {content}
     </Link>
   );

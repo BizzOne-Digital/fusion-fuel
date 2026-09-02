@@ -119,7 +119,7 @@ export function HomePageSections({
 
       {/* 14. How it works */}
       <SectionReveal>
-        <section className="section-lime py-20">
+        <section className="bg-white py-20">
           <div className="mx-auto max-w-7xl px-4 lg:px-6">
             <h2 className="font-display text-center text-4xl">How It Works</h2>
             <div className="mt-12 grid gap-8 md:grid-cols-3">
@@ -153,7 +153,7 @@ export function HomePageSections({
 
       {/* Lifestyle montage */}
       <SectionReveal>
-        <section className="section-lime py-20">
+        <section className="bg-white py-20">
           <div className="mx-auto max-w-7xl px-4 lg:px-6">
             <h2 className="font-display text-4xl text-carbon">Fuel Your Lifestyle</h2>
             <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3">

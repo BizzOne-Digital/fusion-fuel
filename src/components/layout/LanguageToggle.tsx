@@ -13,8 +13,8 @@ interface LanguageToggleProps {
 
 export function LanguageToggle({
   className,
-  activeClassName = 'text-[#F5FF00]',
-  inactiveClassName = 'text-white/70 hover:text-white',
+  activeClassName = 'text-carbon',
+  inactiveClassName = 'text-carbon/45 hover:text-carbon',
 }: LanguageToggleProps) {
   const locale = useLocale();
   const pathname = usePathname();
@@ -24,7 +24,7 @@ export function LanguageToggle({
     <div className={cn('flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide', className)}>
       {routing.locales.map((l, index) => (
         <span key={l} className="flex items-center gap-1.5">
-          {index > 0 && <span className="text-white/40">/</span>}
+          {index > 0 && <span className="text-carbon/35">/</span>}
           <button
             type="button"
             onClick={() => router.replace(pathname, { locale: l })}
