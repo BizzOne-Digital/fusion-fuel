@@ -1036,7 +1036,7 @@ async function seedMegaTeaKitProducts(
           sku,
           name: loc(megaTeaKitProductName(collection.name)),
           shortDescription: loc(megaTeaKitShortDescription(collection.name)),
-          description: rich(megaTeaKitDescriptionHtml(collection.name)),
+          description: rich(megaTeaKitDescriptionHtml(collection.name, collection.collectionSlug)),
           productType: 'kit',
           categoryId: categoryIds['mega-tea-kits'],
           images: [

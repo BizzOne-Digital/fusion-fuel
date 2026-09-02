@@ -10,6 +10,7 @@ import { Select } from '@/components/ui/Select';
 import {
   MEGA_TEA_KITS_MENU,
   isMegaTeaKitProduct,
+  megaTeaKitCollectionFlavorList,
   megaTeaKitCollectionFromProduct,
   megaTeaKitFlavorNote,
 } from '@/lib/mega-tea-kits-menu';
@@ -38,13 +39,18 @@ export function MegaTeaKitProductDetail({ product, flavors, locale }: MegaTeaKit
   const collectionSlug = megaTeaKitCollectionFromProduct(product.slug);
 
   const kitFlavors = useMemo(() => {
-    const list = flavors.filter((flavor) => {
-      const inProduct =
-        product.flavorIds?.length === 0 ||
-        product.flavorIds?.some((id) => String(id) === String(flavor._id));
-      const inCollection = collectionSlug ? flavor.category === collectionSlug : true;
-      return inProduct && inCollection;
-    });
+    const collectionFlavors = flavors.filter((flavor) =>
+      collectionSlug ? flavor.category === collectionSlug : true
+    );
+
+    const matchedProductFlavors = collectionFlavors.filter((flavor) =>
+      product.flavorIds?.length
+        ? product.flavorIds.some((id) => String(id) === String(flavor._id))
+        : true
+    );
+
+    const list = matchedProductFlavors.length > 0 ? matchedProductFlavors : collectionFlavors;
+
     return [...list].sort((a, b) =>
       getLocalized(a.name, locale).localeCompare(getLocalized(b.name, locale))
     );
@@ -110,6 +116,15 @@ export function MegaTeaKitProductDetail({ product, flavors, locale }: MegaTeaKit
               ? `Cada kit incluye ${MEGA_TEA_KITS_MENU.includes.join(', ')}.`
               : `Each kit includes ${MEGA_TEA_KITS_MENU.includes.join(', ')}.`}
           </p>
+
+          {collectionSlug && (
+            <p className="text-sm">
+              <span className="font-semibold text-carbon">
+                {locale === 'es' ? 'Sabores: ' : 'Flavors: '}
+              </span>
+              <span className="text-grey">{megaTeaKitCollectionFlavorList(collectionSlug)}</span>
+            </p>
+          )}
 
           <div>
             <h3 className="font-display text-2xl">

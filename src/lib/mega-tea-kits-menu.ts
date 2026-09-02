@@ -1,6 +1,6 @@
 /** Mega Tea Kits — one kit product per flavor collection. */
 
-import { FLAVOR_COLLECTIONS, type FlavorCollectionSlug } from '@/lib/menu-flavors';
+import { FLAVOR_COLLECTIONS, MENU_FLAVORS, type FlavorCollectionSlug } from '@/lib/menu-flavors';
 
 function formatUsd(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
@@ -34,6 +34,16 @@ export const MEGA_TEA_KIT_COLLECTIONS = FLAVOR_COLLECTIONS.map((collection) => (
   description: collection.description,
 }));
 
+export function megaTeaKitCollectionFlavorNames(collectionSlug: FlavorCollectionSlug): string[] {
+  return MENU_FLAVORS.filter((flavor) => flavor.collection === collectionSlug).map(
+    (flavor) => flavor.name
+  );
+}
+
+export function megaTeaKitCollectionFlavorList(collectionSlug: FlavorCollectionSlug): string {
+  return megaTeaKitCollectionFlavorNames(collectionSlug).join(', ');
+}
+
 export function megaTeaKitProductSlug(collectionSlug: string): string {
   return `mega-tea-kit-${collectionSlug}`;
 }
@@ -63,13 +73,17 @@ export function megaTeaKitIncludesSummary(): string {
   return MEGA_TEA_KITS_MENU.includes.join(', ');
 }
 
-export function megaTeaKitDescriptionHtml(collectionName?: string): string {
+export function megaTeaKitDescriptionHtml(
+  collectionName?: string,
+  collectionSlug?: FlavorCollectionSlug
+): string {
   const includesList = MEGA_TEA_KITS_MENU.includes
     .map((item) => `<li>${item}</li>`)
     .join('');
   const title = collectionName
     ? megaTeaKitProductName(collectionName)
     : 'Mega Tea Kit';
+  const flavorList = collectionSlug ? megaTeaKitCollectionFlavorList(collectionSlug) : '';
 
   return [
     `<p><strong>${title}</strong> — ${MEGA_TEA_KITS_MENU.headline}.</p>`,
@@ -77,6 +91,9 @@ export function megaTeaKitDescriptionHtml(collectionName?: string): string {
     `<p><strong>Price:</strong> ${formatUsd(MEGA_TEA_KITS_MENU.price)}</p>`,
     `<p><strong>Each kit includes:</strong></p>`,
     `<ul>${includesList}</ul>`,
+    ...(flavorList
+      ? [`<p><strong>Flavor enhancer options:</strong> ${flavorList}</p>`]
+      : []),
     `<p>Choose your flavor enhancer on this page — the preview image updates when you select a flavor.</p>`,
   ].join('');
 }

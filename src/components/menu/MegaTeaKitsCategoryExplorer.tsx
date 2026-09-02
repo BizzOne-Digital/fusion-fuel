@@ -7,6 +7,7 @@ import { ProductGrid } from '@/components/products/ProductGrid';
 import {
   MEGA_TEA_KIT_COLLECTIONS,
   MEGA_TEA_KITS_MENU,
+  megaTeaKitCollectionFlavorList,
   megaTeaKitProductSlug,
 } from '@/lib/mega-tea-kits-menu';
 import { resolveFlavorImage } from '@/lib/site-images';
@@ -59,7 +60,7 @@ export function MegaTeaKitsCategoryExplorer({
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {MEGA_TEA_KIT_COLLECTIONS.map((entry) => {
           const preview = collectionPreview(entry.collectionSlug, flavors, locale);
-          const flavorCount = flavors.filter((flavor) => flavor.category === entry.collectionSlug).length;
+          const flavorNames = megaTeaKitCollectionFlavorList(entry.collectionSlug);
 
           return (
             <Link
@@ -79,8 +80,13 @@ export function MegaTeaKitsCategoryExplorer({
               <div className="p-4">
                 <h3 className="font-display text-xl text-carbon">{entry.name}</h3>
                 <p className="mt-1 line-clamp-2 text-sm text-grey">{entry.description}</p>
+                <p className="mt-2 text-sm">
+                  <span className="font-semibold text-carbon">
+                    {locale === 'es' ? 'Sabores: ' : 'Flavors: '}
+                  </span>
+                  <span className="text-grey">{flavorNames}</span>
+                </p>
                 <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-pink">
-                  {flavorCount} {locale === 'es' ? 'sabores' : 'flavors'} ·{' '}
                   {MEGA_TEA_KITS_MENU.price.toFixed(2)}
                 </p>
               </div>
@@ -102,6 +108,14 @@ export function MegaTeaKitsCategoryExplorer({
       <div>
         <h3 className="font-display text-2xl text-carbon">{collection.name}</h3>
         <p className="mt-1 max-w-2xl text-sm text-grey">{collection.description}</p>
+        <p className="mt-3 max-w-3xl text-sm">
+          <span className="font-semibold text-carbon">
+            {locale === 'es' ? 'Sabores: ' : 'Flavors: '}
+          </span>
+          <span className="text-grey">
+            {megaTeaKitCollectionFlavorList(collection.collectionSlug)}
+          </span>
+        </p>
       </div>
       {product ? (
         <ProductGrid products={[product]} locale={locale} categorySlug="mega-tea-kits" />
