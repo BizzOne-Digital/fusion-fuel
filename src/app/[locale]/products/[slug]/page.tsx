@@ -11,7 +11,9 @@ import { ProductPlaceholderVisual } from '@/components/products/ProductPlacehold
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { KitBuilder } from '@/components/products/KitBuilder';
 import { MegaTeaKitProductDetail } from '@/components/products/MegaTeaKitProductDetail';
+import { LoadedTeaProductDetail } from '@/components/products/LoadedTeaProductDetail';
 import { isMegaTeaKitProduct } from '@/lib/mega-tea-kits-menu';
+import { isLoadedTeaProduct } from '@/lib/loaded-teas-menu';
 import { ProductAddToCart } from '@/components/products/ProductAddToCart';
 import { resolveProductAddIns } from '@/lib/product-add-ins';
 import { ProductJsonLd } from '@/components/seo/ProductJsonLd';
@@ -42,6 +44,7 @@ export default async function ProductDetailPage({
   const showListedPrice = hasPrice(product.basePrice) && pricedVariants.length <= 1;
 
   const isMegaTeaKit = isMegaTeaKitProduct(slug);
+  const isLoadedTea = isLoadedTeaProduct(slug);
 
   return (
     <>
@@ -50,6 +53,8 @@ export default async function ProductDetailPage({
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Menu', href: '/menu' }, { label: name }]} />
         {isMegaTeaKit ? (
           <MegaTeaKitProductDetail product={product} flavors={flavors} locale={typedLocale} />
+        ) : isLoadedTea ? (
+          <LoadedTeaProductDetail product={product} addIns={productAddIns} locale={typedLocale} />
         ) : (
         <div className="grid gap-12 lg:grid-cols-2">
           <div>

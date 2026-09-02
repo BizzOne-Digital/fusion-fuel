@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { getLocalized } from '@/lib/utils';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import { MegaTeaKitsCategoryExplorer } from '@/components/menu/MegaTeaKitsCategoryExplorer';
+import { LoadedTeasCategoryExplorer } from '@/components/menu/LoadedTeasCategoryExplorer';
 import { PROTEIN_COFFEE, proteinCoffeeFlavorList, proteinCoffeePricingSummary } from '@/lib/protein-coffee-menu';
 import { LOADED_TEAS_MENU, loadedTeaPricingSummary } from '@/lib/loaded-teas-menu';
 import {
@@ -210,6 +211,8 @@ export function MenuCategoryPanel({
             locale={locale}
             activeCollection={kitCollection}
           />
+        ) : category.slug === 'mega-teas' ? (
+          <LoadedTeasCategoryExplorer locale={locale} />
         ) : category.slug === 'donut-of-the-day' ? (
           <DonutOfTheDaySpotlight locale={locale} />
         ) : category.slug === 'protein-coffee' ? (
@@ -228,9 +231,10 @@ export function MenuCategoryPanel({
       {categories.map((cat) => {
         const categoryProducts = productsForCategory(products, categories, cat.slug);
         const isKits = cat.slug === 'mega-tea-kits';
+        const isLoadedTeas = cat.slug === 'mega-teas';
         const isSpotlight = isMenuSpotlightCategory(cat.slug);
 
-        if (!isSpotlight && categoryProducts.length === 0) return null;
+        if (!isSpotlight && !isKits && !isLoadedTeas && categoryProducts.length === 0) return null;
 
         return (
           <section key={cat.slug} id={cat.slug} className="scroll-mt-24">
@@ -243,6 +247,8 @@ export function MenuCategoryPanel({
                 locale={locale}
                 activeCollection={kitCollection}
               />
+            ) : cat.slug === 'mega-teas' ? (
+              <LoadedTeasCategoryExplorer locale={locale} />
             ) : cat.slug === 'donut-of-the-day' ? (
               <DonutOfTheDaySpotlight locale={locale} />
             ) : cat.slug === 'protein-coffee' ? (

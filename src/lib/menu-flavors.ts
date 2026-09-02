@@ -465,6 +465,14 @@ export const MENU_FLAVORS: readonly MenuFlavor[] = [
     ingredients: ['Pomegranate Berry Liftoff', 'Raspberry Tea', 'Limeade', 'Grape Aloe'],
   },
   {
+    slug: 'tropical-watermelon-rush',
+    name: 'Tropical Watermelon Rush',
+    collection: 'new-flavour-collection',
+    color: '#FF5722',
+    isNew: true,
+    ingredients: ['Tropical Liftoff', 'Passion Hibiscus NRG', 'Watermelon Hydration', 'Strawberry-Kiwi'],
+  },
+  {
     slug: 'wild-berry-cheesecake',
     name: 'Wild Berry Cheesecake',
     collection: 'new-flavour-collection',

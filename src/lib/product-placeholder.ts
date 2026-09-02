@@ -1,5 +1,6 @@
 import type { IProduct } from '@/models/Product';
 import { PROTEIN_COFFEE_PRODUCT_SLUG } from '@/lib/protein-coffee-menu';
+import { LOADED_TEA_PRODUCT_SLUG } from '@/lib/loaded-teas-menu';
 
 /** Generic stock images — show a styled text card instead. */
 export const GENERIC_PRODUCT_IMAGE_URLS = new Set([
@@ -56,6 +57,7 @@ export const CATEGORY_CARD_STYLES: Record<
 
 export function inferProductCategorySlug(productSlug: string): string {
   if (productSlug.startsWith('loaded-tea-')) return 'mega-teas';
+  if (productSlug === LOADED_TEA_PRODUCT_SLUG) return 'mega-teas';
   if (productSlug.startsWith('mega-tea-kit-')) return 'mega-tea-kits';
   if (productSlug === PROTEIN_COFFEE_PRODUCT_SLUG || productSlug.startsWith('protein-coffee-')) {
     return 'protein-coffee';

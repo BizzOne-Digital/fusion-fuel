@@ -25,7 +25,7 @@ import { CATERING_TAGLINE, CONTACT, DELIVERY, acaiBowlEventServiceHtml, ACAI_BOW
 import { PROTEIN_COFFEE, proteinCoffeeIcedPriceCents, proteinCoffeePricingSummary, proteinCoffeeProductDescriptionHtml, PROTEIN_COFFEE_PRODUCT_SLUG } from '../src/lib/protein-coffee-menu';
 import { MEGA_TEA_KIT_COLLECTIONS, MEGA_TEA_KITS_MENU, megaTeaKitDescriptionHtml, megaTeaKitPriceCents, megaTeaKitProductName, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
 import { MENU_FLAVORS } from '../src/lib/menu-flavors';
-import { LOADED_TEAS_MENU, loadedTeaDescriptionHtml, loadedTeaShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
+import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaProductDescriptionHtml, loadedTeaProductShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
 import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlPriceCents } from '../src/lib/acai-bowls-menu';
 import { WAFFLES_MENU, waffleDescriptionHtml, wafflePriceCents } from '../src/lib/waffles-menu';
 import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
@@ -1036,7 +1036,7 @@ async function seedMegaTeaKitProducts(
           sku,
           name: loc(megaTeaKitProductName(collection.name)),
           shortDescription: loc(megaTeaKitShortDescription(collection.name)),
-          description: rich(megaTeaKitDescriptionHtml(collection.name, collection.collectionSlug)),
+          description: rich(megaTeaKitDescriptionHtml(collection.name)),
           productType: 'kit',
           categoryId: categoryIds['mega-tea-kits'],
           images: [
@@ -1152,60 +1152,80 @@ async function seedLoadedTeaProducts(
   categoryIds: Record<string, Types.ObjectId>,
   addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
 ): Promise<void> {
-  const activeSlugs = LOADED_TEAS_MENU.items.map((item) => `loaded-tea-${item.slug}`);
+  const legacySlugs = LOADED_TEAS_MENU.items.map((item) => `loaded-tea-${item.slug}`);
 
-  for (const [index, item] of LOADED_TEAS_MENU.items.entries()) {
-    const sku = `FFB-LTEA-${String(index + 1).padStart(3, '0')}`;
-    const slug = `loaded-tea-${item.slug}`;
-    const productName = item.name;
-    const teaImages = menuItemImage(item, `${item.name} loaded tea`);
+  await Product.updateMany(
+    { slug: { $in: legacySlugs } },
+    { $set: { status: 'archived' } }
+  );
 
-    await Product.findOneAndUpdate(
-      { slug },
-      {
-        $set: {
-          slug,
-          sku,
-          name: loc(productName),
-          shortDescription: loc(loadedTeaShortDescription(item)),
-          description: rich(loadedTeaDescriptionHtml(item)),
-          productType: 'single',
-          categoryId: categoryIds['mega-teas'],
-          images: teaImages,
-          basePrice: loadedTeaSizePriceCents('32oz', item.slug),
-          variants: LOADED_TEAS_MENU.sizes.map((size) => ({
-            sku: `${sku}-${size.slug.replace('oz', '')}`,
-            name: loc(size.name),
-            price: loadedTeaSizePriceCents(size.slug, item.slug),
+  const { heroImage, headline } = LOADED_TEAS_MENU;
+
+  await Product.findOneAndUpdate(
+    { slug: LOADED_TEA_PRODUCT_SLUG },
+    {
+      $set: {
+        slug: LOADED_TEA_PRODUCT_SLUG,
+        sku: 'FFB-LTEA-MAIN',
+        name: loc(headline),
+        shortDescription: loc(loadedTeaProductShortDescription()),
+        description: rich(loadedTeaProductDescriptionHtml()),
+        productType: 'single',
+        categoryId: categoryIds['mega-teas'],
+        images: [img(heroImage.url, heroImage.alt)],
+        basePrice: loadedTeaSizePriceCents('32oz'),
+        variants: [
+          {
+            sku: 'FFB-LTEA-24',
+            name: loc('24 oz'),
+            price: loadedTeaSizePriceCents('24oz'),
             inventory: 0,
-          })),
-          flavorIds: [],
-          kitSizes: [],
-          addInOptions,
-          inventory: {
-            trackInventory: false,
-            quantity: 0,
-            lowStockThreshold: 5,
-            allowBackorder: false,
           },
-          allergens: [],
-          dietaryTags: [],
-          seo: {
-            title: `${productName} | ${BRAND.name}`,
-            description: `${productName} loaded tea. ${item.ingredients.join(', ')}.${'servingNote' in item && item.servingNote ? ` ${item.servingNote}.` : ''}`,
+          {
+            sku: 'FFB-LTEA-32',
+            name: loc('32 oz'),
+            price: loadedTeaSizePriceCents('32oz'),
+            inventory: 0,
           },
-          status: 'published',
-          featured: index < 3,
-          order: index,
+          {
+            sku: 'FFB-LTEA-P24',
+            name: loc('24 oz'),
+            price: loadedTeaSizePriceCents('24oz', 'mango-breeze'),
+            inventory: 0,
+          },
+          {
+            sku: 'FFB-LTEA-P32',
+            name: loc('32 oz'),
+            price: loadedTeaSizePriceCents('32oz', 'mango-breeze'),
+            inventory: 0,
+          },
+        ],
+        flavorIds: [],
+        kitSizes: [],
+        addInOptions,
+        inventory: {
+          trackInventory: false,
+          quantity: 0,
+          lowStockThreshold: 5,
+          allowBackorder: false,
         },
+        allergens: [],
+        dietaryTags: [],
+        seo: {
+          title: `${headline} | ${BRAND.name}`,
+          description: loadedTeaProductShortDescription(),
+        },
+        status: 'published',
+        featured: true,
+        order: 0,
       },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
-  }
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 
   await Product.updateOne({ slug: 'signature-mega-tea' }, { $set: { status: 'archived' } });
 
-  console.log(`Loaded tea products upserted (${LOADED_TEAS_MENU.items.length} records).`);
+  console.log('Loaded tea product upserted (1 record).');
 }
 
 async function seedAcaiBowlProducts(

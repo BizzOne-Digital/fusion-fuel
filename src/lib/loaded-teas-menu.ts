@@ -19,6 +19,10 @@ export const LOADED_TEA_PREMIUM_PRICES = {
 export const LOADED_TEAS_MENU = {
   headline: 'Refreshers / Loaded Teas',
   servingNote: '24 oz & 32 oz',
+  heroImage: {
+    url: '/images/mega-tea.png',
+    alt: 'Loaded tea drinks',
+  },
   sizes: [
     { slug: '24oz', name: '24 oz', price: LOADED_TEA_STANDARD_PRICES['24oz'] },
     { slug: '32oz', name: '32 oz', price: LOADED_TEA_STANDARD_PRICES['32oz'] },
@@ -155,8 +159,58 @@ export const LOADED_TEAS_MENU = {
 
 export type LoadedTeaMenuItem = (typeof LOADED_TEAS_MENU.items)[number];
 
+export const LOADED_TEA_PRODUCT_SLUG = 'loaded-tea';
+
+export const LOADED_TEA_CHIP_COLORS = [
+  '#E8F000',
+  '#FF3F72',
+  '#FFE500',
+  '#CDDC39',
+  '#FF4081',
+  '#A4C639',
+  '#FF5722',
+  '#00BCD4',
+] as const;
+
 export function loadedTeaIsPremium(itemSlug: string): boolean {
   return (LOADED_TEA_PREMIUM_SLUGS as readonly string[]).includes(itemSlug);
+}
+
+export function isLoadedTeaProduct(slug: string): boolean {
+  return slug === LOADED_TEA_PRODUCT_SLUG;
+}
+
+export function loadedTeaFlavorNote(flavorName: string): string {
+  return `Flavor: ${flavorName}`;
+}
+
+export function loadedTeaItemImage(item: LoadedTeaMenuItem): { url: string; alt: string } {
+  const image = 'image' in item && item.image ? item.image : null;
+  if (image) {
+    return { url: image, alt: item.name };
+  }
+  return { url: LOADED_TEAS_MENU.heroImage.url, alt: item.name };
+}
+
+export function loadedTeaChipColor(index: number): string {
+  return LOADED_TEA_CHIP_COLORS[index % LOADED_TEA_CHIP_COLORS.length];
+}
+
+export function loadedTeaVariantSku(sizeSlug: string, itemSlug: string): string {
+  const sizeKey = sizeSlug.replace('oz', '');
+  return loadedTeaIsPremium(itemSlug) ? `FFB-LTEA-P${sizeKey}` : `FFB-LTEA-${sizeKey}`;
+}
+
+export function loadedTeaProductShortDescription(): string {
+  return `${LOADED_TEAS_MENU.servingNote}. ${loadedTeaPricingSummary()}`;
+}
+
+export function loadedTeaProductDescriptionHtml(): string {
+  return [
+    `<p><strong>${LOADED_TEAS_MENU.headline}</strong></p>`,
+    `<p>${LOADED_TEAS_MENU.servingNote}. ${loadedTeaPricingSummary()}</p>`,
+    `<p>Choose your flavor on this page — the preview image updates when you select a flavor.</p>`,
+  ].join('');
 }
 
 export function loadedTeaSizePriceCents(sizeSlug: string, itemSlug?: string): number {
