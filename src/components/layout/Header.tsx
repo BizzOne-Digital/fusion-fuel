@@ -21,16 +21,18 @@ function HeaderActions({
   onOpenCart,
   showLanguage = true,
   showAccount = true,
+  className,
 }: {
   itemCount: number;
   onOpenCart: () => void;
   showLanguage?: boolean;
   showAccount?: boolean;
+  className?: string;
 }) {
   const t = useTranslations('nav');
 
   return (
-    <>
+    <div className={className}>
       {showLanguage ? <LanguageToggle className="hidden md:flex" /> : null}
 
       <Link
@@ -38,7 +40,7 @@ function HeaderActions({
         className="rounded-full p-2 text-carbon transition hover:bg-lime/20"
         aria-label={t('search')}
       >
-        <Search className="h-[1.15rem] w-[1.15rem]" />
+        <Search className="h-[1.2rem] w-[1.2rem]" strokeWidth={2} />
       </Link>
 
       <button
@@ -47,7 +49,7 @@ function HeaderActions({
         className="relative rounded-full p-2 text-carbon transition hover:bg-lime/20"
         aria-label={t('cart')}
       >
-        <ShoppingBag className="h-[1.15rem] w-[1.15rem]" />
+        <ShoppingBag className="h-[1.2rem] w-[1.2rem]" strokeWidth={2} />
         {itemCount > 0 && (
           <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-pink px-1 text-[10px] font-bold leading-none text-white">
             {itemCount}
@@ -61,10 +63,10 @@ function HeaderActions({
           className="hidden rounded-full p-2 text-carbon transition hover:bg-lime/20 sm:inline-flex"
           aria-label={t('account')}
         >
-          <User className="h-[1.15rem] w-[1.15rem]" />
+          <User className="h-[1.2rem] w-[1.2rem]" strokeWidth={2} />
         </Link>
       ) : null}
-    </>
+    </div>
   );
 }
 
@@ -75,58 +77,62 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-grey/15 bg-white/95 text-carbon shadow-sm backdrop-blur-sm">
-        <div className="mx-auto max-w-[90rem] px-4 sm:px-6 lg:px-8">
-          {/* Desktop: nav left · logo center · actions right */}
-          <div className="hidden lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-6 lg:py-3 xl:gap-8 xl:py-4">
-            <nav className="flex items-center justify-end gap-5 xl:gap-8" aria-label="Main">
+      <header className="sticky top-0 z-[60] w-full border-b border-grey/15 bg-white text-carbon shadow-sm">
+        <div className="relative mx-auto w-full max-w-[100rem] px-4 sm:px-6 lg:px-8">
+          {/* Desktop */}
+          <div className="relative hidden h-[5.25rem] items-center xl:h-[6.25rem] lg:flex">
+            <nav
+              className="relative z-30 flex flex-1 items-center justify-start gap-4 pr-4 xl:gap-8"
+              aria-label="Main"
+            >
               {navItems.map((item) => (
                 <Link
                   key={`${item.href}-${item.key}`}
                   href={item.href}
-                  className="whitespace-nowrap text-xs font-semibold uppercase tracking-[0.16em] text-carbon transition hover:text-pink xl:text-sm"
+                  className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.18em] text-carbon transition hover:text-pink xl:text-xs 2xl:text-sm"
                 >
                   {t(item.key)}
                 </Link>
               ))}
             </nav>
 
-            <div className="flex justify-center px-2">
-              <Logo priority variant="header" />
+            <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
+              <Logo priority variant="header" className="pointer-events-auto" />
             </div>
 
-            <div className="flex items-center justify-start gap-1 sm:gap-2">
-              <HeaderActions itemCount={itemCount} onOpenCart={openDrawer} />
-            </div>
+            <HeaderActions
+              itemCount={itemCount}
+              onOpenCart={openDrawer}
+              className="relative z-30 flex flex-1 items-center justify-end gap-1 pl-4 sm:gap-2"
+            />
           </div>
 
-          {/* Mobile: menu · centered logo · actions */}
-          <div className="flex h-[4.25rem] items-center justify-between gap-3 sm:h-[4.75rem] lg:hidden">
+          {/* Mobile */}
+          <div className="flex h-[4.5rem] items-center justify-between gap-2 sm:h-[5rem] lg:hidden">
             <button
               type="button"
-              className="rounded-full p-2 text-carbon transition hover:bg-lime/20"
+              className="relative z-30 shrink-0 rounded-full p-2 text-carbon transition hover:bg-lime/20"
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
             >
               <Menu className="h-5 w-5" />
             </button>
 
-            <div className="flex min-w-0 flex-1 justify-center">
+            <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-14">
               <Logo
                 priority
                 variant="header"
-                className="relative h-12 w-[220px] sm:h-14 sm:w-[280px] md:h-16 md:w-[340px]"
+                className="pointer-events-auto relative h-14 w-[min(72vw,300px)] sm:h-16 sm:w-[min(68vw,360px)]"
               />
             </div>
 
-            <div className="flex items-center gap-0.5 sm:gap-1">
-              <HeaderActions
-                itemCount={itemCount}
-                onOpenCart={openDrawer}
-                showLanguage={false}
-                showAccount={false}
-              />
-            </div>
+            <HeaderActions
+              itemCount={itemCount}
+              onOpenCart={openDrawer}
+              showLanguage={false}
+              showAccount={false}
+              className="relative z-30 flex shrink-0 items-center gap-0.5"
+            />
           </div>
         </div>
       </header>

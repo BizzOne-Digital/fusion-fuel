@@ -6,12 +6,13 @@ import { Link } from '@/i18n/navigation';
 import { BRAND } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
+const LOGO_HEADER_SRC = '/brand/fusion-fuel-boost-logo-header.png';
 const LOGO_PRIMARY_SRC = '/brand/fusion-fuel-boost-logo.png';
 const LOGO_FALLBACK_SRC = '/brand/final-logo.png';
 
-/** Wide horizontal logo box for the centered header row. */
+/** Wide horizontal logo — height-driven so the mark reads large in the header. */
 export const HEADER_LOGO_BOX_CLASS =
-  'relative h-14 w-[260px] shrink-0 sm:h-16 sm:w-[320px] md:h-[4.5rem] md:w-[400px] lg:h-20 lg:w-[480px] xl:h-[5.5rem] xl:w-[560px]';
+  'relative h-16 w-[min(58vw,420px)] shrink-0 lg:h-[4.75rem] lg:w-[min(50vw,560px)] xl:h-[5.75rem] xl:w-[min(44vw,680px)] 2xl:h-[6.25rem] 2xl:w-[min(40vw,760px)]';
 
 interface LogoProps {
   className?: string;
@@ -27,8 +28,8 @@ export function Logo({
   asLink = true,
   variant = 'header',
 }: LogoProps) {
-  const [src, setSrc] = useState(LOGO_PRIMARY_SRC);
   const isHeader = variant === 'header';
+  const [src, setSrc] = useState(isHeader ? LOGO_HEADER_SRC : LOGO_PRIMARY_SRC);
 
   const image = (
     <Image
@@ -37,8 +38,12 @@ export function Logo({
       fill
       className={cn('object-contain', isHeader ? 'object-center' : 'object-left')}
       priority={priority}
-      sizes={isHeader ? '(max-width: 640px) 260px, 560px' : '320px'}
+      sizes={isHeader ? '(max-width: 1024px) 360px, 760px' : '320px'}
       onError={() => {
+        if (src === LOGO_HEADER_SRC) {
+          setSrc(LOGO_PRIMARY_SRC);
+          return;
+        }
         if (src !== LOGO_FALLBACK_SRC) setSrc(LOGO_FALLBACK_SRC);
       }}
     />
@@ -55,7 +60,7 @@ export function Logo({
 
   if (!asLink) {
     return (
-      <div className="inline-flex shrink-0 items-center" aria-label={BRAND.name}>
+      <div className="inline-flex shrink-0 items-center justify-center" aria-label={BRAND.name}>
         {content}
       </div>
     );
