@@ -4,13 +4,13 @@ import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { getLocalized } from '@/lib/utils';
 import { ProductGrid } from '@/components/products/ProductGrid';
+import { Select } from '@/components/ui/Select';
 import {
   MEGA_TEA_KIT_COLLECTIONS,
   MEGA_TEA_KITS_MENU,
   megaTeaKitCollectionMenuFlavors,
   megaTeaKitPricingSummary,
   megaTeaKitProductSlug,
-  type MegaTeaKitMenuFlavor,
 } from '@/lib/mega-tea-kits-menu';
 import type { FlavorCollectionSlug } from '@/lib/menu-flavors';
 import { resolveFlavorImage } from '@/lib/site-images';
@@ -25,31 +25,12 @@ interface MegaTeaKitsCategoryExplorerProps {
   activeCollection?: string;
 }
 
-function textOnColor(hex: string): string {
-  const normalized = hex.replace('#', '');
-  if (normalized.length !== 6) return '#07090A';
-  const r = Number.parseInt(normalized.slice(0, 2), 16);
-  const g = Number.parseInt(normalized.slice(2, 4), 16);
-  const b = Number.parseInt(normalized.slice(4, 6), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.62 ? '#07090A' : '#FFFFFF';
+function stopLinkNavigation(event: React.MouseEvent | React.KeyboardEvent) {
+  event.preventDefault();
+  event.stopPropagation();
 }
 
-function FlavorColorChip({ flavor }: { flavor: MegaTeaKitMenuFlavor }) {
-  const label = flavor.isNew ? `${flavor.name} — NEW!` : flavor.name;
-
-  return (
-    <span
-      className="inline-flex min-h-[4.5rem] min-w-[4.5rem] max-w-[6.5rem] items-center justify-center rounded-2xl px-2 py-2 text-center text-[10px] font-bold leading-tight shadow-sm sm:min-h-[5rem] sm:min-w-[5rem] sm:text-[11px]"
-      style={{ backgroundColor: flavor.color, color: textOnColor(flavor.color) }}
-      title={label}
-    >
-      {label}
-    </span>
-  );
-}
-
-function CollectionFlavorChips({
+function CollectionFlavorDropdown({
   collectionSlug,
   locale,
 }: {
@@ -57,17 +38,33 @@ function CollectionFlavorChips({
   locale: Locale;
 }) {
   const menuFlavors = megaTeaKitCollectionMenuFlavors(collectionSlug);
+  const flavorLabel = locale === 'es' ? 'Sabores' : 'Flavors';
 
   return (
-    <div className="min-w-0 flex-1">
-      <p className="text-xs font-bold uppercase tracking-wide text-carbon">
-        {locale === 'es' ? 'Sabores' : 'Flavors'}
-      </p>
-      <div className="mt-3 flex flex-wrap gap-2">
-        {menuFlavors.map((flavor) => (
-          <FlavorColorChip key={flavor.slug} flavor={flavor} />
-        ))}
-      </div>
+    <div
+      className="min-w-0 flex-1 sm:max-w-xs lg:max-w-sm"
+      onClick={stopLinkNavigation}
+      onMouseDown={stopLinkNavigation}
+      onKeyDown={stopLinkNavigation}
+    >
+      <Select
+        name={`kit-flavors-${collectionSlug}`}
+        defaultValue=""
+        aria-label={flavorLabel}
+        options={[
+          {
+            value: '',
+            label:
+              locale === 'es'
+                ? `${menuFlavors.length} sabores disponibles`
+                : `${menuFlavors.length} flavors available`,
+          },
+          ...menuFlavors.map((flavor) => ({
+            value: flavor.slug,
+            label: flavor.isNew ? `${flavor.name} — NEW!` : flavor.name,
+          })),
+        ]}
+      />
     </div>
   );
 }
@@ -112,34 +109,35 @@ export function MegaTeaKitsCategoryExplorer({
           const preview = collectionPreview(entry.collectionSlug, flavors, locale);
 
           return (
-            <Link
+            <div
               key={entry.collectionSlug}
-              href={`/menu?category=mega-tea-kits&kitCollection=${entry.collectionSlug}`}
-              className="group block overflow-hidden rounded-2xl border border-grey/15 bg-white transition hover:border-pink/30 hover:shadow-lg"
+              className="group overflow-hidden rounded-2xl border border-grey/15 bg-white transition hover:border-pink/30 hover:shadow-lg"
             >
               <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:gap-6 lg:gap-8">
-                <div className="relative mx-auto aspect-square w-full max-w-[11rem] shrink-0 overflow-hidden rounded-2xl bg-cream sm:mx-0 sm:w-36 lg:w-40">
-                  <Image
-                    src={preview.url}
-                    alt={preview.alt}
-                    fill
-                    className="object-cover transition duration-500 group-hover:scale-105"
-                    sizes="(max-width: 640px) 80vw, 160px"
-                  />
-                </div>
+                <Link
+                  href={`/menu?category=mega-tea-kits&kitCollection=${entry.collectionSlug}`}
+                  className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-start sm:gap-6 lg:gap-8"
+                >
+                  <div className="relative mx-auto aspect-square w-full max-w-[11rem] shrink-0 overflow-hidden rounded-2xl bg-cream sm:mx-0 sm:w-36 lg:w-40">
+                    <Image
+                      src={preview.url}
+                      alt={preview.alt}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                      sizes="(max-width: 640px) 80vw, 160px"
+                    />
+                  </div>
 
-                <div className="min-w-0 shrink-0 sm:w-44 lg:w-52">
-                  <h3 className="font-display text-xl text-carbon lg:text-2xl">{entry.name}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-grey">{entry.description}</p>
-                  <p className="mt-3 text-sm font-semibold text-pink">{megaTeaKitPricingSummary()}</p>
-                </div>
+                  <div className="min-w-0 shrink-0 sm:w-44 lg:w-52">
+                    <h3 className="font-display text-xl text-carbon lg:text-2xl">{entry.name}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-grey">{entry.description}</p>
+                    <p className="mt-3 text-sm font-semibold text-pink">{megaTeaKitPricingSummary()}</p>
+                  </div>
+                </Link>
 
-                <CollectionFlavorChips
-                  collectionSlug={entry.collectionSlug}
-                  locale={locale}
-                />
+                <CollectionFlavorDropdown collectionSlug={entry.collectionSlug} locale={locale} />
               </div>
-            </Link>
+            </div>
           );
         })}
       </div>
@@ -162,7 +160,7 @@ export function MegaTeaKitsCategoryExplorer({
             <p className="mt-2 text-sm leading-relaxed text-grey">{collection.description}</p>
             <p className="mt-3 text-sm font-semibold text-pink">{megaTeaKitPricingSummary()}</p>
           </div>
-          <CollectionFlavorChips collectionSlug={collection.collectionSlug} locale={locale} />
+          <CollectionFlavorDropdown collectionSlug={collection.collectionSlug} locale={locale} />
         </div>
       </div>
 
