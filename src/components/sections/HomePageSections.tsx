@@ -83,13 +83,13 @@ export function HomePageSections({
       </SectionReveal>
 
       <SectionReveal>
-        <section className="section-dark py-16">
+        <section className="section-yellow py-16">
           <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <h3 className="font-display text-3xl text-lime">Add-Ons Available</h3>
-            <p className="mt-2 text-sm text-white/70">{LOADED_TEAS.combinations}</p>
+            <h3 className="font-display text-3xl text-carbon">Add-Ons Available</h3>
+            <p className="mt-2 text-sm text-grey">{LOADED_TEAS.combinations}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               {addOnLabels.map(({ id, label }) => (
-                <span key={id} className="rounded-full bg-white/10 px-4 py-2 text-sm text-white/90">
+                <span key={id} className="rounded-full bg-white/80 px-4 py-2 text-sm text-carbon shadow-sm">
                   {label}
                 </span>
               ))}
@@ -100,7 +100,7 @@ export function HomePageSections({
 
       {/* 13. Catering */}
       <SectionReveal>
-        <section className="py-20">
+        <section className="section-pink py-20">
           <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 lg:grid-cols-2 lg:px-6">
             <Image src={SITE_IMAGES.catering} alt="Catering" width={600} height={450} className="h-auto w-full rounded-2xl object-cover" />
             <div>
@@ -119,7 +119,7 @@ export function HomePageSections({
 
       {/* 14. How it works */}
       <SectionReveal>
-        <section className="section-cream py-20">
+        <section className="section-lime py-20">
           <div className="mx-auto max-w-7xl px-4 lg:px-6">
             <h2 className="font-display text-center text-4xl">How It Works</h2>
             <div className="mt-12 grid gap-8 md:grid-cols-3">
@@ -141,8 +141,8 @@ export function HomePageSections({
 
       {/* 15. Special offer */}
       <SectionReveal>
-        <section className="px-4 py-16">
-          <div className="mx-auto max-w-3xl rounded-2xl border border-grey/20 bg-white p-6 text-center shadow-sm sm:p-8">
+        <section className="section-yellow px-4 py-16">
+          <div className="mx-auto max-w-3xl rounded-2xl border border-pink/25 bg-white p-6 text-center shadow-sm sm:p-8">
             <h2 className="font-display text-3xl">{MONTHLY_TEA_CLUB.cta}</h2>
             <p className="mt-4 text-grey">{MONTHLY_TEA_CLUB.ctaDetail}</p>
             <p className="mt-2 text-sm text-grey">{DELIVERY.local}</p>
@@ -153,9 +153,9 @@ export function HomePageSections({
 
       {/* Lifestyle montage */}
       <SectionReveal>
-        <section className="section-dark py-20">
+        <section className="section-lime py-20">
           <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <h2 className="font-display text-4xl text-lime">Fuel Your Lifestyle</h2>
+            <h2 className="font-display text-4xl text-carbon">Fuel Your Lifestyle</h2>
             <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3">
               {LIFESTYLE_IMAGES.map((img) => (
                 <Image key={img.url} src={img.url} alt={img.alt} width={400} height={300} className="h-48 w-full rounded-xl object-cover md:h-56" />
@@ -221,9 +221,9 @@ export function HomePageSections({
 
       {/* 21. Final CTA */}
       <SectionReveal>
-        <section className="section-dark py-24">
+        <section className="section-pink-bold py-24">
           <div className="mx-auto max-w-4xl px-4 text-center lg:px-6">
-            <h2 className="font-display text-5xl text-lime">{MONTHLY_TEA_CLUB.taglines.secondary}</h2>
+            <h2 className="font-display text-5xl text-white">{MONTHLY_TEA_CLUB.taglines.secondary}</h2>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Link href={MEGA_TEA_KITS_MENU_HREF}>
                 <Button size="lg">{MONTHLY_TEA_CLUB.cta}</Button>

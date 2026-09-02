@@ -36,15 +36,15 @@ export async function Footer({ settings, locale }: FooterProps) {
       ];
 
   return (
-    <footer className="site-content section-dark mt-auto w-full overflow-x-hidden border-t border-white/10">
+    <footer className="site-content section-lime mt-auto w-full overflow-x-hidden border-t border-carbon/10">
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4">
-            <Logo className="relative h-16 w-[260px] md:h-20 md:w-[320px]" />
-            <p className="max-w-xs text-sm text-white/70">
+            <Logo className="relative h-16 w-[260px] md:h-20 md:w-[320px]" variant="light" />
+            <p className="max-w-xs text-sm text-carbon/80">
               {getLocalized(settings.footer?.tagline ?? settings.tagline, locale)}
             </p>
-            <div className="space-y-1 break-all text-sm text-white/80">
+            <div className="space-y-1 break-all text-sm text-carbon/90">
               <p>{settings.contactEmail}</p>
               <p>{settings.contactPhone}</p>
             </div>
@@ -55,7 +55,7 @@ export async function Footer({ settings, locale }: FooterProps) {
                   href={s.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-lime hover:underline"
+                  className="text-sm font-semibold text-pink hover:underline"
                 >
                   {s.label ?? (s.platform === 'instagram' ? 'Instagram' : s.platform === 'facebook' ? 'Facebook' : s.platform)}
                 </a>
@@ -64,11 +64,11 @@ export async function Footer({ settings, locale }: FooterProps) {
           </div>
           {columns.map((col, i) => (
             <div key={i}>
-              <h3 className="font-display mb-4 text-lg text-lime">{getLocalized(col.title, locale)}</h3>
+              <h3 className="font-display mb-4 text-lg text-pink">{getLocalized(col.title, locale)}</h3>
               <ul className="space-y-2">
                 {col.links.map((link, j) => (
                   <li key={j}>
-                    <Link href={link.href} className="text-sm text-white/75 hover:text-white">
+                    <Link href={link.href} className="text-sm text-carbon/80 hover:text-carbon">
                       {getLocalized(link.label, locale)}
                     </Link>
                   </li>
@@ -77,19 +77,19 @@ export async function Footer({ settings, locale }: FooterProps) {
             </div>
           ))}
           <div>
-            <h3 className="font-display mb-4 text-lg text-lime">{tNav('menu')}</h3>
-            <ul className="space-y-2 text-sm text-white/75">
-              <li><Link href="/menu" className="hover:text-white">{tNav('menu')}</Link></li>
-              <li><Link href="/booking" className="hover:text-white">{tNav('booking')}</Link></li>
-              <li><Link href="/account" className="hover:text-white">{tNav('account')}</Link></li>
+            <h3 className="font-display mb-4 text-lg text-pink">{tNav('menu')}</h3>
+            <ul className="space-y-2 text-sm text-carbon/80">
+              <li><Link href="/menu" className="hover:text-carbon">{tNav('menu')}</Link></li>
+              <li><Link href="/booking" className="hover:text-carbon">{tNav('booking')}</Link></li>
+              <li><Link href="/account" className="hover:text-carbon">{tNav('account')}</Link></li>
             </ul>
           </div>
         </div>
-        <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-6 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-4 border-t border-carbon/15 pt-6 text-sm text-carbon/70 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {settings.businessName ?? 'Fusion Fuel & Boost Co.'}. {t('rights')}</p>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             {(settings.legalLinks ?? []).map((link, i) => (
-              <Link key={i} href={link.href} className="hover:text-white">
+              <Link key={i} href={link.href} className="hover:text-carbon">
                 {getLocalized(link.label, locale)}
               </Link>
             ))}

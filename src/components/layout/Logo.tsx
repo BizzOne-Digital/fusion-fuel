@@ -6,19 +6,18 @@ import { Link } from '@/i18n/navigation';
 import { BRAND } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
-const LOGO_HEADER_SRC = '/brand/fusion-fuel-boost-logo-header.png';
-const LOGO_LIGHT_SRC = '/brand/fusion-fuel-boost-logo-trimmed-transparent.png';
-const LOGO_FALLBACK_SRC = '/brand/fusion-fuel-boost-logo-trimmed.png';
+const LOGO_PRIMARY_SRC = '/brand/fusion-fuel-boost-logo.png';
+const LOGO_FALLBACK_SRC = '/brand/final-logo.png';
 
-/** Fixed box — sized to header row height so nav and icons stay visible. */
+/** Wide horizontal logo box for the header row. */
 export const HEADER_LOGO_BOX_CLASS =
-  'relative h-10 w-[148px] shrink-0 sm:h-11 sm:w-[168px] md:h-12 md:w-[188px] lg:h-[3.25rem] lg:w-[220px]';
+  'relative h-11 w-[200px] shrink-0 sm:h-12 sm:w-[240px] md:h-[3.25rem] md:w-[280px] lg:h-14 lg:w-[320px]';
 
 interface LogoProps {
   className?: string;
   priority?: boolean;
   asLink?: boolean;
-  /** `header` = full logo on dark backgrounds; `light` = transparent logo on white */
+  /** `header` and `light` both use the full-color logo on white backgrounds. */
   variant?: 'header' | 'light';
 }
 
@@ -28,8 +27,7 @@ export function Logo({
   asLink = true,
   variant = 'header',
 }: LogoProps) {
-  const initialSrc = variant === 'light' ? LOGO_LIGHT_SRC : LOGO_HEADER_SRC;
-  const [src, setSrc] = useState(initialSrc);
+  const [src, setSrc] = useState(LOGO_PRIMARY_SRC);
   const isHeader = variant === 'header';
 
   const image = (
@@ -37,23 +35,16 @@ export function Logo({
       src={src}
       alt={BRAND.name}
       fill
-      className={cn(
-        'object-contain object-left',
-        !isHeader && src === LOGO_FALLBACK_SRC && 'mix-blend-screen'
-      )}
+      className="object-contain object-left"
       priority={priority}
-      sizes={isHeader ? '(max-width: 640px) 148px, 220px' : '240px'}
+      sizes={isHeader ? '(max-width: 640px) 200px, 320px' : '320px'}
       onError={() => {
-        if (src === LOGO_HEADER_SRC) setSrc(LOGO_LIGHT_SRC);
-        else if (src === LOGO_LIGHT_SRC) setSrc(LOGO_FALLBACK_SRC);
-        else if (src !== '/brand/fusion-fuel-boost-logo.png') {
-          setSrc('/brand/fusion-fuel-boost-logo.png');
-        }
+        if (src !== LOGO_FALLBACK_SRC) setSrc(LOGO_FALLBACK_SRC);
       }}
     />
   );
 
-  const boxClassName = cn(isHeader ? HEADER_LOGO_BOX_CLASS : 'relative h-12 w-[200px] sm:w-[240px]', className);
+  const boxClassName = cn(isHeader ? HEADER_LOGO_BOX_CLASS : 'relative h-14 w-[240px] sm:w-[300px]', className);
 
   const content = (
     <>

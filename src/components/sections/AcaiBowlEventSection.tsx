@@ -45,7 +45,7 @@ export function AcaiBowlEventSection() {
   }, []);
 
   return (
-    <section className="w-full py-20">
+    <section className="section-yellow w-full py-20">
       <div ref={sectionRef} className="mx-auto max-w-7xl px-4 lg:px-6">
         <div className="grid items-start gap-10 lg:grid-cols-[1fr_420px]">
           <div>
@@ -109,9 +109,9 @@ export function AcaiBowlEventSection() {
               </div>
             </div>
 
-            <div className="mt-8 rounded-2xl bg-ink p-6 text-white">
+            <div className="mt-8 rounded-2xl bg-pink/90 p-6 text-white shadow-lg">
               <h3 className="font-display text-2xl text-lime">How It Works</h3>
-              <ol className="mt-4 space-y-3 text-sm text-white/85">
+              <ol className="mt-4 space-y-3 text-sm text-white/90">
                 {ACAI_BOWL_EVENT.howItWorks.map((step, index) => (
                   <li key={step}>
                     <span className="font-bold text-lime">{index + 1}.</span> {step}

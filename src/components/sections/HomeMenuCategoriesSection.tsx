@@ -13,7 +13,7 @@ interface HomeMenuCategoriesSectionProps {
 
 export function HomeMenuCategoriesSection({ categories, locale }: HomeMenuCategoriesSectionProps) {
   return (
-    <section className="section-cream py-20">
+    <section className="section-lime py-20">
       <div className="mx-auto max-w-7xl px-4 lg:px-6">
         <h2 className="font-display text-center text-4xl md:text-5xl">
           {locale === 'es' ? 'Nuestro Menú' : 'Our Menu'}

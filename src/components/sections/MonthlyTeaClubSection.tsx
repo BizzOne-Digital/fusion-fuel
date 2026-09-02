@@ -26,7 +26,7 @@ interface MonthlyTeaClubSectionProps {
 
 export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
   return (
-    <section className="relative w-full overflow-x-hidden bg-ink text-white">
+    <section className="relative w-full overflow-x-hidden section-pink-bold text-white">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-lime/10 blur-3xl" />
         <div className="absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-pink/15 blur-3xl" />
@@ -37,7 +37,7 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16">
           <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
             <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-lime/30 via-transparent to-pink/30 blur-2xl" />
-            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-carbon shadow-2xl shadow-black/40">
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/20 bg-white/10 shadow-2xl shadow-pink/20">
               <Image
                 src={MONTHLY_TEA_CLUB.posterImage}
                 alt="Monthly Tea Club — Fusion Fuel & Boost Co."
@@ -111,7 +111,7 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
         </div>
 
         {/* What's Inside */}
-        <div className="mt-20 rounded-[1.75rem] border border-white/10 bg-carbon p-6 md:p-8 lg:mt-24 lg:p-10">
+        <div className="mt-20 rounded-[1.75rem] border border-white/20 bg-white/10 p-6 md:p-8 lg:mt-24 lg:p-10">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.24em] text-lime">Unbox the Good Stuff</p>
@@ -126,7 +126,7 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
               return (
                 <div
                   key={item}
-                  className="flex min-h-[148px] flex-col rounded-2xl border border-white/10 bg-ink/70 p-5 transition hover:border-pink/40 hover:bg-ink"
+                  className="flex min-h-[148px] flex-col rounded-2xl border border-white/20 bg-white/10 p-5 transition hover:border-lime/50 hover:bg-white/15"
                 >
                   <div className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-pink/15">
                     <Icon className="h-5 w-5 text-pink" aria-hidden />
@@ -236,7 +236,7 @@ export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
                 </li>
               </ul>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-ink/60 p-6">
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-6">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/50">Get in Touch</p>
               <ul className="mt-4 space-y-3 text-sm">
                 <li>

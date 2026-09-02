@@ -23,16 +23,16 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-black text-white">
-        <div className="mx-auto grid h-14 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:h-16 sm:gap-4 sm:px-4 lg:px-8">
-          <Logo priority />
+      <header className="sticky top-0 z-50 w-full border-b border-grey/15 bg-white text-carbon shadow-sm">
+        <div className="mx-auto grid h-16 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:h-[4.5rem] sm:gap-4 sm:px-4 lg:px-8">
+          <Logo priority variant="header" />
 
           <nav className="hidden items-center justify-center gap-5 lg:flex xl:gap-8" aria-label="Main">
             {navItems.map((item) => (
               <Link
                 key={`${item.href}-${item.key}`}
                 href={item.href}
-                className="whitespace-nowrap text-xs font-semibold uppercase tracking-[0.14em] text-white transition hover:text-[#F5FF00] xl:text-sm"
+                className="whitespace-nowrap text-xs font-semibold uppercase tracking-[0.14em] text-carbon transition hover:text-pink xl:text-sm"
               >
                 {t(item.key)}
               </Link>
@@ -44,7 +44,7 @@ export function Header() {
 
             <Link
               href="/menu"
-              className="rounded-full p-2 transition hover:bg-white/10"
+              className="rounded-full p-2 text-carbon transition hover:bg-lime/20"
               aria-label={t('search')}
             >
               <Search className="h-[1.1rem] w-[1.1rem]" />
@@ -53,12 +53,12 @@ export function Header() {
             <button
               type="button"
               onClick={openDrawer}
-              className="relative rounded-full p-2 transition hover:bg-white/10"
+              className="relative rounded-full p-2 text-carbon transition hover:bg-lime/20"
               aria-label={t('cart')}
             >
               <ShoppingBag className="h-[1.1rem] w-[1.1rem]" />
               {itemCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#F5FF00] px-1 text-[10px] font-bold leading-none text-ink">
+                <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-pink px-1 text-[10px] font-bold leading-none text-white">
                   {itemCount}
                 </span>
               )}
@@ -66,7 +66,7 @@ export function Header() {
 
             <Link
               href="/account"
-              className="hidden rounded-full p-2 transition hover:bg-white/10 sm:inline-flex"
+              className="hidden rounded-full p-2 text-carbon transition hover:bg-lime/20 sm:inline-flex"
               aria-label={t('account')}
             >
               <User className="h-[1.1rem] w-[1.1rem]" />
@@ -74,7 +74,7 @@ export function Header() {
 
             <button
               type="button"
-              className="rounded-full p-2 transition hover:bg-white/10 lg:hidden"
+              className="rounded-full p-2 text-carbon transition hover:bg-lime/20 lg:hidden"
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
             >

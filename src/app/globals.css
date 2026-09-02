@@ -7,10 +7,10 @@
   --color-yellow: #FFE500;
   --color-pink: #FF3F72;
   --color-coral: #FF315E;
-  --color-white: #FFFDF8;
+  --color-white: #FFFFFF;
   --color-cream: #FFF8E7;
   --color-grey: #687078;
-  --background: var(--color-white);
+  --background: #FFFFFF;
   --foreground: var(--color-carbon);
 }
 
@@ -23,7 +23,7 @@
   --color-yellow: #FFE500;
   --color-pink: #FF3F72;
   --color-coral: #FF315E;
-  --color-white: #FFFDF8;
+  --color-white: #FFFFFF;
   --color-cream: #FFF8E7;
   --color-grey: #687078;
   --font-sans: var(--font-inter);
@@ -166,6 +166,26 @@ svg {
 
 .section-dark {
   background: var(--color-carbon);
+  color: var(--color-white);
+}
+
+.section-lime {
+  background: var(--color-lime);
+  color: var(--color-ink);
+}
+
+.section-yellow {
+  background: color-mix(in srgb, var(--color-yellow) 42%, white);
+  color: var(--color-ink);
+}
+
+.section-pink {
+  background: color-mix(in srgb, var(--color-pink) 22%, white);
+  color: var(--color-ink);
+}
+
+.section-pink-bold {
+  background: linear-gradient(135deg, var(--color-pink) 0%, var(--color-coral) 100%);
   color: var(--color-white);
 }
 
