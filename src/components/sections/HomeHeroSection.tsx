@@ -35,14 +35,18 @@ export function HomeHeroSection({
           alt=""
           fill
           priority
-          sizes="100%"
-          className="object-cover object-[72%_center] sm:object-[78%_center] lg:object-right"
+          sizes="100vw"
+          className="object-cover object-[62%_42%] sm:object-[72%_center] lg:object-right"
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/55 to-black/75 sm:bg-gradient-to-r sm:from-black/90 sm:via-black/65 sm:to-black/25"
+          aria-hidden
         />
       </div>
 
-      <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl flex-col justify-center px-4 pb-8 pt-16 sm:min-h-[calc(100svh-4.5rem)] sm:px-6 sm:pt-20 lg:min-h-[min(100svh,920px)] lg:px-8 lg:pt-24">
-        <div className="max-w-2xl [text-shadow:0_2px_18px_rgba(0,0,0,0.75)]">
-          <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#F5FF00] sm:text-xs">
+      <div className="relative mx-auto flex min-h-[min(100svh-4.5rem,780px)] max-w-7xl flex-col justify-end px-5 pb-10 pt-8 sm:min-h-[calc(100svh-5rem)] sm:justify-center sm:px-6 sm:pb-8 sm:pt-20 lg:min-h-[min(100svh,920px)] lg:px-8 lg:pt-24">
+        <div className="w-full max-w-xl sm:max-w-2xl [text-shadow:0_2px_20px_rgba(0,0,0,0.85)]">
+          <p className="max-w-[18rem] text-[10px] font-bold uppercase leading-snug tracking-[0.22em] text-[#F5FF00] sm:max-w-none sm:text-xs sm:tracking-[0.28em]">
             {HOME_HERO.eyebrow}
           </p>
 
@@ -52,27 +56,27 @@ export function HomeHeroSection({
             size="hero"
             animated
             boostTone="brand"
-            className="mt-5 lg:max-w-4xl"
+            className="mt-4 sm:mt-5 lg:max-w-4xl"
           />
 
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-white sm:mt-6 sm:max-w-xl sm:text-lg">
             {HOME_HERO.description}
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3 sm:gap-4">
-            <Link href={kitHref}>
+          <div className="mt-6 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:flex-wrap sm:gap-4">
+            <Link href={kitHref} className="w-full sm:w-auto">
               <Button
                 size="lg"
-                className="rounded-md px-7 py-4 text-sm font-bold uppercase tracking-[0.12em] text-ink"
+                className="w-full rounded-md px-5 py-3.5 text-xs font-bold uppercase tracking-[0.1em] text-ink sm:w-auto sm:px-7 sm:py-4 sm:text-sm sm:tracking-[0.12em]"
               >
                 {HOME_HERO.ctaPrimary}
               </Button>
             </Link>
-            <Link href="/menu">
+            <Link href="/menu" className="w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="lg"
-                className="rounded-md border-2 border-white bg-transparent px-7 py-4 text-sm font-bold uppercase tracking-[0.12em] text-white hover:bg-white hover:text-ink"
+                className="w-full rounded-md border-2 border-white bg-black/25 px-5 py-3.5 text-xs font-bold uppercase tracking-[0.1em] text-white backdrop-blur-sm hover:bg-white hover:text-ink sm:w-auto sm:bg-transparent sm:px-7 sm:py-4 sm:text-sm sm:tracking-[0.12em]"
               >
                 {HOME_HERO.ctaSecondary}
               </Button>
@@ -81,7 +85,7 @@ export function HomeHeroSection({
 
           <Link
             href="/booking"
-            className="mt-6 inline-block text-sm font-bold uppercase tracking-[0.18em] text-white transition hover:text-[#F5FF00]"
+            className="mt-5 inline-block text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:text-[#F5FF00] sm:mt-6 sm:text-sm sm:tracking-[0.18em]"
           >
             {HOME_HERO.ctaTertiary}
           </Link>

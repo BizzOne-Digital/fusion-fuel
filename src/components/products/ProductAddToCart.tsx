@@ -118,6 +118,13 @@ export function ProductAddToCart({ product, addIns, locale }: ProductAddToCartPr
         locale={locale}
         selected={selectedAddIns}
         onChange={setSelectedAddIns}
+        title={
+          requiresFlavor
+            ? locale === 'es'
+              ? 'Complementos opcionales'
+              : 'Optional Add-Ons'
+            : undefined
+        }
       />
 
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-grey/15 pt-6">

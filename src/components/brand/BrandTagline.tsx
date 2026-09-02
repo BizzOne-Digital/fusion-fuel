@@ -15,9 +15,9 @@ interface BrandTaglineProps {
 
 const sizeClasses = {
   hero: {
-    fuel: 'text-[clamp(1.75rem,9vw,4.5rem)] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl',
-    boost: 'text-[clamp(1.75rem,9vw,4.5rem)] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl',
-    gap: 'gap-1 sm:gap-2',
+    fuel: 'text-[clamp(1.625rem,8.2vw,4.5rem)] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl',
+    boost: 'text-[clamp(1.625rem,8.2vw,4.5rem)] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl',
+    gap: 'gap-0.5 sm:gap-2',
   },
   intro: {
     fuel: 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl',

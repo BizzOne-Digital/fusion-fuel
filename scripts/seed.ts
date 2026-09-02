@@ -22,12 +22,12 @@ import SiteSettings from '../src/models/SiteSettings';
 import { SITE_IMAGES, getCategoryImage, getServiceImage, getProductFallbackImage, getFlavorImage } from '../src/lib/site-images';
 import { FLAVOR_IMAGE_BY_SLUG } from '../src/lib/flavor-image-manifest';
 import { CATERING_TAGLINE, CONTACT, DELIVERY, acaiBowlEventServiceHtml, ACAI_BOWL_EVENT, flavorIngredientsHtml, HOME_HERO, LOADED_TEAS, MONTHLY_TEA_CLUB } from '../src/lib/brand-content';
-import { PROTEIN_COFFEE, proteinCoffeeIcedPriceCents, proteinCoffeePricingSummary, proteinCoffeeProductDescriptionHtml, PROTEIN_COFFEE_PRODUCT_SLUG } from '../src/lib/protein-coffee-menu';
+import { PROTEIN_COFFEE, proteinCoffeeIcedPriceCents, proteinCoffeeOptionalAddInSlugs, proteinCoffeePricingSummary, proteinCoffeeProductDescriptionHtml, PROTEIN_COFFEE_PRODUCT_SLUG } from '../src/lib/protein-coffee-menu';
 import { MEGA_TEA_KIT_COLLECTIONS, MEGA_TEA_KITS_MENU, megaTeaKitDescriptionHtml, megaTeaKitPriceCents, megaTeaKitProductName, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
 import { MENU_FLAVORS } from '../src/lib/menu-flavors';
 import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaProductDescriptionHtml, loadedTeaProductShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
-import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlPriceCents } from '../src/lib/acai-bowls-menu';
-import { WAFFLES_MENU, waffleDescriptionHtml, wafflePriceCents } from '../src/lib/waffles-menu';
+import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents } from '../src/lib/acai-bowls-menu';
+import { WAFFLES_MENU, waffleDescriptionHtml, waffleExtraAddInSlugs, waffleExtraModifierSlug, wafflePriceCents } from '../src/lib/waffles-menu';
 import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
 import {
   PROTEIN_TREATS_MENU,
@@ -36,6 +36,15 @@ import {
   proteinTreatItemVariants,
   proteinTreatShortDescription,
 } from '../src/lib/protein-treats-menu';
+import {
+  PROTEIN_SHAKES_MENU,
+  PROTEIN_SHAKE_PRODUCT_SLUG,
+  proteinShakeOptionalAddInSlugs,
+  proteinShakeProductDescriptionHtml,
+  proteinShakeProductShortDescription,
+  proteinShakeProductSlug,
+  proteinShakeSizePriceCents,
+} from '../src/lib/protein-shakes-menu';
 
 const ES = '[ES - Review Required]';
 
@@ -487,9 +496,10 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
     { slug: 'mega-tea-kits', name: 'Mega Tea Kits', order: 1 },
     { slug: 'acai-bowls', name: 'Açaí Bowls', order: 2 },
     { slug: 'protein-coffee', name: 'Protein Coffee', order: 3 },
-    { slug: 'waffles', name: 'Waffles', order: 4 },
-    { slug: 'protein-treats', name: 'Protein Treats', order: 5 },
-    { slug: 'donut-of-the-day', name: 'Donut of the Day', order: 6 },
+    { slug: 'protein-shakes', name: 'Protein Shakes', order: 4 },
+    { slug: 'waffles', name: 'Waffles', order: 5 },
+    { slug: 'protein-treats', name: 'Protein Treats', order: 6 },
+    { slug: 'donut-of-the-day', name: 'Donut of the Day', order: 7 },
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
@@ -569,6 +579,51 @@ async function seedFlavors(): Promise<Record<string, Types.ObjectId>> {
 }
 
 async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
+  const acaiExtraAddIns = [
+    ...ACAI_BOWLS_MENU.extraFruits.map((name) => ({
+      slug: acaiBowlModifierSlug('extra-fruit', name),
+      name: `Extra Fruit — ${name}`,
+      category: 'acai-extra-fruit',
+      description: `Extra ${name} for açaí bowls.`,
+      price: 100,
+    })),
+    ...ACAI_BOWLS_MENU.extraToppings.map((name) => ({
+      slug: acaiBowlModifierSlug('extra-topping', name),
+      name: `Extra Topping — ${name}`,
+      category: 'acai-extra-topping',
+      description: `Extra ${name} for açaí bowls.`,
+      price: 100,
+    })),
+  ];
+
+  const waffleExtraAddIns = WAFFLES_MENU.toppingGroups
+    .flatMap((group) => group.items)
+    .map((name) => ({
+      slug: waffleExtraModifierSlug(name),
+      name: `Extra Waffle Topping — ${name}`,
+      category: 'waffle-extra-topping',
+      description: `Extra ${name} for protein waffles.`,
+      price: 100,
+    }));
+
+  const proteinCoffeeAddIns = PROTEIN_COFFEE.optionalAddOns
+    .filter((addOn) => addOn.slug !== 'fat-reducing-donut-shot-dulce-de-leche')
+    .map((addOn) => ({
+      slug: addOn.slug,
+      name: addOn.name,
+      category: 'protein-coffee',
+      description: `${addOn.name} optional add-on for protein coffee.`,
+      price: Math.round(addOn.price * 100),
+    }));
+
+  const proteinShakeAddIns = PROTEIN_SHAKES_MENU.optionalAddOns.map((addOn) => ({
+    slug: addOn.slug,
+    name: addOn.name,
+    category: 'protein-shakes',
+    description: `${addOn.name} optional add-on for protein shakes.`,
+    price: Math.round(addOn.price * 100),
+  }));
+
   const addIns = [
     {
       slug: 'flavor-enhancer',
@@ -707,7 +762,7 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
       slug: 'additional-topping',
       name: 'Additional Topping',
       category: 'topping',
-      description: 'Extra topping for açaí bowls and waffles.',
+      description: 'Extra topping for waffles.',
       price: 100,
     },
     {
@@ -717,6 +772,10 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
       description: 'Fat reducing donut shot add-on for iced protein coffee — Dulce de Leche flavor only.',
       price: 600,
     },
+    ...acaiExtraAddIns,
+    ...waffleExtraAddIns,
+    ...proteinCoffeeAddIns,
+    ...proteinShakeAddIns,
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
@@ -1230,9 +1289,17 @@ async function seedLoadedTeaProducts(
 
 async function seedAcaiBowlProducts(
   categoryIds: Record<string, Types.ObjectId>,
-  addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
+  addInIds: Record<string, Types.ObjectId>
 ): Promise<void> {
   const activeSlugs = ACAI_BOWLS_MENU.items.map((item) => `acai-bowl-${item.slug}`);
+  const acaiExtraAddInOptions = acaiBowlExtraAddInSlugs()
+    .map((slug) => addInIds[slug])
+    .filter(Boolean)
+    .map((addInId) => ({
+      addInId,
+      maxQuantity: 1,
+      included: false,
+    }));
 
   const acaiBowlSkuBySlug: Record<string, string> = {
     'dubai-acai-bowl': 'FFB-ACAI-DUBAI',
@@ -1292,7 +1359,7 @@ async function seedAcaiBowlProducts(
               : [],
           flavorIds: [],
           kitSizes: [],
-          addInOptions,
+          addInOptions: acaiExtraAddInOptions,
           inventory: {
             trackInventory: false,
             quantity: 0,
@@ -1329,9 +1396,17 @@ async function seedAcaiBowlProducts(
 
 async function seedWaffleProducts(
   categoryIds: Record<string, Types.ObjectId>,
-  addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
+  addInIds: Record<string, Types.ObjectId>
 ): Promise<void> {
   const activeSlugs = WAFFLES_MENU.items.map((item) => `waffle-${item.slug}`);
+  const waffleExtraAddInOptions = waffleExtraAddInSlugs()
+    .map((slug) => addInIds[slug])
+    .filter(Boolean)
+    .map((addInId) => ({
+      addInId,
+      maxQuantity: 1,
+      included: false,
+    }));
 
   await Product.updateOne(
     { slug: 'fusion-waffle' },
@@ -1349,7 +1424,7 @@ async function seedWaffleProducts(
           slug,
           sku,
           name: loc(item.name),
-          shortDescription: loc(`${item.description} $${WAFFLES_MENU.price.toFixed(2)}.`),
+          shortDescription: loc(`${WAFFLES_MENU.websiteDescription} $${WAFFLES_MENU.price.toFixed(2)}.`),
           description: rich(waffleDescriptionHtml(item)),
           productType: 'single',
           categoryId: categoryIds['waffles'],
@@ -1365,7 +1440,7 @@ async function seedWaffleProducts(
           ],
           flavorIds: [],
           kitSizes: [],
-          addInOptions,
+          addInOptions: waffleExtraAddInOptions,
           inventory: {
             trackInventory: false,
             quantity: 0,
@@ -1376,7 +1451,7 @@ async function seedWaffleProducts(
           dietaryTags: [],
           seo: {
             title: `${item.name} | ${BRAND.name}`,
-            description: `${item.name} protein waffle. ${item.description}`,
+            description: `${item.name} protein waffle. ${WAFFLES_MENU.websiteDescription}`,
           },
           status: 'published',
           featured: index === 0,
@@ -1398,6 +1473,68 @@ async function seedWaffleProducts(
   }
 
   console.log(`Waffle products upserted (${WAFFLES_MENU.items.length} records).`);
+}
+
+async function seedProteinShakeProducts(
+  categoryIds: Record<string, Types.ObjectId>,
+  addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
+): Promise<void> {
+  const legacySlugs = PROTEIN_SHAKES_MENU.items.map((item) => proteinShakeProductSlug(item.slug));
+
+  await Product.updateMany(
+    { slug: { $in: legacySlugs } },
+    { $set: { status: 'archived' } }
+  );
+  await Product.updateMany(
+    { slug: 'chocolate-protein-shake' },
+    { $set: { status: 'archived', sku: 'FFB-PSHK-LEGACY' } }
+  );
+
+  const { heroImage, headline } = PROTEIN_SHAKES_MENU;
+
+  await Product.findOneAndUpdate(
+    { slug: PROTEIN_SHAKE_PRODUCT_SLUG },
+    {
+      $set: {
+        slug: PROTEIN_SHAKE_PRODUCT_SLUG,
+        sku: 'FFB-PSHK-MAIN',
+        name: loc(headline),
+        shortDescription: loc(proteinShakeProductShortDescription()),
+        description: rich(proteinShakeProductDescriptionHtml()),
+        productType: 'single',
+        categoryId: categoryIds['protein-shakes'],
+        images: [img(heroImage.url, heroImage.alt)],
+        basePrice: proteinShakeSizePriceCents('24oz'),
+        variants: PROTEIN_SHAKES_MENU.sizes.map((size) => ({
+          sku: `FFB-PSHK-${size.variantSuffix}`,
+          name: loc(size.name),
+          price: proteinShakeSizePriceCents(size.slug),
+          inventory: 0,
+        })),
+        flavorIds: [],
+        kitSizes: [],
+        addInOptions,
+        inventory: {
+          trackInventory: false,
+          quantity: 0,
+          lowStockThreshold: 5,
+          allowBackorder: false,
+        },
+        allergens: [],
+        dietaryTags: [],
+        seo: {
+          title: `${headline} | ${BRAND.name}`,
+          description: proteinShakeProductShortDescription(),
+        },
+        status: 'published',
+        featured: true,
+        order: 0,
+      },
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
+
+  console.log('Protein shake product upserted (1 record).');
 }
 
 async function seedProteinTreatProducts(
@@ -1691,32 +1828,30 @@ async function main(): Promise<void> {
     maxQuantity: 5,
     included: false,
   }));
-  const proteinCoffeeAddInOptions = addInIds['fat-reducing-donut-shot-dulce-de-leche']
-    ? [
-        {
-          addInId: addInIds['fat-reducing-donut-shot-dulce-de-leche'],
-          maxQuantity: 1,
-          included: false,
-        },
-      ]
-    : [];
-  const bowlToppingAddInOptions = addInIds['additional-topping']
-    ? [
-        {
-          addInId: addInIds['additional-topping'],
-          maxQuantity: 10,
-          included: false,
-        },
-      ]
-    : [];
+  const proteinCoffeeAddInOptions = proteinCoffeeOptionalAddInSlugs()
+    .filter((slug) => addInIds[slug])
+    .map((slug) => ({
+      addInId: addInIds[slug],
+      maxQuantity: slug === 'fat-reducing-donut-shot-dulce-de-leche' ? 1 : 5,
+      included: false,
+    }));
+
+  const proteinShakeAddInOptions = proteinShakeOptionalAddInSlugs()
+    .filter((slug) => addInIds[slug])
+    .map((slug) => ({
+      addInId: addInIds[slug],
+      maxQuantity: slug === 'pshk-fat-reducing-shot' ? 1 : 5,
+      included: false,
+    }));
 
   await seedServices();
   await seedProducts(categoryIds, flavorIds, addInIds);
   await seedMegaTeaKitProducts(categoryIds, flavorIds, addInOptions);
   await seedProteinCoffeeProducts(categoryIds, proteinCoffeeAddInOptions);
   await seedLoadedTeaProducts(categoryIds, addInOptions);
-  await seedAcaiBowlProducts(categoryIds, bowlToppingAddInOptions);
-  await seedWaffleProducts(categoryIds, bowlToppingAddInOptions);
+  await seedAcaiBowlProducts(categoryIds, addInIds);
+  await seedWaffleProducts(categoryIds, addInIds);
+  await seedProteinShakeProducts(categoryIds, proteinShakeAddInOptions);
   await seedProteinTreatProducts(categoryIds, addInOptions);
   await seedFaqs();
   await seedPromotions();

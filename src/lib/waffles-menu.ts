@@ -1,14 +1,18 @@
-/** Protein waffles menu — client poster (preset waffles + create your own toppings). */
+/** Protein waffles menu — customize up to 5 included toppings + paid extras. */
 
 function formatUsd(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }
 
+const WAFFLE_WEBSITE_DESCRIPTION =
+  'Build your perfect protein waffle! Choose up to 5 toppings from our fresh fruits, spreads, syrups, nuts and sweet extras. Additional toppings are $1 each.';
+
 export const WAFFLES_MENU = {
   headline: 'Protein Waffles',
   price: 12.99,
-  additionalToppingPrice: 1,
-  buildYourOwnMax: 5,
+  extraToppingPrice: 1,
+  includedToppingMax: 5,
+  websiteDescription: WAFFLE_WEBSITE_DESCRIPTION,
   toppingGroups: [
     {
       label: 'Fruit',
@@ -22,28 +26,29 @@ export const WAFFLES_MENU = {
         'Syrup',
         'Peanut Butter',
         'Caramel',
-        'Chocolate drizzle',
+        'Chocolate Drizzle',
         'Condensed Milk',
-        'Dulce de leche',
+        'Dulce de Leche',
       ] as const,
     },
     {
       label: 'Nuts & Seeds',
-      items: ['Chia seeds', 'Almonds', 'Walnuts', 'Pecans', 'Coconut Flakes'] as const,
+      items: ['Chia Seeds', 'Sliced Almonds', 'Walnuts', 'Pecans', 'Coconut Flakes'] as const,
     },
     {
-      label: 'Dry Toppings & Mix-ins',
+      label: 'Dry Toppings & Mix-Ins',
       items: [
-        'Chocolate Chip (Dark/White)',
-        'Oreo crumbs',
+        'Dark Chocolate Chips',
+        'White Chocolate Chips',
+        'Oreo Crumbs',
         'Cinnamon',
         'Marshmallows',
-        'Powder sugar',
+        'Powdered Sugar',
       ] as const,
     },
     {
       label: 'Other',
-      items: ['Whipped cream'] as const,
+      items: ['Whipped Cream'] as const,
     },
   ],
   items: [
@@ -51,28 +56,18 @@ export const WAFFLES_MENU = {
       slug: 'birthday-cake',
       name: 'Birthday Cake',
       description: 'Rainbow sprinkles, condensed milk & whipped cream.',
-      includes: ['Rainbow sprinkles', 'Condensed Milk', 'Whipped cream'] as const,
       image: '/images/waffle-birthday-cake.png',
     },
     {
       slug: 'crunchy-monkey',
       name: 'Crunchy Monkey',
       description: 'Bananas, walnuts, coconut flakes, caramel drizzle & condensed milk.',
-      includes: [
-        'Bananas',
-        'Walnuts',
-        'Coconut flakes',
-        'Caramel drizzle',
-        'Condensed Milk',
-      ] as const,
       image: '/images/waffles/crunchy-monkey.png',
     },
     {
       slug: 'build-your-own',
       name: 'Create Your Own Waffle',
-      description: 'Pick up to 5 toppings from our waffle bar.',
-      placeholder: true,
-      picks: { max: 5 },
+      description: WAFFLE_WEBSITE_DESCRIPTION,
       image: '/images/waffles/berry-nutella.png',
     },
   ],
@@ -84,35 +79,62 @@ export function waffleAllToppings(): string[] {
   return WAFFLES_MENU.toppingGroups.flatMap((group) => [...group.items]);
 }
 
+export function isWaffleProduct(slug: string): boolean {
+  return slug.startsWith('waffle-');
+}
+
+export function waffleMenuItem(productSlug: string): WaffleMenuItem | null {
+  if (!isWaffleProduct(productSlug)) return null;
+  const itemSlug = productSlug.replace(/^waffle-/, '');
+  return WAFFLES_MENU.items.find((item) => item.slug === itemSlug) ?? null;
+}
+
+export function waffleExtraModifierSlug(topping: string): string {
+  const base = topping
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+  return `waffle-extra-${base}`;
+}
+
+export function waffleExtraAddInSlugs(): string[] {
+  return waffleAllToppings().map((topping) => waffleExtraModifierSlug(topping));
+}
+
 export function wafflePriceCents(): number {
   return Math.round(WAFFLES_MENU.price * 100);
 }
 
 export function wafflePricingSummary(): string {
-  return `All waffles ${formatUsd(WAFFLES_MENU.price)} · Additional toppings ${formatUsd(WAFFLES_MENU.additionalToppingPrice)} each`;
+  return `All waffles ${formatUsd(WAFFLES_MENU.price)} · Up to ${WAFFLES_MENU.includedToppingMax} toppings included · Extra toppings ${formatUsd(WAFFLES_MENU.extraToppingPrice)} each`;
+}
+
+export function waffleOrderNotes(input: {
+  includedToppings: string[];
+  extraToppings: string[];
+}): string {
+  const parts: string[] = [];
+  if (input.includedToppings.length) {
+    parts.push(`Toppings: ${input.includedToppings.join(', ')}`);
+  }
+  if (input.extraToppings.length) {
+    parts.push(`Extra toppings: ${input.extraToppings.join(', ')}`);
+  }
+  return parts.join(' · ');
 }
 
 export function waffleDescriptionHtml(item: WaffleMenuItem): string {
-  const parts = [
+  const toppingLines = WAFFLES_MENU.toppingGroups
+    .map((group) => `<li><strong>${group.label}:</strong> ${group.items.join(', ')}</li>`)
+    .join('');
+
+  return [
     `<p><strong>${item.name}</strong> — ${WAFFLES_MENU.headline}.</p>`,
-    `<p>${item.description}</p>`,
+    `<p>${WAFFLES_MENU.websiteDescription}</p>`,
     `<p><strong>Price:</strong> ${formatUsd(WAFFLES_MENU.price)}</p>`,
-  ];
-
-  if ('includes' in item && item.includes?.length) {
-    parts.push(`<p><strong>Includes:</strong> ${item.includes.join(', ')}.</p>`);
-  }
-
-  if ('picks' in item && item.picks?.max) {
-    parts.push(`<p>Choose up to <strong>${item.picks.max}</strong> toppings:</p>`);
-    for (const group of WAFFLES_MENU.toppingGroups) {
-      parts.push(`<p><strong>${group.label}:</strong> ${group.items.join(', ')}.</p>`);
-    }
-  }
-
-  parts.push(
-    `<p>Additional toppings beyond your selection: <strong>${formatUsd(WAFFLES_MENU.additionalToppingPrice)} each</strong>.</p>`
-  );
-
-  return parts.join('');
+    `<p><strong>Customize Your Waffle</strong> — choose up to ${WAFFLES_MENU.includedToppingMax} toppings included:</p>`,
+    `<ul>${toppingLines}</ul>`,
+    `<p><strong>Extra Toppings:</strong> ${formatUsd(WAFFLES_MENU.extraToppingPrice)} each (optional).</p>`,
+  ].join('');
 }

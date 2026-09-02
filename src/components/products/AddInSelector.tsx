@@ -12,14 +12,18 @@ interface AddInSelectorProps {
   locale: Locale;
   selected: Record<string, number>;
   onChange: (next: Record<string, number>) => void;
+  title?: string;
 }
 
-export function AddInSelector({ product, addIns, locale, selected, onChange }: AddInSelectorProps) {
+export function AddInSelector({ product, addIns, locale, selected, onChange, title }: AddInSelectorProps) {
   if (addIns.length === 0) return null;
+
+  const heading =
+    title ?? (locale === 'es' ? 'Complementos' : 'Add-ons');
 
   return (
     <div>
-      <h3 className="font-display text-2xl">{locale === 'es' ? 'Complementos' : 'Add-ons'}</h3>
+      <h3 className="font-display text-2xl">{heading}</h3>
       <div className="mt-4 space-y-3">
         {addIns.map((addIn) => {
           const id = String(addIn._id);

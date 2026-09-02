@@ -23,14 +23,26 @@ export const PROTEIN_COFFEE = {
     { slug: '24oz', name: '24 oz Iced', price: 6.99, variantSuffix: 'ICED24' },
     { slug: '32oz', name: '32 oz Iced', price: 8.99, variantSuffix: 'ICED32' },
   ] as const,
-  icedAddOn: {
-    slug: 'fat-reducing-donut-shot-dulce-de-leche',
-    name: 'Fat Reducing Donut Shot — Dulce de Leche',
-    price: 6,
-    note: 'Iced protein coffee only — Dulce de Leche flavor.',
-  },
+  optionalAddOns: [
+    { slug: 'pcof-collagen', name: 'Collagen', price: 3.0 },
+    { slug: 'pcof-fiber-unflavored', name: 'Fiber (Unflavored)', price: 2.0 },
+    { slug: 'pcof-probiotics', name: 'Probiotics', price: 2.0 },
+    { slug: 'pcof-creatine', name: 'Creatine', price: 2.0 },
+    { slug: 'pcof-immunity-essentials', name: 'Immunity Essentials', price: 2.0 },
+    { slug: 'pcof-additional-flavoring', name: 'Additional Flavoring', price: 1.0 },
+    { slug: 'pcof-cinnamon', name: 'Cinnamon', price: 0.5 },
+    { slug: 'pcof-whipped-cream', name: 'Whipped Cream', price: 1.0 },
+    { slug: 'pcof-foam', name: 'Foam', price: 1.0 },
+    { slug: 'pcof-caramel-drizzle', name: 'Caramel Drizzle', price: 0.5 },
+    { slug: 'pcof-chocolate-drizzle', name: 'Chocolate Drizzle', price: 0.5 },
+    {
+      slug: 'fat-reducing-donut-shot-dulce-de-leche',
+      name: 'Fat Reducing Donut Shot — Dulce de Leche',
+      price: 6.0,
+    },
+  ] as const,
   footerNotes: [
-    'Add fat-reducing donut shot (Dulce de Leche) to iced coffee',
+    'Optional collagen, fiber, probiotics, creatine, and more',
     'Ask for flavor available',
   ],
   flavors: [
@@ -59,6 +71,16 @@ export function proteinCoffeePricingSummary(): string {
     .join(' · ');
 }
 
+export function proteinCoffeeOptionalAddInSlugs(): string[] {
+  return PROTEIN_COFFEE.optionalAddOns.map((addOn) => addOn.slug);
+}
+
+export function proteinCoffeeOptionalAddOnsSummary(): string {
+  return PROTEIN_COFFEE.optionalAddOns
+    .map((addOn) => `${addOn.name} ${formatUsd(addOn.price)}`)
+    .join(' · ');
+}
+
 export function isProteinCoffeeProduct(slug: string): boolean {
   return slug === PROTEIN_COFFEE_PRODUCT_SLUG;
 }
@@ -72,33 +94,39 @@ export function proteinCoffeeFlavorList(): string {
 }
 
 export function proteinCoffeeProductDescriptionHtml(): string {
-  const { icedAddOn, icedSizes } = PROTEIN_COFFEE;
+  const { icedSizes } = PROTEIN_COFFEE;
   const sizeLines = icedSizes
     .map((size) => `<li><strong>${size.name}</strong> — ${formatUsd(size.price)}</li>`)
     .join('');
   const flavorLines = PROTEIN_COFFEE.flavors
     .map((flavor) => `<li>${flavor.name}</li>`)
     .join('');
+  const addOnLines = PROTEIN_COFFEE.optionalAddOns
+    .map((addOn) => `<li>${addOn.name} — ${formatUsd(addOn.price)}</li>`)
+    .join('');
 
   return [
     `<p><strong>${PROTEIN_COFFEE.headline}</strong> — iced only.</p>`,
     `<p><strong>Iced sizes:</strong></p><ul>${sizeLines}</ul>`,
     `<p><strong>Flavors:</strong></p><ul>${flavorLines}</ul>`,
-    `<p><strong>Add-on:</strong> ${icedAddOn.name} — ${formatUsd(icedAddOn.price)} (${icedAddOn.note})</p>`,
+    `<p><strong>Optional add-ons:</strong></p><ul>${addOnLines}</ul>`,
     `<p>Contains caffeine. Not recommended for all audiences.</p>`,
   ].join('');
 }
 
 export function proteinCoffeeDescriptionHtml(flavorName: string): string {
-  const { icedAddOn, icedSizes } = PROTEIN_COFFEE;
+  const { icedSizes } = PROTEIN_COFFEE;
   const sizeLines = icedSizes
     .map((size) => `<li><strong>${size.name}</strong> — ${formatUsd(size.price)}</li>`)
+    .join('');
+  const addOnLines = PROTEIN_COFFEE.optionalAddOns
+    .map((addOn) => `<li>${addOn.name} — ${formatUsd(addOn.price)}</li>`)
     .join('');
 
   return [
     `<p><strong>${flavorName}</strong> protein coffee.</p>`,
     `<p><strong>Iced sizes:</strong></p><ul>${sizeLines}</ul>`,
-    `<p><strong>Iced add-on:</strong> ${icedAddOn.name} — ${formatUsd(icedAddOn.price)} (${icedAddOn.note})</p>`,
+    `<p><strong>Optional add-ons:</strong></p><ul>${addOnLines}</ul>`,
     `<p>Contains caffeine. Not recommended for all audiences.</p>`,
   ].join('');
 }

@@ -3,13 +3,8 @@ import { getLocalized } from '@/lib/utils';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import { MegaTeaKitsCategoryExplorer } from '@/components/menu/MegaTeaKitsCategoryExplorer';
 import { LoadedTeasCategoryExplorer } from '@/components/menu/LoadedTeasCategoryExplorer';
-import { PROTEIN_COFFEE, proteinCoffeeFlavorList, proteinCoffeePricingSummary } from '@/lib/protein-coffee-menu';
-import { LOADED_TEAS_MENU, loadedTeaPricingSummary } from '@/lib/loaded-teas-menu';
-import {
-  MEGA_TEA_KITS_MENU,
-  megaTeaKitIncludesSummary,
-  megaTeaKitPricingSummary,
-} from '@/lib/mega-tea-kits-menu';
+import { ProteinShakesCategoryExplorer } from '@/components/menu/ProteinShakesCategoryExplorer';
+import { PROTEIN_COFFEE, proteinCoffeeFlavorList, proteinCoffeeOptionalAddOnsSummary, proteinCoffeePricingSummary } from '@/lib/protein-coffee-menu';
 import { ACAI_BOWLS_MENU, acaiBowlPricingSummary } from '@/lib/acai-bowls-menu';
 import { WAFFLES_MENU, wafflePricingSummary } from '@/lib/waffles-menu';
 import { PROTEIN_TREATS_MENU } from '@/lib/protein-treats-menu';
@@ -40,9 +35,15 @@ function productsForCategory(
   return allProducts.filter((p) => String(p.categoryId) === String(cat._id));
 }
 
+function categoryUsesExplorer(slug: string): boolean {
+  return slug === 'mega-teas' || slug === 'protein-shakes' || slug === 'mega-tea-kits';
+}
+
 function CategoryIntro({ category, locale }: { category: IProductCategory; locale: Locale }) {
+  if (categoryUsesExplorer(category.slug)) {
+    return null;
+  }
   if (category.slug === 'protein-coffee') {
-    const { icedAddOn } = PROTEIN_COFFEE;
     return (
       <div className="mb-6 max-w-3xl space-y-3 text-grey">
         <p>{PROTEIN_COFFEE.servingNote}</p>
@@ -51,32 +52,9 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
           <span className="font-semibold text-carbon">Flavors: </span>
           {proteinCoffeeFlavorList()}
         </p>
-        <p className="text-sm">
-          <span className="font-semibold text-carbon">Add-on: </span>
-          {icedAddOn.name} — ${icedAddOn.price.toFixed(2)} ({icedAddOn.note})
-        </p>
-      </div>
-    );
-  }
-  if (category.slug === 'mega-teas') {
-    return (
-      <div className="mb-6 max-w-2xl space-y-2 text-grey">
-        <p>{LOADED_TEAS_MENU.headline}</p>
-        <p className="text-sm">{loadedTeaPricingSummary()}</p>
-      </div>
-    );
-  }
-  if (category.slug === 'mega-tea-kits') {
-    return (
-      <div className="mb-6 max-w-2xl space-y-2 text-grey">
-        <p className="font-semibold text-carbon">{MEGA_TEA_KITS_MENU.headline}</p>
-        <p className="text-sm">
-          {megaTeaKitPricingSummary()} · Includes {megaTeaKitIncludesSummary()}
-        </p>
-        <p className="text-sm">
-          {locale === 'es'
-            ? 'Elige una colección, luego selecciona tu sabor en la página del kit.'
-            : 'Pick a collection, then choose your flavor on the kit page.'}
+        <p>
+          <span className="font-semibold text-carbon">Optional add-ons: </span>
+          {proteinCoffeeOptionalAddOnsSummary()}
         </p>
       </div>
     );
@@ -87,21 +65,24 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
         <p className="font-semibold text-carbon">{ACAI_BOWLS_MENU.headline}</p>
         <p className="text-sm">{acaiBowlPricingSummary()}</p>
         <p>
+          <span className="font-semibold text-carbon">Regular &amp; Tropical Açaí Bowls: </span>
+          choose up to 3 fruits and 2 toppings (included).
+        </p>
+        <p>
           <span className="font-semibold text-carbon">Dubai Açaí Bowl: </span>
           pick 2 fruits — includes pistachio sauce &amp; Nutella, then pick 1 more topping.
         </p>
         <p>
-          <span className="font-semibold text-carbon">Regular &amp; Tropical Açaí Bowls: </span>
-          pick 3 fruits and 2 toppings.
+          <span className="font-semibold text-carbon">Included fruits: </span>
+          {ACAI_BOWLS_MENU.includedFruits.join(', ')}.
         </p>
         <p>
-          <span className="font-semibold text-carbon">Fruits: </span>
-          {ACAI_BOWLS_MENU.fruits.join(', ')}.
+          <span className="font-semibold text-carbon">Included toppings: </span>
+          {ACAI_BOWLS_MENU.includedToppings.join(', ')}.
         </p>
         <p>
-          <span className="font-semibold text-carbon">Toppings: </span>
-          {ACAI_BOWLS_MENU.toppings.join(', ')}. Additional toppings $
-          {ACAI_BOWLS_MENU.additionalToppingPrice.toFixed(2)} each.
+          <span className="font-semibold text-carbon">Extra fruits &amp; toppings: </span>
+          ${ACAI_BOWLS_MENU.extraFruitPrice.toFixed(2)} each.
         </p>
         <p className="text-sm italic">{ACAI_BOWLS_MENU.footnote}</p>
       </div>
@@ -111,18 +92,21 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
     return (
       <div className="mb-6 max-w-3xl space-y-3 text-grey">
         <p className="font-semibold text-carbon">{WAFFLES_MENU.headline}</p>
+        <p>{WAFFLES_MENU.websiteDescription}</p>
         <p className="text-sm">{wafflePricingSummary()}</p>
         <p>
-          <span className="font-semibold text-carbon">Create your own — up to {WAFFLES_MENU.buildYourOwnMax} toppings</span>
+          <span className="font-semibold text-carbon">Customize Your Waffle: </span>
+          choose up to {WAFFLES_MENU.includedToppingMax} toppings included from fruits, spreads, nuts, and sweet extras.
         </p>
         {WAFFLES_MENU.toppingGroups.map((group) => (
           <p key={group.label}>
             <span className="font-semibold text-carbon">{group.label}: </span>
-            {group.items.join(', ')}
+            {group.items.join(', ')}.
           </p>
         ))}
-        <p className="text-sm">
-          Additional toppings ${WAFFLES_MENU.additionalToppingPrice.toFixed(2)} each.
+        <p>
+          <span className="font-semibold text-carbon">Extra toppings: </span>
+          ${WAFFLES_MENU.extraToppingPrice.toFixed(2)} each (optional).
         </p>
       </div>
     );
@@ -213,6 +197,8 @@ export function MenuCategoryPanel({
           />
         ) : category.slug === 'mega-teas' ? (
           <LoadedTeasCategoryExplorer locale={locale} />
+        ) : category.slug === 'protein-shakes' ? (
+          <ProteinShakesCategoryExplorer locale={locale} />
         ) : category.slug === 'donut-of-the-day' ? (
           <DonutOfTheDaySpotlight locale={locale} />
         ) : category.slug === 'protein-coffee' ? (
@@ -232,9 +218,10 @@ export function MenuCategoryPanel({
         const categoryProducts = productsForCategory(products, categories, cat.slug);
         const isKits = cat.slug === 'mega-tea-kits';
         const isLoadedTeas = cat.slug === 'mega-teas';
+        const isProteinShakes = cat.slug === 'protein-shakes';
         const isSpotlight = isMenuSpotlightCategory(cat.slug);
 
-        if (!isSpotlight && !isKits && !isLoadedTeas && categoryProducts.length === 0) return null;
+        if (!isSpotlight && !isKits && !isLoadedTeas && !isProteinShakes && categoryProducts.length === 0) return null;
 
         return (
           <section key={cat.slug} id={cat.slug} className="scroll-mt-24">
@@ -249,6 +236,8 @@ export function MenuCategoryPanel({
               />
             ) : cat.slug === 'mega-teas' ? (
               <LoadedTeasCategoryExplorer locale={locale} />
+            ) : cat.slug === 'protein-shakes' ? (
+              <ProteinShakesCategoryExplorer locale={locale} />
             ) : cat.slug === 'donut-of-the-day' ? (
               <DonutOfTheDaySpotlight locale={locale} />
             ) : cat.slug === 'protein-coffee' ? (

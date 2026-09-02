@@ -1,4 +1,4 @@
-/** Açaí & Protein Bowls menu — client poster (pick fruits, toppings, bowl styles). */
+/** Açaí & Protein Bowls menu — pick fruits, toppings, and paid extras. */
 
 function formatUsd(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
@@ -7,24 +7,40 @@ function formatUsd(amount: number): string {
 export const ACAI_BOWLS_MENU = {
   headline: 'Açaí & Protein Bowls',
   footnote: 'Gluten free Granola & Protein available for additional fee.',
-  additionalToppingPrice: 1,
+  extraFruitPrice: 1,
+  extraToppingPrice: 1,
   defaultSize: '12 oz',
-  fruits: ['Strawberry', 'Banana', 'Blueberry', 'Kiwi'] as const,
-  toppings: [
+  includedFruits: ['Strawberry', 'Banana', 'Blueberry', 'Kiwi'] as const,
+  includedToppings: [
     'Granola',
     'Nutella',
     'Honey',
     'Peanut Butter',
     'Coconut Flakes',
-    'Chia seeds',
+    'Chia Seeds',
     'Almond Butter',
     'Pecans',
-    'Condensed milk',
-    'Chocolate drizzle',
+    'Condensed Milk',
+    'Chocolate Drizzle',
     'Walnuts',
-    'Almonds',
-    'Chocolate chips',
-    'Dulce de leche',
+    'Sliced Almonds',
+    'Chocolate Chips',
+    'Dulce de Leche',
+  ] as const,
+  extraFruits: ['Strawberry', 'Banana', 'Blueberry', 'Kiwi'] as const,
+  extraToppings: [
+    'Strawberries',
+    'Banana',
+    'Kiwi',
+    'Blueberries',
+    'Granola',
+    'Peanut Butter',
+    'Nutella',
+    'Chocolate Chips',
+    'Sliced Almonds',
+    'Coconut Flakes',
+    'Condensed Milk',
+    'Caramel Drizzle',
   ] as const,
   items: [
     {
@@ -43,7 +59,7 @@ export const ACAI_BOWLS_MENU = {
       slug: 'regular-acai-bowl',
       name: 'Regular Açaí Bowl',
       kind: 'acai' as const,
-      description: 'Build your bowl — pick 3 fruits and 2 toppings.',
+      description: 'Choose up to 3 fruits and 2 toppings.',
       picks: { fruits: 3, toppings: 2 },
       image: '/images/acai-regular-bowl.png',
       size: '12 oz',
@@ -63,7 +79,7 @@ export const ACAI_BOWLS_MENU = {
       slug: 'tropical-acai-bowl',
       name: 'Tropical Açaí Bowl',
       kind: 'acai' as const,
-      description: 'Tropical açaí bowl — pick 3 fruits and 2 toppings.',
+      description: 'Choose up to 3 fruits and 2 toppings.',
       picks: { fruits: 3, toppings: 2 },
       image: '/images/acai-tropical-bowl.png',
       size: '12 oz',
@@ -84,15 +100,89 @@ export const ACAI_BOWLS_MENU = {
 
 export type AcaiBowlMenuItem = (typeof ACAI_BOWLS_MENU.items)[number];
 
+export interface AcaiBowlModifierConfig {
+  includedFruitMax: number;
+  includedToppingMax: number;
+  fixedIncludes: string[];
+}
+
+export function isAcaiBowlProduct(slug: string): boolean {
+  return slug.startsWith('acai-bowl-');
+}
+
+export function acaiBowlItemSlug(productSlug: string): string | null {
+  if (!isAcaiBowlProduct(productSlug)) return null;
+  return productSlug.replace(/^acai-bowl-/, '');
+}
+
+export function acaiBowlMenuItem(productSlug: string): AcaiBowlMenuItem | null {
+  const itemSlug = acaiBowlItemSlug(productSlug);
+  if (!itemSlug) return null;
+  return ACAI_BOWLS_MENU.items.find((item) => item.slug === itemSlug) ?? null;
+}
+
+export function acaiBowlModifierConfig(item: AcaiBowlMenuItem): AcaiBowlModifierConfig {
+  return {
+    includedFruitMax: item.picks.fruits,
+    includedToppingMax: item.picks.toppings ?? 0,
+    fixedIncludes: 'includes' in item && item.includes ? [...item.includes] : [],
+  };
+}
+
+export function acaiBowlModifierSlug(kind: 'extra-fruit' | 'extra-topping', name: string): string {
+  const base = name
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+  return `acai-${kind}-${base}`;
+}
+
+export function acaiBowlExtraAddInSlugs(): string[] {
+  return [
+    ...ACAI_BOWLS_MENU.extraFruits.map((name) => acaiBowlModifierSlug('extra-fruit', name)),
+    ...ACAI_BOWLS_MENU.extraToppings.map((name) => acaiBowlModifierSlug('extra-topping', name)),
+  ];
+}
+
 export function acaiBowlPriceCents(item: AcaiBowlMenuItem): number {
   return 'price' in item && item.price != null ? Math.round(item.price * 100) : 0;
 }
 
 export function acaiBowlPricingSummary(): string {
-  return `Açaí & tropical bowls ${ACAI_BOWLS_MENU.defaultSize} ${formatUsd(11.99)} · Dubai ${formatUsd(14.99)} · Additional toppings ${formatUsd(ACAI_BOWLS_MENU.additionalToppingPrice)} each`;
+  return `Açaí & tropical bowls ${ACAI_BOWLS_MENU.defaultSize} ${formatUsd(11.99)} · Dubai ${formatUsd(14.99)} · Extra fruits & toppings ${formatUsd(ACAI_BOWLS_MENU.extraToppingPrice)} each`;
+}
+
+export function acaiBowlOrderNotes(input: {
+  includedFruits: string[];
+  includedToppings: string[];
+  extraFruits: string[];
+  extraToppings: string[];
+  fixedIncludes?: string[];
+}): string {
+  const parts: string[] = [];
+
+  if (input.fixedIncludes?.length) {
+    parts.push(`Includes: ${input.fixedIncludes.join(', ')}`);
+  }
+  if (input.includedFruits.length) {
+    parts.push(`Fruits: ${input.includedFruits.join(', ')}`);
+  }
+  if (input.includedToppings.length) {
+    parts.push(`Toppings: ${input.includedToppings.join(', ')}`);
+  }
+  if (input.extraFruits.length) {
+    parts.push(`Extra fruits: ${input.extraFruits.join(', ')}`);
+  }
+  if (input.extraToppings.length) {
+    parts.push(`Extra toppings: ${input.extraToppings.join(', ')}`);
+  }
+
+  return parts.join(' · ');
 }
 
 export function acaiBowlDescriptionHtml(item: AcaiBowlMenuItem): string {
+  const config = acaiBowlModifierConfig(item);
   const parts = [
     `<p><strong>${item.name}</strong> — ${ACAI_BOWLS_MENU.headline}.</p>`,
     `<p>${item.description}</p>`,
@@ -102,28 +192,25 @@ export function acaiBowlDescriptionHtml(item: AcaiBowlMenuItem): string {
     parts.push(`<p><strong>Size:</strong> ${item.size} — <strong>${formatUsd(item.price)}</strong></p>`);
   }
 
-  if (item.picks.fruits) {
-    parts.push(
-      `<p>Choose <strong>${item.picks.fruits} fruit${item.picks.fruits > 1 ? 's' : ''}</strong> from: ${ACAI_BOWLS_MENU.fruits.join(', ')}.</p>`
-    );
+  if (config.fixedIncludes.length) {
+    parts.push(`<p><strong>Includes:</strong> ${config.fixedIncludes.join(' & ')}.</p>`);
   }
 
-  if ('includes' in item && item.includes?.length) {
-    parts.push(`<p>Includes: ${item.includes.join(' & ')}.</p>`);
-    if ('toppings' in item.picks && item.picks.toppings) {
-      parts.push(
-        `<p>Then choose <strong>${item.picks.toppings} more topping${item.picks.toppings > 1 ? 's' : ''}</strong> from: ${ACAI_BOWLS_MENU.toppings.join(', ')}.</p>`
-      );
-    }
-  } else if ('toppings' in item.picks && item.picks.toppings) {
+  parts.push(
+    `<p><strong>Choose Your Fruits</strong> — select up to ${config.includedFruitMax}: ${ACAI_BOWLS_MENU.includedFruits.join(', ')}.</p>`
+  );
+
+  if (config.includedToppingMax > 0) {
     parts.push(
-      `<p>Choose <strong>${item.picks.toppings} topping${item.picks.toppings > 1 ? 's' : ''}</strong> from: ${ACAI_BOWLS_MENU.toppings.join(', ')}.</p>`
+      `<p><strong>Choose Your Toppings</strong> — select up to ${config.includedToppingMax}: ${ACAI_BOWLS_MENU.includedToppings.join(', ')}.</p>`
     );
   }
 
   parts.push(
-    `<p>Additional toppings beyond your selection: <strong>${formatUsd(ACAI_BOWLS_MENU.additionalToppingPrice)} each</strong>.</p>`
+    `<p><strong>Extra Fruits</strong> — ${formatUsd(ACAI_BOWLS_MENU.extraFruitPrice)} each: ${ACAI_BOWLS_MENU.extraFruits.join(', ')}.</p>`,
+    `<p><strong>Extra Toppings</strong> — ${formatUsd(ACAI_BOWLS_MENU.extraToppingPrice)} each: ${ACAI_BOWLS_MENU.extraToppings.join(', ')}.</p>`,
+    `<p><em>${ACAI_BOWLS_MENU.footnote}</em></p>`
   );
-  parts.push(`<p><em>${ACAI_BOWLS_MENU.footnote}</em></p>`);
+
   return parts.join('');
 }

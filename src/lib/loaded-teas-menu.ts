@@ -20,8 +20,8 @@ export const LOADED_TEAS_MENU = {
   headline: 'Refreshers / Loaded Teas',
   servingNote: '24 oz & 32 oz',
   heroImage: {
-    url: '/images/mega-tea.png',
-    alt: 'Loaded tea drinks',
+    url: '/images/loaded-teas/hero.jpg',
+    alt: 'Colorful layered Fusion Fuel loaded tea with ice',
   },
   sizes: [
     { slug: '24oz', name: '24 oz', price: LOADED_TEA_STANDARD_PRICES['24oz'] },

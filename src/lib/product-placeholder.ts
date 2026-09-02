@@ -1,6 +1,7 @@
 import type { IProduct } from '@/models/Product';
 import { PROTEIN_COFFEE_PRODUCT_SLUG } from '@/lib/protein-coffee-menu';
 import { LOADED_TEA_PRODUCT_SLUG } from '@/lib/loaded-teas-menu';
+import { PROTEIN_SHAKE_PRODUCT_SLUG } from '@/lib/protein-shakes-menu';
 
 /** Generic stock images — show a styled text card instead. */
 export const GENERIC_PRODUCT_IMAGE_URLS = new Set([
@@ -27,6 +28,11 @@ export const CATEGORY_CARD_STYLES: Record<
     gradient: 'from-carbon via-carbon/90 to-carbon/75',
     label: 'Protein Coffee',
     badge: 'bg-lime text-ink',
+  },
+  'protein-shakes': {
+    gradient: 'from-lime/25 via-yellow/20 to-white',
+    label: 'Protein Shake',
+    badge: 'bg-pink text-white',
   },
   'acai-bowls': {
     gradient: 'from-purple-200/80 via-pink-100/60 to-white',
@@ -61,6 +67,9 @@ export function inferProductCategorySlug(productSlug: string): string {
   if (productSlug.startsWith('mega-tea-kit-')) return 'mega-tea-kits';
   if (productSlug === PROTEIN_COFFEE_PRODUCT_SLUG || productSlug.startsWith('protein-coffee-')) {
     return 'protein-coffee';
+  }
+  if (productSlug === PROTEIN_SHAKE_PRODUCT_SLUG || productSlug.startsWith('protein-shake-')) {
+    return 'protein-shakes';
   }
   if (productSlug.startsWith('acai-bowl-')) return 'acai-bowls';
   if (productSlug.startsWith('waffle-')) return 'waffles';

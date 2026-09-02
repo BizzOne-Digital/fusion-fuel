@@ -12,8 +12,14 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { KitBuilder } from '@/components/products/KitBuilder';
 import { MegaTeaKitProductDetail } from '@/components/products/MegaTeaKitProductDetail';
 import { LoadedTeaProductDetail } from '@/components/products/LoadedTeaProductDetail';
+import { ProteinShakeProductDetail } from '@/components/products/ProteinShakeProductDetail';
+import { AcaiBowlProductDetail } from '@/components/products/AcaiBowlProductDetail';
+import { WaffleProductDetail } from '@/components/products/WaffleProductDetail';
 import { isMegaTeaKitProduct } from '@/lib/mega-tea-kits-menu';
 import { isLoadedTeaProduct } from '@/lib/loaded-teas-menu';
+import { isProteinShakeProduct } from '@/lib/protein-shakes-menu';
+import { isAcaiBowlProduct } from '@/lib/acai-bowls-menu';
+import { isWaffleProduct } from '@/lib/waffles-menu';
 import { ProductAddToCart } from '@/components/products/ProductAddToCart';
 import { resolveProductAddIns } from '@/lib/product-add-ins';
 import { ProductJsonLd } from '@/components/seo/ProductJsonLd';
@@ -45,6 +51,9 @@ export default async function ProductDetailPage({
 
   const isMegaTeaKit = isMegaTeaKitProduct(slug);
   const isLoadedTea = isLoadedTeaProduct(slug);
+  const isProteinShake = isProteinShakeProduct(slug);
+  const isAcaiBowl = isAcaiBowlProduct(slug);
+  const isWaffle = isWaffleProduct(slug);
 
   return (
     <>
@@ -55,6 +64,22 @@ export default async function ProductDetailPage({
           <MegaTeaKitProductDetail product={product} flavors={flavors} locale={typedLocale} />
         ) : isLoadedTea ? (
           <LoadedTeaProductDetail product={product} addIns={productAddIns} locale={typedLocale} />
+        ) : isProteinShake ? (
+          <ProteinShakeProductDetail product={product} addIns={productAddIns} locale={typedLocale} />
+        ) : isAcaiBowl ? (
+          <AcaiBowlProductDetail
+            product={product}
+            addIns={productAddIns}
+            locale={typedLocale}
+            categorySlug={categorySlug}
+          />
+        ) : isWaffle ? (
+          <WaffleProductDetail
+            product={product}
+            addIns={productAddIns}
+            locale={typedLocale}
+            categorySlug={categorySlug}
+          />
         ) : (
         <div className="grid gap-12 lg:grid-cols-2">
           <div>
