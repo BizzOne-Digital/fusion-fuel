@@ -10,8 +10,7 @@ import {
 } from '@/lib/loaded-teas-menu';
 import type { Locale } from '@/types';
 
-function stopLinkNavigation(event: React.MouseEvent | React.KeyboardEvent) {
-  event.preventDefault();
+function isolateDropdownClicks(event: React.MouseEvent) {
   event.stopPropagation();
 }
 
@@ -45,9 +44,7 @@ export function LoadedTeasCategoryExplorer({ locale }: { locale: Locale }) {
 
         <div
           className="min-w-0 flex-1 sm:max-w-xs lg:max-w-sm"
-          onClick={stopLinkNavigation}
-          onMouseDown={stopLinkNavigation}
-          onKeyDown={stopLinkNavigation}
+          onClick={isolateDropdownClicks}
         >
           <Select
             name="loaded-tea-flavors-preview"

@@ -25,8 +25,7 @@ interface MegaTeaKitsCategoryExplorerProps {
   activeCollection?: string;
 }
 
-function stopLinkNavigation(event: React.MouseEvent | React.KeyboardEvent) {
-  event.preventDefault();
+function isolateDropdownClicks(event: React.MouseEvent) {
   event.stopPropagation();
 }
 
@@ -43,9 +42,7 @@ function CollectionFlavorDropdown({
   return (
     <div
       className="min-w-0 flex-1 sm:max-w-xs lg:max-w-sm"
-      onClick={stopLinkNavigation}
-      onMouseDown={stopLinkNavigation}
-      onKeyDown={stopLinkNavigation}
+      onClick={isolateDropdownClicks}
     >
       <Select
         name={`kit-flavors-${collectionSlug}`}
