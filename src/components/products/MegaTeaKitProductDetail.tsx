@@ -35,7 +35,6 @@ export function MegaTeaKitProductDetail({ product, flavors, addIns, locale }: Me
   const [loading, setLoading] = useState(false);
 
   const name = getLocalized(product.name, locale);
-  const shortDescription = getLocalized(product.shortDescription, locale);
   const kitSize = product.kitSizes[0];
   const unitPrice = kitSize?.price ?? product.basePrice;
 
@@ -116,7 +115,6 @@ export function MegaTeaKitProductDetail({ product, flavors, addIns, locale }: Me
       </div>
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
-        <p className="mt-2 text-grey">{shortDescription}</p>
         <p className="mt-2 text-sm leading-relaxed text-grey">{megaTeaKitPricingSummary()}</p>
         <p className="mt-4 font-display text-3xl text-pink">
           {formatPrice(linePrice, 'USD', locale)}

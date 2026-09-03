@@ -4,10 +4,6 @@ import { ProductGrid } from '@/components/products/ProductGrid';
 import { MegaTeaKitsCategoryExplorer } from '@/components/menu/MegaTeaKitsCategoryExplorer';
 import { LoadedTeasCategoryExplorer } from '@/components/menu/LoadedTeasCategoryExplorer';
 import { ProteinShakesCategoryExplorer } from '@/components/menu/ProteinShakesCategoryExplorer';
-import { ACAI_BOWLS_MENU, acaiBowlPricingSummary } from '@/lib/acai-bowls-menu';
-import { PROTEIN_COFFEE, proteinCoffeePricingSummary } from '@/lib/protein-coffee-menu';
-import { PROTEIN_SHAKES_MENU, proteinShakePricingSummary } from '@/lib/protein-shakes-menu';
-import { MEGA_TEA_KITS_MENU, megaTeaKitIncludesSummary, megaTeaKitPricingSummary } from '@/lib/mega-tea-kits-menu';
 import { DONUT_OF_THE_DAY_MENU } from '@/lib/donut-of-the-day-menu';
 import type { IFlavor } from '@/models/Flavor';
 import type { IProduct } from '@/models/Product';
@@ -57,50 +53,6 @@ function isMenuSpotlightCategory(slug: string): boolean {
   return slug === 'donut-of-the-day';
 }
 
-function CategoryPricingNote({ slug }: { slug: string }) {
-  if (slug === 'acai-bowls') {
-    return (
-      <div className="mt-2 mb-6 max-w-3xl space-y-1 text-grey">
-        <p className="font-semibold text-carbon">{ACAI_BOWLS_MENU.headline}</p>
-        <p className="text-sm leading-relaxed">{acaiBowlPricingSummary()}</p>
-      </div>
-    );
-  }
-
-  if (slug === 'protein-coffee') {
-    return (
-      <div className="mt-2 mb-6 max-w-3xl space-y-1 text-grey">
-        <p className="font-semibold text-carbon">{PROTEIN_COFFEE.headline}</p>
-        <p>{PROTEIN_COFFEE.servingNote}</p>
-        <p className="text-sm leading-relaxed">{proteinCoffeePricingSummary()}</p>
-      </div>
-    );
-  }
-
-  if (slug === 'protein-shakes') {
-    return (
-      <div className="mt-2 mb-6 max-w-3xl space-y-1 text-grey">
-        <p className="font-semibold text-carbon">{PROTEIN_SHAKES_MENU.headline}</p>
-        <p>{PROTEIN_SHAKES_MENU.servingNote}</p>
-        <p className="text-sm leading-relaxed">{proteinShakePricingSummary()}</p>
-      </div>
-    );
-  }
-
-  if (slug === 'mega-tea-kits') {
-    return (
-      <div className="mt-2 mb-6 max-w-3xl space-y-1 text-grey">
-        <p className="font-semibold text-carbon">{MEGA_TEA_KITS_MENU.headline}</p>
-        <p className="text-sm leading-relaxed">
-          Includes {megaTeaKitIncludesSummary()}. {megaTeaKitPricingSummary()}.
-        </p>
-      </div>
-    );
-  }
-
-  return null;
-}
-
 export function MenuCategoryPanel({
   category,
   categories,
@@ -115,7 +67,6 @@ export function MenuCategoryPanel({
     return (
       <div>
         <h2 className="font-display text-3xl md:text-4xl">{getLocalized(category.name, locale)}</h2>
-        <CategoryPricingNote slug={category.slug} />
         {category.slug === 'mega-tea-kits' ? (
           <MegaTeaKitsCategoryExplorer
             products={categoryProducts}
@@ -154,7 +105,6 @@ export function MenuCategoryPanel({
         return (
           <section key={cat.slug} id={cat.slug} className="scroll-mt-24">
             <h2 className="font-display text-3xl">{getLocalized(cat.name, locale)}</h2>
-            <CategoryPricingNote slug={cat.slug} />
             {isKits ? (
               <MegaTeaKitsCategoryExplorer
                 products={categoryProducts}

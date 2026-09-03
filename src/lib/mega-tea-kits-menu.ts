@@ -112,5 +112,5 @@ export function megaTeaKitFlavorNote(flavorName: string): string {
 
 export function megaTeaKitShortDescription(collectionName?: string): string {
   const label = collectionName ? megaTeaKitProductName(collectionName) : 'Mega Tea Kit';
-  return `${label}. ${MEGA_TEA_KITS_MENU.description} ${megaTeaKitPricingSummary()}.`;
+  return `${label}. ${megaTeaKitPricingSummary()}.`;
 }

@@ -13,7 +13,6 @@ import {
   isLoadedTeaProduct,
   loadedTeaFlavorNote,
   loadedTeaItemImage,
-  loadedTeaPricingSummary,
   loadedTeaSizePriceCents,
   loadedTeaVariantSku,
 } from '@/lib/loaded-teas-menu';
@@ -90,8 +89,6 @@ export function LoadedTeaProductDetail({ product, addIns, locale }: LoadedTeaPro
       </div>
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
-        <p className="mt-2 text-grey">{LOADED_TEAS_MENU.servingNote}</p>
-        <p className="mt-2 text-sm leading-relaxed text-grey">{loadedTeaPricingSummary()}</p>
         {selectedItem && hasPrice(unitPrice) && (
           <p className="mt-4 font-display text-3xl text-pink">
             {formatPrice(unitPrice, 'USD', locale)}

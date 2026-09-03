@@ -65,12 +65,6 @@ export function KitBuilder({ product, flavors, addIns }: KitBuilderProps) {
 
   return (
     <div className="space-y-8 rounded-2xl border border-grey/15 bg-cream p-6">
-      <p className="text-sm text-grey">
-        {locale === 'es'
-          ? `Cada kit incluye ${MEGA_TEA_KITS_MENU.includes.join(', ')}.`
-          : `Each kit includes ${MEGA_TEA_KITS_MENU.includes.join(', ')}.`}
-      </p>
-
       <div>
         <h3 className="font-display text-2xl">{locale === 'es' ? 'Tamaño del kit' : 'Kit size'}</h3>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
