@@ -89,6 +89,7 @@ export function isProteinTreatProduct(slug: string): boolean {
 export function productExcludesOptionalAddOns(slug: string): boolean {
   return (
     slug === PROTEIN_TREATS_MENU.proteinTruffles.slug ||
+    slug === PROTEIN_TREATS_MENU.proteinMiniDonuts.slug ||
     slug === PROTEIN_TREATS_MENU.pieInACup.slug
   );
 }

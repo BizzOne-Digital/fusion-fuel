@@ -53,7 +53,7 @@ async function buildCartItem(input: ReturnType<typeof cartItemInputSchema.parse>
   if (input.variantSku) {
     const sku = input.variantSku.toUpperCase();
     const variant = product.variants.find((v) => v.sku === sku);
-    if (variant) {
+    if (variant && variant.price > 0) {
       unitPrice = variant.price;
       variantName = variant.name;
       variantSku = variant.sku;
@@ -96,6 +96,8 @@ async function buildCartItem(input: ReturnType<typeof cartItemInputSchema.parse>
 
   const addInLineTotal = addIns.reduce((s, a) => s + a.unitPrice * a.quantity, 0);
   const lineTotal = (unitPrice + addInLineTotal) * input.quantity;
+
+  if (unitPrice <= 0) return null;
 
   return {
     productId: product._id as Types.ObjectId,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
@@ -22,6 +22,14 @@ interface ProteinTreatProductDetailProps {
   locale: Locale;
 }
 
+function resolveSellableVariant(product: IProduct) {
+  const pricedVariants = product.variants.filter((variant) => hasPrice(variant.price));
+  const variant = pricedVariants[0] ?? null;
+  const unitPrice = variant?.price ?? product.basePrice;
+
+  return { variant, unitPrice };
+}
+
 export function ProteinTreatProductDetail({ product, locale }: ProteinTreatProductDetailProps) {
   const { addItem } = useCart();
   const [loading, setLoading] = useState(false);
@@ -30,16 +38,17 @@ export function ProteinTreatProductDetail({ product, locale }: ProteinTreatProdu
   const name = getLocalized(product.name, locale);
   const image = menuItem ? proteinTreatItemImage(menuItem) : null;
   const packLabel = menuItem ? proteinTreatPackLabel(menuItem) : '';
-  const unitPrice = product.basePrice;
-  const canAdd = Boolean(menuItem) && hasPrice(unitPrice);
+  const { variant, unitPrice } = useMemo(() => resolveSellableVariant(product), [product]);
+  const productId = String(product._id ?? '');
+  const canAdd = Boolean(menuItem) && Boolean(productId) && hasPrice(unitPrice);
 
   const handleAdd = async () => {
     if (!canAdd) return;
     setLoading(true);
     await addItem({
-      productId: String(product._id),
+      productId,
       quantity: 1,
-      variantSku: product.variants[0]?.sku,
+      ...(variant?.sku ? { variantSku: variant.sku } : {}),
     });
     setLoading(false);
   };
@@ -76,9 +85,16 @@ export function ProteinTreatProductDetail({ product, locale }: ProteinTreatProdu
         <p className="mt-4 font-display text-4xl text-pink md:text-5xl">{packLabel}</p>
 
         <div className="mt-8 rounded-2xl border border-grey/15 bg-cream p-6">
-          <Button onClick={handleAdd} loading={loading} disabled={!canAdd} size="lg">
+          <Button type="button" onClick={handleAdd} loading={loading} disabled={!canAdd} size="lg">
             {locale === 'es' ? 'Agregar al carrito' : 'Add to cart'}
           </Button>
+          {!canAdd ? (
+            <p className="mt-3 text-sm text-grey">
+              {locale === 'es'
+                ? 'Precio no disponible en este momento.'
+                : 'Pricing is not available right now.'}
+            </p>
+          ) : null}
         </div>
 
         <Link href="/booking" className="mt-4 inline-block">
