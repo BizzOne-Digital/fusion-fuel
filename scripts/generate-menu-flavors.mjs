@@ -8,7 +8,7 @@ const publicDir = join(__dirname, '../public');
 const FLAVOR_COLLECTIONS = [
   {
     slug: 'signature-favourites',
-    name: 'Signature Favourites',
+    name: 'Signature Favorites',
     description: 'Loaded Tea classics from the Signature Favorites menu (posters 1–3).',
   },
   {

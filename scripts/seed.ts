@@ -1544,7 +1544,7 @@ async function seedFaqs(): Promise<void> {
       category: 'mega-tea-kits',
       question: 'What add-ins are available for kits?',
       answer:
-        'Mega Tea Kit add-ons include Lift Off, Aloe Vera, NRG or Tea, Collagen, and Flavor Enhancer — $10.00 each.',
+        'Mega Tea Kit optional add-ons include Probiotics ($2), Collagen ($3), Lift Off ($3), NRG ($2), and Tea ($2).',
       order: 3,
     },
     {

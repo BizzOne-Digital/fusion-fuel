@@ -18,19 +18,19 @@ export const MEGA_TEA_KITS_MENU = {
     alt: 'Mega Tea Kit with colorful flavor pouches and an iced loaded tea',
   },
   includes: [
-    'Lift Off',
-    'Aloe Vera',
-    'NRG or Tea',
+    'Probiotics',
     'Collagen',
-    'Flavor Enhancer',
+    'Lift Off',
+    'NRG',
+    'Tea',
   ] as const,
   flavorPickerLimit: 1,
   optionalAddOns: [
-    { slug: 'mtk-lift-off', name: 'Lift Off', price: 10 },
-    { slug: 'mtk-aloe-vera', name: 'Aloe Vera', price: 10 },
-    { slug: 'mtk-nrg-or-tea', name: 'NRG or Tea', price: 10 },
-    { slug: 'mtk-collagen', name: 'Collagen', price: 10 },
-    { slug: 'mtk-flavor-enhancer', name: 'Flavor Enhancer', price: 10 },
+    { slug: 'mtk-probiotics', name: 'Probiotics', price: 2 },
+    { slug: 'mtk-collagen', name: 'Collagen', price: 3 },
+    { slug: 'mtk-lift-off', name: 'Lift Off', price: 3 },
+    { slug: 'mtk-nrg', name: 'NRG', price: 2 },
+    { slug: 'mtk-tea', name: 'Tea', price: 2 },
   ] as const,
 } as const;
 
