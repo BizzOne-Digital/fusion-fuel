@@ -90,7 +90,6 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
       </div>
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
-        <p className="mt-2 text-grey">{PROTEIN_SHAKES_MENU.servingNote}</p>
         <p className="mt-2 text-sm leading-relaxed text-grey">{proteinShakePricingSummary()}</p>
         <p className="mt-4 font-display text-3xl text-pink">
           {formatPrice(linePrice, 'USD', locale)}

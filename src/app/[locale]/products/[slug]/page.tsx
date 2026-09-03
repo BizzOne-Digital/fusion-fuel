@@ -84,6 +84,7 @@ export default async function ProductDetailPage({
         ) : isWaffle ? (
           <WaffleProductDetail
             product={product}
+            addIns={productAddIns}
             locale={typedLocale}
             categorySlug={categorySlug}
           />

@@ -98,7 +98,7 @@ export function WaffleModifierGroups({
 
       <ModifierChipGroup
         title={locale === 'es' ? 'Toppings extra' : 'Extra Toppings'}
-        subtitle={locale === 'es' ? 'Opcional' : 'Optional — same choices, $1 each'}
+        subtitle={locale === 'es' ? 'Opcional' : 'Optional — same choices, +$1.00 each'}
         options={allToppings}
         selected={extraToppings}
         priceCents={extraPriceCents}

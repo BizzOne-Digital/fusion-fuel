@@ -67,7 +67,7 @@ export const WAFFLES_MENU = {
     {
       slug: 'build-your-own',
       name: 'Create Your Own Waffle',
-      description: 'Pick up to 5 toppings included.',
+      description: WAFFLE_WEBSITE_DESCRIPTION,
       image: '/images/waffles/berry-nutella.png',
     },
   ],
@@ -81,6 +81,12 @@ export function waffleAllToppings(): string[] {
 
 export function isWaffleProduct(slug: string): boolean {
   return slug.startsWith('waffle-');
+}
+
+export const WAFFLE_BUILD_YOUR_OWN_SLUG = 'waffle-build-your-own';
+
+export function isWaffleBuildYourOwnProduct(slug: string): boolean {
+  return slug === WAFFLE_BUILD_YOUR_OWN_SLUG;
 }
 
 export function waffleMenuItem(productSlug: string): WaffleMenuItem | null {
@@ -125,6 +131,9 @@ export function waffleOrderNotes(input: {
 }
 
 export function waffleShortDescription(item: WaffleMenuItem): string {
+  if (item.slug === 'build-your-own') {
+    return `Pick up to 5 toppings included. ${formatUsd(WAFFLES_MENU.price)}.`;
+  }
   return `${item.description} ${formatUsd(WAFFLES_MENU.price)}.`;
 }
 
