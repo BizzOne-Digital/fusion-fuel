@@ -27,7 +27,7 @@ import { MEGA_TEA_KIT_COLLECTIONS, MEGA_TEA_KITS_MENU, megaTeaKitDescriptionHtml
 import { MENU_FLAVORS } from '../src/lib/menu-flavors';
 import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaOptionalAddInSlugs, loadedTeaProductDescriptionHtml, loadedTeaProductShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
 import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents, acaiBowlShortDescription } from '../src/lib/acai-bowls-menu';
-import { WAFFLES_MENU, waffleDescriptionHtml, waffleExtraAddInSlugs, waffleExtraModifierSlug, wafflePriceCents, waffleShortDescription } from '../src/lib/waffles-menu';
+import { WAFFLES_MENU, waffleDescriptionHtml, waffleExtraModifierSlug, wafflePriceCents, waffleShortDescription } from '../src/lib/waffles-menu';
 import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
 import {
   PROTEIN_TREATS_MENU,
@@ -1270,14 +1270,6 @@ async function seedWaffleProducts(
   addInIds: Record<string, Types.ObjectId>
 ): Promise<void> {
   const activeSlugs = WAFFLES_MENU.items.map((item) => `waffle-${item.slug}`);
-  const waffleExtraAddInOptions = waffleExtraAddInSlugs()
-    .map((slug) => addInIds[slug])
-    .filter(Boolean)
-    .map((addInId) => ({
-      addInId,
-      maxQuantity: 1,
-      included: false,
-    }));
 
   await Product.updateOne(
     { slug: 'fusion-waffle' },
@@ -1311,7 +1303,7 @@ async function seedWaffleProducts(
           ],
           flavorIds: [],
           kitSizes: [],
-          addInOptions: waffleExtraAddInOptions,
+          addInOptions: [],
           inventory: {
             trackInventory: false,
             quantity: 0,

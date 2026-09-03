@@ -21,7 +21,8 @@ import { isProteinShakeProduct } from '@/lib/protein-shakes-menu';
 import { isAcaiBowlProduct } from '@/lib/acai-bowls-menu';
 import { isWaffleProduct } from '@/lib/waffles-menu';
 import { PieInACupProductDetail } from '@/components/products/PieInACupProductDetail';
-import { isPieInACupProduct } from '@/lib/protein-treats-menu';
+import { ProteinTreatProductDetail } from '@/components/products/ProteinTreatProductDetail';
+import { isPieInACupProduct, isProteinTreatProduct } from '@/lib/protein-treats-menu';
 import { ProteinCoffeeProductDetail } from '@/components/products/ProteinCoffeeProductDetail';
 import { isProteinCoffeeProduct } from '@/lib/protein-coffee-menu';
 import { ProductAddToCart } from '@/components/products/ProductAddToCart';
@@ -59,6 +60,7 @@ export default async function ProductDetailPage({
   const isAcaiBowl = isAcaiBowlProduct(slug);
   const isWaffle = isWaffleProduct(slug);
   const isPieInACup = isPieInACupProduct(slug);
+  const isProteinTreat = isProteinTreatProduct(slug) && !isPieInACup;
   const isProteinCoffee = isProteinCoffeeProduct(slug);
 
   return (
@@ -82,12 +84,13 @@ export default async function ProductDetailPage({
         ) : isWaffle ? (
           <WaffleProductDetail
             product={product}
-            addIns={productAddIns}
             locale={typedLocale}
             categorySlug={categorySlug}
           />
         ) : isPieInACup ? (
           <PieInACupProductDetail product={product} locale={typedLocale} />
+        ) : isProteinTreat ? (
+          <ProteinTreatProductDetail product={product} locale={typedLocale} />
         ) : isProteinCoffee ? (
           <ProteinCoffeeProductDetail product={product} addIns={productAddIns} locale={typedLocale} />
         ) : (

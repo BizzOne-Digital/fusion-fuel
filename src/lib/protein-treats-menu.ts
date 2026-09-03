@@ -9,7 +9,7 @@ export const PROTEIN_TREATS_MENU = {
   proteinTruffles: {
     slug: 'protein-truffles',
     name: 'Protein Truffles',
-    description: 'Bite-size protein truffles — add to your order.',
+    description: 'Bite-size protein truffles.',
     image: {
       url: '/images/protein-treats/protein-truffles.png',
       alt: 'Protein truffles in paper cups on a white plate',
@@ -19,7 +19,7 @@ export const PROTEIN_TREATS_MENU = {
   proteinMiniDonuts: {
     slug: 'protein-mini-donuts',
     name: 'Protein Mini Donuts',
-    description: 'Soft protein mini donuts — add to your order.',
+    description: 'Soft protein mini donuts.',
     image: {
       url: '/images/donut.png',
       alt: 'Protein mini donuts with glaze',
@@ -61,13 +61,13 @@ export const PROTEIN_TREATS_MENU = {
       kind: 'protein-truffles' as const,
       slug: 'protein-truffles',
       name: 'Protein Truffles',
-      description: 'Bite-size protein truffles — add to your order.',
+      description: 'Bite-size protein truffles.',
     },
     {
       kind: 'protein-mini-donuts' as const,
       slug: 'protein-mini-donuts',
       name: 'Protein Mini Donuts',
-      description: 'Soft protein mini donuts — add to your order.',
+      description: 'Soft protein mini donuts.',
     },
     {
       kind: 'pie-in-a-cup' as const,
@@ -135,30 +135,20 @@ function treatImageConfig(item: ProteinTreatMenuItem) {
   return PROTEIN_TREATS_MENU.pieInACup.image;
 }
 
-export function proteinTreatDescriptionHtml(item: ProteinTreatMenuItem): string {
+export function proteinTreatDescriptionHtml(_item: ProteinTreatMenuItem): string {
+  return '';
+}
+
+export function proteinTreatPackLabel(item: ProteinTreatMenuItem): string {
   if (item.kind === 'pie-in-a-cup') {
-    const { pieInACup } = PROTEIN_TREATS_MENU;
-    const sizeLines = pieInACup.sizes
-      .map((size) => `<li><strong>${size.name}</strong> — ${formatUsd(size.price)}</li>`)
-      .join('');
-    const flavorLines = pieInACup.flavors.map((flavor) => `<li>${flavor.name}</li>`).join('');
-
-    return [
-      `<p><strong>${item.name}</strong> — ${PROTEIN_TREATS_MENU.headline}.</p>`,
-      `<p>${item.description}</p>`,
-      `<p><strong>Sizes:</strong></p><ul>${sizeLines}</ul>`,
-      `<p><strong>Flavors:</strong></p><ul>${flavorLines}</ul>`,
-      `<p>Choose your flavor on this page — the preview image updates when you select a flavor.</p>`,
-    ].join('');
+    return '';
   }
-
   const pack = treatPackConfig(item);
+  return `${pack.count} for ${formatUsd(pack.price)}`;
+}
 
-  return [
-    `<p><strong>${item.name}</strong> — ${PROTEIN_TREATS_MENU.headline}.</p>`,
-    `<p>${item.description}</p>`,
-    `<p><strong>Price:</strong> ${pack.count} for ${formatUsd(pack.price)}</p>`,
-  ].join('');
+export function proteinTreatMenuItem(slug: string): ProteinTreatMenuItem | null {
+  return PROTEIN_TREATS_MENU.items.find((item) => item.slug === slug) ?? null;
 }
 
 export function proteinTreatItemPriceCents(item: ProteinTreatMenuItem): number {
@@ -195,15 +185,7 @@ export function proteinTreatItemVariants(
 }
 
 export function proteinTreatShortDescription(item: ProteinTreatMenuItem): string {
-  if (item.kind === 'pie-in-a-cup') {
-    const sizeSummary = PROTEIN_TREATS_MENU.pieInACup.sizes
-      .map((size) => `${size.name} ${formatUsd(size.price)}`)
-      .join(' · ');
-    return `${item.description} ${sizeSummary}.`;
-  }
-
-  const pack = treatPackConfig(item);
-  return `${item.description} ${pack.count} for ${formatUsd(pack.price)}.`;
+  return item.description;
 }
 
 export function proteinTreatPricingSummary(): string {

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
-import { getLocalized, formatPrice, hasPrice, sanitizeHtml } from '@/lib/utils';
+import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
@@ -31,7 +31,6 @@ export function PieInACupProductDetail({ product, locale }: PieInACupProductDeta
   const [loading, setLoading] = useState(false);
 
   const name = getLocalized(product.name, locale);
-  const description = getLocalized(product.description, locale);
   const galleryImages = product.images.filter((image) => image.url?.trim());
 
   const selectedFlavor = PROTEIN_TREATS_MENU.pieInACup.flavors.find(
@@ -93,15 +92,11 @@ export function PieInACupProductDetail({ product, locale }: PieInACupProductDeta
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
         <p className="mt-2 text-grey">{getLocalized(product.shortDescription, locale)}</p>
-        {selectedFlavor && hasPrice(unitPrice) && (
+        {hasPrice(unitPrice) && selectedFlavor && (
           <p className="mt-4 font-display text-3xl text-pink">
             {formatPrice(unitPrice, 'USD', locale)}
           </p>
         )}
-        <div
-          className="prose-brand mt-6 text-grey"
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
-        />
 
         <div className="mt-8 space-y-6 rounded-2xl border border-grey/15 bg-cream p-6">
           <div>
@@ -138,11 +133,9 @@ export function PieInACupProductDetail({ product, locale }: PieInACupProductDeta
                   }`}
                 >
                   <p className="font-semibold">{size.name}</p>
-                  {flavorSlug && (
-                    <p className="mt-1 text-sm text-grey">
-                      {formatPrice(pieInACupSizePriceCents(size.slug), 'USD', locale)}
-                    </p>
-                  )}
+                  <p className="mt-1 text-sm text-grey">
+                    {formatPrice(pieInACupSizePriceCents(size.slug), 'USD', locale)}
+                  </p>
                 </button>
               ))}
             </div>
