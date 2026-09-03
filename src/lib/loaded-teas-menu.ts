@@ -41,6 +41,12 @@ export const LOADED_TEAS_MENU = {
       price: 3,
     },
     {
+      slug: 'ltea-hydration',
+      name: 'Hydration',
+      description: 'Electrolyte hydration boost',
+      price: 3,
+    },
+    {
       slug: 'ltea-immunity-shot',
       name: 'Immunity Shot',
       description: '1,000mg vitamin C, Zinc Multivitamins',
