@@ -20,7 +20,7 @@ export function formatPrice(
   locale: Locale = 'en'
 ): string {
   if (amountMinor == null || amountMinor <= 0) {
-    return locale === 'es' ? 'Consultar precio' : 'Contact for pricing';
+    return '—';
   }
 
   return new Intl.NumberFormat(locale === 'es' ? 'es-US' : 'en-US', {

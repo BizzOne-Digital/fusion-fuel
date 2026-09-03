@@ -105,25 +105,7 @@ export function proteinShakeProductShortDescription(): string {
 }
 
 export function proteinShakeProductDescriptionHtml(): string {
-  const flavorLines = PROTEIN_SHAKES_MENU.items
-    .map((item) => `<li>${item.name}</li>`)
-    .join('');
-  const sizeLines = PROTEIN_SHAKES_MENU.sizes
-    .map((size) => `<li><strong>${size.name}</strong> — ${formatUsd(size.price)}</li>`)
-    .join('');
-
-  const addOnLines = PROTEIN_SHAKES_MENU.optionalAddOns
-    .map((addOn) => `<li>${addOn.name} — ${formatUsd(addOn.price)}</li>`)
-    .join('');
-
-  return [
-    `<p><strong>${PROTEIN_SHAKES_MENU.headline}</strong></p>`,
-    `<p>${PROTEIN_SHAKES_MENU.servingNote}. ${proteinShakePricingSummary()}</p>`,
-    `<p><strong>Sizes:</strong></p><ul>${sizeLines}</ul>`,
-    `<p><strong>Flavors:</strong></p><ul>${flavorLines}</ul>`,
-    `<p><strong>Optional add-ons:</strong></p><ul>${addOnLines}</ul>`,
-    `<p>Choose your flavor on this page — the preview image updates when you select a flavor.</p>`,
-  ].join('');
+  return '';
 }
 
 export function proteinShakeSizePriceCents(sizeSlug: string): number {

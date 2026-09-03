@@ -35,11 +35,6 @@ export const PROTEIN_COFFEE = {
     { slug: 'pcof-foam', name: 'Foam', price: 1.0 },
     { slug: 'pcof-caramel-drizzle', name: 'Caramel Drizzle', price: 0.5 },
     { slug: 'pcof-chocolate-drizzle', name: 'Chocolate Drizzle', price: 0.5 },
-    {
-      slug: 'fat-reducing-donut-shot-dulce-de-leche',
-      name: 'Fat Reducing Donut Shot — Dulce de Leche',
-      price: 6.0,
-    },
   ] as const,
   footerNotes: [
     'Optional collagen, fiber, probiotics, creatine, and more',
@@ -89,44 +84,34 @@ export function proteinCoffeeFlavorNote(flavorName: string): string {
   return `Flavor: ${flavorName}`;
 }
 
+export function proteinCoffeeFlavorImage(flavorSlug: string): { url: string; alt: string } {
+  const flavor = PROTEIN_COFFEE.flavors.find((entry) => entry.slug === flavorSlug);
+  const index = PROTEIN_COFFEE.flavors.findIndex((entry) => entry.slug === flavorSlug);
+  const image =
+    index >= 0
+      ? PROTEIN_COFFEE.galleryImages[index % PROTEIN_COFFEE.galleryImages.length]
+      : PROTEIN_COFFEE.galleryImages[0];
+
+  return { url: image.url, alt: flavor?.name ?? image.alt };
+}
+
+export function proteinCoffeeVariantSku(sizeSlug: string): string {
+  const size = PROTEIN_COFFEE.icedSizes.find((entry) => entry.slug === sizeSlug);
+  return size ? `FFB-PCOF-${size.variantSuffix}` : '';
+}
+
 export function proteinCoffeeFlavorList(): string {
   return PROTEIN_COFFEE.flavors.map((flavor) => flavor.name).join(', ');
 }
 
-export function proteinCoffeeProductDescriptionHtml(): string {
-  const { icedSizes } = PROTEIN_COFFEE;
-  const sizeLines = icedSizes
-    .map((size) => `<li><strong>${size.name}</strong> — ${formatUsd(size.price)}</li>`)
-    .join('');
-  const flavorLines = PROTEIN_COFFEE.flavors
-    .map((flavor) => `<li>${flavor.name}</li>`)
-    .join('');
-  const addOnLines = PROTEIN_COFFEE.optionalAddOns
-    .map((addOn) => `<li>${addOn.name} — ${formatUsd(addOn.price)}</li>`)
-    .join('');
-
-  return [
-    `<p><strong>${PROTEIN_COFFEE.headline}</strong> — iced only.</p>`,
-    `<p><strong>Iced sizes:</strong></p><ul>${sizeLines}</ul>`,
-    `<p><strong>Flavors:</strong></p><ul>${flavorLines}</ul>`,
-    `<p><strong>Optional add-ons:</strong></p><ul>${addOnLines}</ul>`,
-    `<p>Contains caffeine. Not recommended for all audiences.</p>`,
-  ].join('');
+export function proteinCoffeeProductShortDescription(): string {
+  return 'Iced protein coffee — choose your flavor, size, and add-ons.';
 }
 
-export function proteinCoffeeDescriptionHtml(flavorName: string): string {
-  const { icedSizes } = PROTEIN_COFFEE;
-  const sizeLines = icedSizes
-    .map((size) => `<li><strong>${size.name}</strong> — ${formatUsd(size.price)}</li>`)
-    .join('');
-  const addOnLines = PROTEIN_COFFEE.optionalAddOns
-    .map((addOn) => `<li>${addOn.name} — ${formatUsd(addOn.price)}</li>`)
-    .join('');
+export function proteinCoffeeProductDescriptionHtml(): string {
+  return '';
+}
 
-  return [
-    `<p><strong>${flavorName}</strong> protein coffee.</p>`,
-    `<p><strong>Iced sizes:</strong></p><ul>${sizeLines}</ul>`,
-    `<p><strong>Optional add-ons:</strong></p><ul>${addOnLines}</ul>`,
-    `<p>Contains caffeine. Not recommended for all audiences.</p>`,
-  ].join('');
+export function proteinCoffeeDescriptionHtml(_flavorName: string): string {
+  return '';
 }

@@ -6,7 +6,6 @@ import { getSiteSettings } from '@/lib/data';
 import { SiteChrome } from '@/components/layout/SiteChrome';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/Toast';
-import { IntroProvider } from '@/context/IntroContext';
 import { CartProvider } from '@/context/CartContext';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { OrganizationJsonLd } from '@/components/seo/OrganizationJsonLd';
@@ -38,23 +37,21 @@ export default async function LocaleLayout({
     <NextIntlClientProvider messages={messages}>
       <AuthProvider>
         <CartProvider>
-          <IntroProvider>
-            <OrganizationJsonLd settings={settings} />
-            <a
-              href="#main-content"
-              className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[300] focus:rounded focus:bg-lime focus:px-4 focus:py-2"
-            >
-              Skip to content
-            </a>
-            <SiteChrome
-              locale={localeKey}
-              announcement={settings.announcement ?? { enabled: false, message: { en: '', es: '' } }}
-              footer={<Footer settings={settings} locale={localeKey} />}
-            >
-              {children}
-            </SiteChrome>
-            <Toaster position="top-center" richColors closeButton />
-          </IntroProvider>
+          <OrganizationJsonLd settings={settings} />
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[300] focus:rounded focus:bg-lime focus:px-4 focus:py-2"
+          >
+            Skip to content
+          </a>
+          <SiteChrome
+            locale={localeKey}
+            announcement={settings.announcement ?? { enabled: false, message: { en: '', es: '' } }}
+            footer={<Footer settings={settings} locale={localeKey} />}
+          >
+            {children}
+          </SiteChrome>
+          <Toaster position="top-center" richColors closeButton />
         </CartProvider>
       </AuthProvider>
     </NextIntlClientProvider>

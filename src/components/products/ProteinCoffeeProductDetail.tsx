@@ -9,40 +9,40 @@ import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { AddInSelector } from '@/components/products/AddInSelector';
 import {
-  PROTEIN_SHAKES_MENU,
-  isProteinShakeProduct,
-  proteinShakeFlavorNote,
-  proteinShakeItemImage,
-  proteinShakePricingSummary,
-  proteinShakeSizePriceCents,
-  proteinShakeVariantSku,
-} from '@/lib/protein-shakes-menu';
+  PROTEIN_COFFEE,
+  isProteinCoffeeProduct,
+  proteinCoffeeFlavorImage,
+  proteinCoffeeFlavorNote,
+  proteinCoffeeIcedPriceCents,
+  proteinCoffeePricingSummary,
+  proteinCoffeeVariantSku,
+} from '@/lib/protein-coffee-menu';
 import type { IProduct } from '@/models/Product';
 import type { IAddIn } from '@/models/AddIn';
 import type { Locale } from '@/types';
 
-interface ProteinShakeProductDetailProps {
+interface ProteinCoffeeProductDetailProps {
   product: IProduct;
   addIns: IAddIn[];
   locale: Locale;
 }
 
-export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinShakeProductDetailProps) {
+export function ProteinCoffeeProductDetail({ product, addIns, locale }: ProteinCoffeeProductDetailProps) {
   const { addItem } = useCart();
   const [flavorSlug, setFlavorSlug] = useState('');
-  const [sizeSlug, setSizeSlug] = useState<string>(PROTEIN_SHAKES_MENU.sizes[0].slug);
+  const [sizeSlug, setSizeSlug] = useState<string>(PROTEIN_COFFEE.icedSizes[0].slug);
   const [selectedAddIns, setSelectedAddIns] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
 
   const name = getLocalized(product.name, locale);
 
-  const selectedItem = PROTEIN_SHAKES_MENU.items.find((item) => item.slug === flavorSlug);
-  const displayImage = selectedItem
-    ? proteinShakeItemImage(selectedItem)
-    : PROTEIN_SHAKES_MENU.heroImage;
+  const selectedFlavor = PROTEIN_COFFEE.flavors.find((flavor) => flavor.slug === flavorSlug);
+  const displayImage = selectedFlavor
+    ? proteinCoffeeFlavorImage(flavorSlug)
+    : PROTEIN_COFFEE.galleryImages[0];
 
-  const variantSku = flavorSlug ? proteinShakeVariantSku(sizeSlug) : '';
-  const unitPrice = proteinShakeSizePriceCents(sizeSlug);
+  const variantSku = flavorSlug ? proteinCoffeeVariantSku(sizeSlug) : '';
+  const unitPrice = proteinCoffeeIcedPriceCents(sizeSlug);
 
   const addInTotal = useMemo(
     () =>
@@ -54,16 +54,16 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
   );
 
   const linePrice = unitPrice + addInTotal;
-  const canAdd = Boolean(selectedItem && hasPrice(linePrice));
+  const canAdd = Boolean(selectedFlavor && hasPrice(linePrice));
 
   const handleAdd = async () => {
-    if (!canAdd || !selectedItem) return;
+    if (!canAdd || !selectedFlavor) return;
     setLoading(true);
     await addItem({
       productId: String(product._id),
       quantity: 1,
       variantSku,
-      notes: proteinShakeFlavorNote(selectedItem.name),
+      notes: proteinCoffeeFlavorNote(selectedFlavor.name),
       addIns: Object.entries(selectedAddIns)
         .filter(([, quantity]) => quantity > 0)
         .map(([addInId, quantity]) => ({ addInId, quantity })),
@@ -71,7 +71,7 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
     setLoading(false);
   };
 
-  if (!isProteinShakeProduct(product.slug)) return null;
+  if (!isProteinCoffeeProduct(product.slug)) return null;
 
   return (
     <div className="grid gap-12 lg:grid-cols-2">
@@ -90,18 +90,20 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
       </div>
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
-        <p className="mt-2 text-grey">{PROTEIN_SHAKES_MENU.servingNote}</p>
-        <p className="mt-2 text-sm leading-relaxed text-grey">{proteinShakePricingSummary()}</p>
-        <p className="mt-4 font-display text-3xl text-pink">
-          {formatPrice(linePrice, 'USD', locale)}
-        </p>
+        <p className="mt-2 text-grey">{PROTEIN_COFFEE.servingNote}</p>
+        <p className="mt-2 text-sm leading-relaxed text-grey">{proteinCoffeePricingSummary()}</p>
+        {selectedFlavor && (
+          <p className="mt-4 font-display text-3xl text-pink">
+            {formatPrice(linePrice, 'USD', locale)}
+          </p>
+        )}
 
         <div className="mt-8 space-y-6 rounded-2xl border border-grey/15 bg-cream p-6">
           <div>
             <h3 className="font-display text-2xl">{locale === 'es' ? 'Sabor' : 'Flavor'}</h3>
             <div className="mt-4">
               <Select
-                name="protein-shake-flavor"
+                name="protein-coffee-flavor"
                 value={flavorSlug}
                 onChange={(event) => setFlavorSlug(event.target.value)}
                 options={[
@@ -109,9 +111,9 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
                     value: '',
                     label: locale === 'es' ? 'Selecciona un sabor' : 'Select a flavor',
                   },
-                  ...PROTEIN_SHAKES_MENU.items.map((item) => ({
-                    value: item.slug,
-                    label: item.name,
+                  ...PROTEIN_COFFEE.flavors.map((flavor) => ({
+                    value: flavor.slug,
+                    label: flavor.name,
                   })),
                 ]}
               />
@@ -121,7 +123,7 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
           <div>
             <h3 className="font-display text-2xl">{locale === 'es' ? 'Tamaño' : 'Size'}</h3>
             <div className="mt-4 flex flex-wrap gap-3">
-              {PROTEIN_SHAKES_MENU.sizes.map((size) => (
+              {PROTEIN_COFFEE.icedSizes.map((size) => (
                 <button
                   key={size.slug}
                   type="button"
@@ -132,7 +134,7 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
                 >
                   <p className="font-semibold">{size.name}</p>
                   <p className="mt-1 text-sm text-grey">
-                    {formatPrice(proteinShakeSizePriceCents(size.slug), 'USD', locale)}
+                    {formatPrice(proteinCoffeeIcedPriceCents(size.slug), 'USD', locale)}
                   </p>
                 </button>
               ))}
@@ -149,7 +151,9 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
           />
 
           <div className="flex flex-wrap items-center justify-between gap-4 border-t border-grey/15 pt-6">
-            <p className="font-display text-2xl">{formatPrice(linePrice, 'USD', locale)}</p>
+            <p className="font-display text-2xl">
+              {selectedFlavor ? formatPrice(linePrice, 'USD', locale) : '—'}
+            </p>
             <Button onClick={handleAdd} loading={loading} disabled={!canAdd}>
               {locale === 'es' ? 'Agregar al carrito' : 'Add to cart'}
             </Button>

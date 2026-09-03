@@ -22,6 +22,8 @@ import { isAcaiBowlProduct } from '@/lib/acai-bowls-menu';
 import { isWaffleProduct } from '@/lib/waffles-menu';
 import { PieInACupProductDetail } from '@/components/products/PieInACupProductDetail';
 import { isPieInACupProduct } from '@/lib/protein-treats-menu';
+import { ProteinCoffeeProductDetail } from '@/components/products/ProteinCoffeeProductDetail';
+import { isProteinCoffeeProduct } from '@/lib/protein-coffee-menu';
 import { ProductAddToCart } from '@/components/products/ProductAddToCart';
 import { resolveProductAddIns } from '@/lib/product-add-ins';
 import { ProductJsonLd } from '@/components/seo/ProductJsonLd';
@@ -57,6 +59,7 @@ export default async function ProductDetailPage({
   const isAcaiBowl = isAcaiBowlProduct(slug);
   const isWaffle = isWaffleProduct(slug);
   const isPieInACup = isPieInACupProduct(slug);
+  const isProteinCoffee = isProteinCoffeeProduct(slug);
 
   return (
     <>
@@ -85,6 +88,8 @@ export default async function ProductDetailPage({
           />
         ) : isPieInACup ? (
           <PieInACupProductDetail product={product} locale={typedLocale} />
+        ) : isProteinCoffee ? (
+          <ProteinCoffeeProductDetail product={product} addIns={productAddIns} locale={typedLocale} />
         ) : (
         <div className="grid gap-12 lg:grid-cols-2">
           <div>
@@ -125,15 +130,10 @@ export default async function ProductDetailPage({
                 </Link>
               </div>
             ) : (
-              <div className="mt-8 flex flex-wrap gap-4">
+              <div className="mt-8">
                 <Link href="/booking">
                   <Button size="lg">
                     {typedLocale === 'es' ? 'Reservar catering' : 'Book catering'}
-                  </Button>
-                </Link>
-                <Link href="/contact">
-                  <Button variant="outline" size="lg">
-                    {typedLocale === 'es' ? 'Contáctanos' : 'Contact us'}
                   </Button>
                 </Link>
               </div>

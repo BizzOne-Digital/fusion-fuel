@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import { useLocale } from 'next-intl';
-import { Link } from '@/i18n/navigation';
 import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { MEGA_TEA_KITS_MENU } from '@/lib/mega-tea-kits-menu';
@@ -144,11 +143,7 @@ export function KitBuilder({ product, flavors, addIns }: KitBuilderProps) {
           <Button onClick={handleAdd} loading={loading} disabled={!canAdd}>
             {locale === 'es' ? 'Agregar al carrito' : 'Add to cart'}
           </Button>
-        ) : (
-          <Link href="/contact">
-            <Button variant="outline">{locale === 'es' ? 'Consultar precio' : 'Contact for pricing'}</Button>
-          </Link>
-        )}
+        ) : null}
       </div>
 
       {!canAdd && hasPrice(unitPrice) && (

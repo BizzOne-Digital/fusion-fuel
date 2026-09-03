@@ -67,7 +67,7 @@ export const WAFFLES_MENU = {
     {
       slug: 'build-your-own',
       name: 'Create Your Own Waffle',
-      description: WAFFLE_WEBSITE_DESCRIPTION,
+      description: 'Pick up to 5 toppings included.',
       image: '/images/waffles/berry-nutella.png',
     },
   ],
@@ -124,17 +124,10 @@ export function waffleOrderNotes(input: {
   return parts.join(' · ');
 }
 
-export function waffleDescriptionHtml(item: WaffleMenuItem): string {
-  const toppingLines = WAFFLES_MENU.toppingGroups
-    .map((group) => `<li><strong>${group.label}:</strong> ${group.items.join(', ')}</li>`)
-    .join('');
+export function waffleShortDescription(item: WaffleMenuItem): string {
+  return `${item.description} ${formatUsd(WAFFLES_MENU.price)}.`;
+}
 
-  return [
-    `<p><strong>${item.name}</strong> — ${WAFFLES_MENU.headline}.</p>`,
-    `<p>${WAFFLES_MENU.websiteDescription}</p>`,
-    `<p><strong>Price:</strong> ${formatUsd(WAFFLES_MENU.price)}</p>`,
-    `<p><strong>Customize Your Waffle</strong> — choose up to ${WAFFLES_MENU.includedToppingMax} toppings included:</p>`,
-    `<ul>${toppingLines}</ul>`,
-    `<p><strong>Extra Toppings:</strong> ${formatUsd(WAFFLES_MENU.extraToppingPrice)} each (optional).</p>`,
-  ].join('');
+export function waffleDescriptionHtml(_item: WaffleMenuItem): string {
+  return '';
 }

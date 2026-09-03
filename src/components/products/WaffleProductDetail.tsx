@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
-import { getLocalized, formatPrice, hasPrice, sanitizeHtml } from '@/lib/utils';
+import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { ProductImageGallery } from '@/components/products/ProductImageGallery';
@@ -43,9 +43,9 @@ export function WaffleProductDetail({
   const menuItem = waffleMenuItem(product.slug);
   const allToppings = waffleAllToppings();
 
-  const name = getLocalized(product.name, locale);
   const shortDescription = getLocalized(product.shortDescription, locale);
-  const description = getLocalized(product.description, locale);
+
+  const name = getLocalized(product.name, locale);
   const galleryImages = product.images.filter((image) => image.url?.trim());
   const usePlaceholder = productUsesPlaceholderCard(product);
   const showListedPrice = hasPrice(product.basePrice);
@@ -121,10 +121,6 @@ export function WaffleProductDetail({
             {formatPrice(product.basePrice, 'USD', locale)}
           </p>
         )}
-        <div
-          className="prose-brand mt-6 text-grey"
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
-        />
 
         <div className="mt-8 space-y-6 rounded-2xl border border-grey/15 bg-cream p-6">
           <WaffleModifierGroups
