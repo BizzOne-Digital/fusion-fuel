@@ -102,22 +102,8 @@ export function megaTeaKitIncludesSummary(): string {
   return MEGA_TEA_KITS_MENU.includes.join(', ');
 }
 
-export function megaTeaKitDescriptionHtml(collectionName?: string): string {
-  const includesList = MEGA_TEA_KITS_MENU.includes
-    .map((item) => `<li>${item}</li>`)
-    .join('');
-  const title = collectionName
-    ? megaTeaKitProductName(collectionName)
-    : 'Mega Tea Kit';
-
-  return [
-    `<p><strong>${title}</strong> — ${MEGA_TEA_KITS_MENU.headline}.</p>`,
-    `<p>${MEGA_TEA_KITS_MENU.description}</p>`,
-    `<p><strong>Price:</strong> ${formatUsd(MEGA_TEA_KITS_MENU.price)}</p>`,
-    `<p><strong>Each kit includes:</strong></p>`,
-    `<ul>${includesList}</ul>`,
-    `<p>Choose your flavor enhancer on this page — the preview image updates when you select a flavor.</p>`,
-  ].join('');
+export function megaTeaKitDescriptionHtml(_collectionName?: string): string {
+  return '';
 }
 
 export function megaTeaKitFlavorNote(flavorName: string): string {
@@ -126,5 +112,5 @@ export function megaTeaKitFlavorNote(flavorName: string): string {
 
 export function megaTeaKitShortDescription(collectionName?: string): string {
   const label = collectionName ? megaTeaKitProductName(collectionName) : 'Mega Tea Kit';
-  return `${label}. ${MEGA_TEA_KITS_MENU.description} Includes ${megaTeaKitIncludesSummary()}. ${formatUsd(MEGA_TEA_KITS_MENU.price)}.`;
+  return `${label}. ${MEGA_TEA_KITS_MENU.description} ${megaTeaKitPricingSummary()}.`;
 }
