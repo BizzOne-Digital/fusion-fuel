@@ -112,29 +112,21 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
     );
   }
   if (category.slug === 'protein-treats') {
-    const { pieInACup, proteinTruffles, addOnPricing, standardAddOns, wellnessAddOns } = PROTEIN_TREATS_MENU;
-    const pieSizes = pieInACup.sizes
-      .map((size) => `${size.name} $${size.price.toFixed(2)}`)
-      .join(' · ');
+    const { proteinTruffles, proteinMiniDonuts } = PROTEIN_TREATS_MENU;
 
     return (
       <div className="mb-6 max-w-3xl space-y-3 text-grey">
         <p className="font-semibold text-carbon">{PROTEIN_TREATS_MENU.headline}</p>
         <ul className="list-inside list-disc space-y-2 text-sm">
           <li>
-            <span className="font-semibold text-carbon">{pieInACup.name}</span> — {pieSizes} · Flavors:{' '}
-            {pieInACup.flavors.join(', ')}
-          </li>
-          <li>
             <span className="font-semibold text-carbon">{proteinTruffles.name}</span> —{' '}
             {proteinTruffles.pack.count} for ${proteinTruffles.pack.price.toFixed(2)}
           </li>
+          <li>
+            <span className="font-semibold text-carbon">{proteinMiniDonuts.name}</span> —{' '}
+            {proteinMiniDonuts.pack.count} for ${proteinMiniDonuts.pack.price.toFixed(2)}
+          </li>
         </ul>
-        <p className="text-sm">
-          Add-ons ${addOnPricing.standard.toFixed(2)} each — flavor add-ons
-          {standardAddOns.length > 0 ? `, ${standardAddOns.join(', ')}` : ''} · {wellnessAddOns.join(' & ')} $
-          {addOnPricing.wellness.toFixed(2)} each
-        </p>
       </div>
     );
   }

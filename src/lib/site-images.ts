@@ -34,7 +34,7 @@ export const SITE_IMAGES = {
     waffles: '/images/waffles/berry-nutella.png',
     'donut-of-the-day': '/images/donut-of-the-day.png',
     donuts: '/images/donut-of-the-day.png',
-    'protein-treats': '/images/pie-in-a-cup/oreo.png',
+    'protein-treats': '/images/protein-treats/protein-truffles.png',
     'add-ins': '/images/mega-tea-kit.png',
     'new-and-seasonal-items': '/images/mega-tea.png',
   } as Record<string, string>,
@@ -58,7 +58,7 @@ export const SITE_IMAGES = {
     waffles: '/images/waffles/berry-nutella.png',
     'donut-of-the-day': '/images/donut-of-the-day.png',
     donuts: '/images/donut-of-the-day.png',
-    'protein-treats': '/images/pie-in-a-cup/oreo.png',
+    'protein-treats': '/images/protein-treats/protein-truffles.png',
   } as Record<string, string>,
 } as const;
 

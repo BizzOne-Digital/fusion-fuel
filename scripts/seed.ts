@@ -26,7 +26,7 @@ import { PROTEIN_COFFEE, proteinCoffeeIcedPriceCents, proteinCoffeeOptionalAddIn
 import { MEGA_TEA_KIT_COLLECTIONS, MEGA_TEA_KITS_MENU, megaTeaKitDescriptionHtml, megaTeaKitPriceCents, megaTeaKitProductName, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
 import { MENU_FLAVORS } from '../src/lib/menu-flavors';
 import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaProductDescriptionHtml, loadedTeaProductShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
-import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents } from '../src/lib/acai-bowls-menu';
+import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents, acaiBowlShortDescription } from '../src/lib/acai-bowls-menu';
 import { WAFFLES_MENU, waffleDescriptionHtml, waffleExtraAddInSlugs, waffleExtraModifierSlug, wafflePriceCents } from '../src/lib/waffles-menu';
 import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
 import {
@@ -1333,11 +1333,7 @@ async function seedAcaiBowlProducts(
           slug,
           sku,
           name: loc(item.name),
-          shortDescription: loc(
-            `${item.description} ${'size' in item && item.size ? `${item.size} ` : ''}${
-              'price' in item && item.price != null ? `$${item.price.toFixed(2)}.` : ''
-            } ${ACAI_BOWLS_MENU.footnote}`
-          ),
+          shortDescription: loc(acaiBowlShortDescription(item)),
           description: rich(acaiBowlDescriptionHtml(item)),
           productType: 'single',
           categoryId: categoryIds['acai-bowls'],
@@ -1538,42 +1534,31 @@ async function seedProteinShakeProducts(
 }
 
 async function seedProteinTreatProducts(
-  categoryIds: Record<string, Types.ObjectId>,
-  addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
+  categoryIds: Record<string, Types.ObjectId>
 ): Promise<void> {
   const activeSlugs = PROTEIN_TREATS_MENU.items.map((item) => item.slug);
+
+  await Product.updateMany(
+    { slug: { $in: activeSlugs } },
+    { $set: { addInOptions: [] } }
+  );
 
   await Product.updateMany(
     { slug: 'protein-energy-bite' },
     { $set: { status: 'archived', sku: 'FFB-TRET-001-ARCHIVED' } }
   );
   await Product.updateMany(
-    { slug: { $in: ['oreo-pie-in-a-cup', 'pie-in-a-cup-oreo'] } },
+    { slug: { $in: ['oreo-pie-in-a-cup', 'pie-in-a-cup-oreo', 'pie-in-a-cup'] } },
     { $set: { status: 'archived' } }
   );
 
   for (const [index, item] of PROTEIN_TREATS_MENU.items.entries()) {
     const sku = `FFB-TRET-${String(index + 1).padStart(3, '0')}`;
-    const productImages =
-      item.kind === 'pie-in-a-cup'
-        ? [
-            img(
-              PROTEIN_TREATS_MENU.pieInACup.image.url,
-              PROTEIN_TREATS_MENU.pieInACup.image.alt
-            ),
-            img(
-              PROTEIN_TREATS_MENU.pieInACup.hoverImage.url,
-              PROTEIN_TREATS_MENU.pieInACup.hoverImage.alt
-            ),
-          ]
-        : item.kind === 'protein-truffles'
-          ? [
-              img(
-                PROTEIN_TREATS_MENU.proteinTruffles.image.url,
-                PROTEIN_TREATS_MENU.proteinTruffles.image.alt
-              ),
-            ]
-          : [];
+    const image =
+      item.kind === 'protein-truffles'
+        ? PROTEIN_TREATS_MENU.proteinTruffles.image
+        : PROTEIN_TREATS_MENU.proteinMiniDonuts.image;
+    const productImages = [img(image.url, image.alt)];
 
     await Product.findOneAndUpdate(
       { slug: item.slug },
@@ -1596,7 +1581,7 @@ async function seedProteinTreatProducts(
           })),
           flavorIds: [],
           kitSizes: [],
-          addInOptions,
+          addInOptions: [],
           inventory: {
             trackInventory: false,
             quantity: 0,
@@ -1852,7 +1837,7 @@ async function main(): Promise<void> {
   await seedAcaiBowlProducts(categoryIds, addInIds);
   await seedWaffleProducts(categoryIds, addInIds);
   await seedProteinShakeProducts(categoryIds, proteinShakeAddInOptions);
-  await seedProteinTreatProducts(categoryIds, addInOptions);
+  await seedProteinTreatProducts(categoryIds);
   await seedFaqs();
   await seedPromotions();
 

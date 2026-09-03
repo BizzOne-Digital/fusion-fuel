@@ -182,35 +182,23 @@ export function acaiBowlOrderNotes(input: {
 }
 
 export function acaiBowlDescriptionHtml(item: AcaiBowlMenuItem): string {
-  const config = acaiBowlModifierConfig(item);
-  const parts = [
+  const sizeLine =
+    'size' in item && item.size && 'price' in item && item.price != null
+      ? `<p><strong>Size:</strong> ${item.size} — <strong>${formatUsd(item.price)}</strong></p>`
+      : '';
+
+  return [
     `<p><strong>${item.name}</strong> — ${ACAI_BOWLS_MENU.headline}.</p>`,
     `<p>${item.description}</p>`,
-  ];
+    sizeLine,
+    `<p><em>${ACAI_BOWLS_MENU.footnote}</em></p>`,
+  ]
+    .filter(Boolean)
+    .join('');
+}
 
-  if ('size' in item && item.size && 'price' in item && item.price != null) {
-    parts.push(`<p><strong>Size:</strong> ${item.size} — <strong>${formatUsd(item.price)}</strong></p>`);
-  }
-
-  if (config.fixedIncludes.length) {
-    parts.push(`<p><strong>Includes:</strong> ${config.fixedIncludes.join(' & ')}.</p>`);
-  }
-
-  parts.push(
-    `<p><strong>Choose Your Fruits</strong> — select up to ${config.includedFruitMax}: ${ACAI_BOWLS_MENU.includedFruits.join(', ')}.</p>`
-  );
-
-  if (config.includedToppingMax > 0) {
-    parts.push(
-      `<p><strong>Choose Your Toppings</strong> — select up to ${config.includedToppingMax}: ${ACAI_BOWLS_MENU.includedToppings.join(', ')}.</p>`
-    );
-  }
-
-  parts.push(
-    `<p><strong>Extra Fruits</strong> — ${formatUsd(ACAI_BOWLS_MENU.extraFruitPrice)} each: ${ACAI_BOWLS_MENU.extraFruits.join(', ')}.</p>`,
-    `<p><strong>Extra Toppings</strong> — ${formatUsd(ACAI_BOWLS_MENU.extraToppingPrice)} each: ${ACAI_BOWLS_MENU.extraToppings.join(', ')}.</p>`,
-    `<p><em>${ACAI_BOWLS_MENU.footnote}</em></p>`
-  );
-
-  return parts.join('');
+export function acaiBowlShortDescription(item: AcaiBowlMenuItem): string {
+  const sizePart = 'size' in item && item.size ? `${item.size} — ` : '';
+  const pricePart = 'price' in item && item.price != null ? formatUsd(item.price) : '';
+  return `${item.description} ${sizePart}${pricePart}`.trim();
 }

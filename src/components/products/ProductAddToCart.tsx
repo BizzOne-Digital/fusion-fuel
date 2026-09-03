@@ -6,6 +6,7 @@ import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { PROTEIN_COFFEE, isProteinCoffeeProduct, proteinCoffeeFlavorNote } from '@/lib/protein-coffee-menu';
+import { isProteinTreatProduct } from '@/lib/protein-treats-menu';
 import { Select } from '@/components/ui/Select';
 import { AddInSelector } from '@/components/products/AddInSelector';
 import type { IProduct } from '@/models/Product';
@@ -39,6 +40,7 @@ export function ProductAddToCart({ product, addIns, locale }: ProductAddToCartPr
   );
 
   const requiresFlavor = isProteinCoffeeProduct(product.slug);
+  const showAddOns = !isProteinTreatProduct(product.slug);
   const selectedFlavor = PROTEIN_COFFEE.flavors.find((flavor) => flavor.slug === flavorSlug);
 
   const unitPrice = basePrice + addInTotal;
@@ -112,20 +114,22 @@ export function ProductAddToCart({ product, addIns, locale }: ProductAddToCartPr
         </div>
       )}
 
-      <AddInSelector
-        product={product}
-        addIns={addIns}
-        locale={locale}
-        selected={selectedAddIns}
-        onChange={setSelectedAddIns}
-        title={
-          requiresFlavor
-            ? locale === 'es'
-              ? 'Complementos opcionales'
-              : 'Optional Add-Ons'
-            : undefined
-        }
-      />
+      {showAddOns ? (
+        <AddInSelector
+          product={product}
+          addIns={addIns}
+          locale={locale}
+          selected={selectedAddIns}
+          onChange={setSelectedAddIns}
+          title={
+            requiresFlavor
+              ? locale === 'es'
+                ? 'Complementos opcionales'
+                : 'Optional Add-Ons'
+              : undefined
+          }
+        />
+      ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-grey/15 pt-6">
         <p className="font-display text-2xl">
