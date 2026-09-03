@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
-import { getLocalized } from '@/lib/utils';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import {
   MEGA_TEA_KIT_COLLECTIONS,
@@ -11,41 +10,17 @@ import {
   megaTeaKitPricingSummary,
   megaTeaKitProductSlug,
 } from '@/lib/mega-tea-kits-menu';
-import { resolveFlavorImage } from '@/lib/site-images';
-import type { IFlavor } from '@/models/Flavor';
 import type { IProduct } from '@/models/Product';
 import type { Locale } from '@/types';
 
 interface MegaTeaKitsCategoryExplorerProps {
   products: IProduct[];
-  flavors: IFlavor[];
   locale: Locale;
   activeCollection?: string;
 }
 
-function collectionPreview(
-  collectionSlug: string,
-  flavors: IFlavor[],
-  locale: Locale
-): { url: string; alt: string } {
-  const collectionFlavor = flavors.find(
-    (flavor) =>
-      flavor.category === collectionSlug &&
-      Boolean(resolveFlavorImage(flavor, getLocalized(flavor.name, locale)).url)
-  );
-
-  if (collectionFlavor) {
-    const name = getLocalized(collectionFlavor.name, locale);
-    const image = resolveFlavorImage(collectionFlavor, name);
-    if (image.url) return { url: image.url, alt: name };
-  }
-
-  return MEGA_TEA_KITS_MENU.heroImage;
-}
-
 export function MegaTeaKitsCategoryExplorer({
   products,
-  flavors,
   locale,
   activeCollection,
 }: MegaTeaKitsCategoryExplorerProps) {
@@ -55,12 +30,12 @@ export function MegaTeaKitsCategoryExplorer({
   const product = collection
     ? products.find((entry) => entry.slug === megaTeaKitProductSlug(collection.collectionSlug))
     : undefined;
+  const collectionImage = MEGA_TEA_KITS_MENU.heroImage;
 
   if (!activeCollection || !collection) {
     return (
       <div className="space-y-4">
         {MEGA_TEA_KIT_COLLECTIONS.map((entry) => {
-          const preview = collectionPreview(entry.collectionSlug, flavors, locale);
           const flavorCount = megaTeaKitCollectionMenuFlavors(entry.collectionSlug).length;
 
           return (
@@ -72,8 +47,8 @@ export function MegaTeaKitsCategoryExplorer({
               <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:gap-6 lg:gap-8">
                 <div className="relative mx-auto aspect-square w-full max-w-[11rem] shrink-0 overflow-hidden rounded-2xl bg-cream sm:mx-0 sm:w-36 lg:w-40">
                   <Image
-                    src={preview.url}
-                    alt={preview.alt}
+                    src={collectionImage.url}
+                    alt={collectionImage.alt}
                     fill
                     className="object-cover transition duration-500 group-hover:scale-105"
                     sizes="(max-width: 640px) 80vw, 160px"

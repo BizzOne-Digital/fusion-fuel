@@ -70,7 +70,6 @@ export function MenuCategoryPanel({
         {category.slug === 'mega-tea-kits' ? (
           <MegaTeaKitsCategoryExplorer
             products={categoryProducts}
-            flavors={flavors}
             locale={locale}
             activeCollection={kitCollection}
           />
@@ -108,7 +107,6 @@ export function MenuCategoryPanel({
             {isKits ? (
               <MegaTeaKitsCategoryExplorer
                 products={categoryProducts}
-                flavors={flavors}
                 locale={locale}
                 activeCollection={kitCollection}
               />
