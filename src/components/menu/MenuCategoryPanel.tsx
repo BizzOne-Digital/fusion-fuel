@@ -112,7 +112,10 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
     );
   }
   if (category.slug === 'protein-treats') {
-    const { proteinTruffles, proteinMiniDonuts } = PROTEIN_TREATS_MENU;
+    const { proteinTruffles, proteinMiniDonuts, pieInACup } = PROTEIN_TREATS_MENU;
+    const pieSizes = pieInACup.sizes
+      .map((size) => `${size.name} $${size.price.toFixed(2)}`)
+      .join(' · ');
 
     return (
       <div className="mb-6 max-w-3xl space-y-3 text-grey">
@@ -125,6 +128,10 @@ function CategoryIntro({ category, locale }: { category: IProductCategory; local
           <li>
             <span className="font-semibold text-carbon">{proteinMiniDonuts.name}</span> —{' '}
             {proteinMiniDonuts.pack.count} for ${proteinMiniDonuts.pack.price.toFixed(2)}
+          </li>
+          <li>
+            <span className="font-semibold text-carbon">{pieInACup.name}</span> — {pieSizes} · Flavors:{' '}
+            {pieInACup.flavors.map((flavor) => flavor.name).join(', ')}
           </li>
         </ul>
       </div>

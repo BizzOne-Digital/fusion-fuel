@@ -34,6 +34,8 @@ import {
   proteinTreatDescriptionHtml,
   proteinTreatItemPriceCents,
   proteinTreatItemVariants,
+  proteinTreatItemImage,
+  proteinTreatPieImages,
   proteinTreatShortDescription,
 } from '../src/lib/protein-treats-menu';
 import {
@@ -1537,9 +1539,13 @@ async function seedProteinTreatProducts(
   categoryIds: Record<string, Types.ObjectId>
 ): Promise<void> {
   const activeSlugs = PROTEIN_TREATS_MENU.items.map((item) => item.slug);
+  const treatsWithoutAddOns = [
+    PROTEIN_TREATS_MENU.proteinTruffles.slug,
+    PROTEIN_TREATS_MENU.pieInACup.slug,
+  ];
 
   await Product.updateMany(
-    { slug: { $in: activeSlugs } },
+    { slug: { $in: [...activeSlugs, ...treatsWithoutAddOns] } },
     { $set: { addInOptions: [] } }
   );
 
@@ -1548,17 +1554,33 @@ async function seedProteinTreatProducts(
     { $set: { status: 'archived', sku: 'FFB-TRET-001-ARCHIVED' } }
   );
   await Product.updateMany(
-    { slug: { $in: ['oreo-pie-in-a-cup', 'pie-in-a-cup-oreo', 'pie-in-a-cup'] } },
+    { slug: { $in: ['oreo-pie-in-a-cup', 'pie-in-a-cup-oreo'] } },
     { $set: { status: 'archived' } }
   );
+
+  for (const [index, item] of PROTEIN_TREATS_MENU.items.entries()) {
+    const sku = `FFB-TRET-${String(index + 1).padStart(3, '0')}`;
+    const conflicts = await Product.find({ sku, slug: { $ne: item.slug } }).select('_id slug');
+    for (const conflict of conflicts) {
+      await Product.updateOne(
+        { _id: conflict._id },
+        { $set: { status: 'archived', sku: `${sku}-ARCHIVED-${conflict.slug}` } }
+      );
+    }
+  }
 
   for (const [index, item] of PROTEIN_TREATS_MENU.items.entries()) {
     const sku = `FFB-TRET-${String(index + 1).padStart(3, '0')}`;
     const image =
       item.kind === 'protein-truffles'
         ? PROTEIN_TREATS_MENU.proteinTruffles.image
-        : PROTEIN_TREATS_MENU.proteinMiniDonuts.image;
-    const productImages = [img(image.url, image.alt)];
+        : item.kind === 'protein-mini-donuts'
+          ? PROTEIN_TREATS_MENU.proteinMiniDonuts.image
+          : PROTEIN_TREATS_MENU.pieInACup.image;
+    const productImages =
+      item.kind === 'pie-in-a-cup'
+        ? proteinTreatPieImages().map((entry) => img(entry.url, entry.alt))
+        : [img(image.url, image.alt)];
 
     await Product.findOneAndUpdate(
       { slug: item.slug },

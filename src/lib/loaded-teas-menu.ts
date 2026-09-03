@@ -206,11 +206,7 @@ export function loadedTeaProductShortDescription(): string {
 }
 
 export function loadedTeaProductDescriptionHtml(): string {
-  return [
-    `<p><strong>${LOADED_TEAS_MENU.headline}</strong></p>`,
-    `<p>${LOADED_TEAS_MENU.servingNote}. ${loadedTeaPricingSummary()}</p>`,
-    `<p>Choose your flavor on this page — the preview image updates when you select a flavor.</p>`,
-  ].join('');
+  return '';
 }
 
 export function loadedTeaSizePriceCents(sizeSlug: string, itemSlug?: string): number {

@@ -20,6 +20,8 @@ import { isLoadedTeaProduct } from '@/lib/loaded-teas-menu';
 import { isProteinShakeProduct } from '@/lib/protein-shakes-menu';
 import { isAcaiBowlProduct } from '@/lib/acai-bowls-menu';
 import { isWaffleProduct } from '@/lib/waffles-menu';
+import { PieInACupProductDetail } from '@/components/products/PieInACupProductDetail';
+import { isPieInACupProduct } from '@/lib/protein-treats-menu';
 import { ProductAddToCart } from '@/components/products/ProductAddToCart';
 import { resolveProductAddIns } from '@/lib/product-add-ins';
 import { ProductJsonLd } from '@/components/seo/ProductJsonLd';
@@ -54,6 +56,7 @@ export default async function ProductDetailPage({
   const isProteinShake = isProteinShakeProduct(slug);
   const isAcaiBowl = isAcaiBowlProduct(slug);
   const isWaffle = isWaffleProduct(slug);
+  const isPieInACup = isPieInACupProduct(slug);
 
   return (
     <>
@@ -80,6 +83,8 @@ export default async function ProductDetailPage({
             locale={typedLocale}
             categorySlug={categorySlug}
           />
+        ) : isPieInACup ? (
+          <PieInACupProductDetail product={product} locale={typedLocale} />
         ) : (
         <div className="grid gap-12 lg:grid-cols-2">
           <div>

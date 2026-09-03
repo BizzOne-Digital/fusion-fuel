@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
-import { getLocalized, formatPrice, hasPrice, sanitizeHtml } from '@/lib/utils';
+import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
@@ -13,6 +13,7 @@ import {
   isLoadedTeaProduct,
   loadedTeaFlavorNote,
   loadedTeaItemImage,
+  loadedTeaPricingSummary,
   loadedTeaSizePriceCents,
   loadedTeaVariantSku,
 } from '@/lib/loaded-teas-menu';
@@ -34,7 +35,6 @@ export function LoadedTeaProductDetail({ product, addIns, locale }: LoadedTeaPro
   const [loading, setLoading] = useState(false);
 
   const name = getLocalized(product.name, locale);
-  const description = getLocalized(product.description, locale);
 
   const selectedItem = LOADED_TEAS_MENU.items.find((item) => item.slug === flavorSlug);
   const displayImage = selectedItem
@@ -91,16 +91,12 @@ export function LoadedTeaProductDetail({ product, addIns, locale }: LoadedTeaPro
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
         <p className="mt-2 text-grey">{LOADED_TEAS_MENU.servingNote}</p>
+        <p className="mt-2 text-sm leading-relaxed text-grey">{loadedTeaPricingSummary()}</p>
         {selectedItem && hasPrice(unitPrice) && (
           <p className="mt-4 font-display text-3xl text-pink">
             {formatPrice(unitPrice, 'USD', locale)}
           </p>
         )}
-        <div
-          className="prose-brand mt-6 text-grey"
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }}
-        />
-
         {selectedItem && (
           <div className="mt-6 rounded-2xl border border-grey/15 bg-cream p-4 text-sm text-grey">
             <p className="font-semibold text-carbon">{selectedItem.name}</p>
