@@ -12,7 +12,7 @@ export const MEGA_TEA_KIT_PRODUCT_SLUG = 'mega-tea-kit-builder';
 export const MEGA_TEA_KITS_MENU = {
   headline: 'Mega Tea Kits',
   description: 'Make loaded teas at home with premium boosters and your choice of flavor enhancer.',
-  price: 12,
+  price: 10,
   heroImage: {
     url: '/images/mega-tea-kits/hero.jpg',
     alt: 'Mega Tea Kit with colorful flavor pouches and an iced loaded tea',
@@ -25,7 +25,18 @@ export const MEGA_TEA_KITS_MENU = {
     'Flavor Enhancer',
   ] as const,
   flavorPickerLimit: 1,
+  optionalAddOns: [
+    { slug: 'mtk-lift-off', name: 'Lift Off', price: 10 },
+    { slug: 'mtk-aloe-vera', name: 'Aloe Vera', price: 10 },
+    { slug: 'mtk-nrg-or-tea', name: 'NRG or Tea', price: 10 },
+    { slug: 'mtk-collagen', name: 'Collagen', price: 10 },
+    { slug: 'mtk-flavor-enhancer', name: 'Flavor Enhancer', price: 10 },
+  ] as const,
 } as const;
+
+export function megaTeaKitOptionalAddInSlugs(): string[] {
+  return MEGA_TEA_KITS_MENU.optionalAddOns.map((addOn) => addOn.slug);
+}
 
 export const MEGA_TEA_KIT_COLLECTIONS = FLAVOR_COLLECTIONS.map((collection) => ({
   collectionSlug: collection.slug,

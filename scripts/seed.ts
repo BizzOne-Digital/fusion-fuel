@@ -23,9 +23,9 @@ import { SITE_IMAGES, getCategoryImage, getServiceImage, getProductFallbackImage
 import { FLAVOR_IMAGE_BY_SLUG } from '../src/lib/flavor-image-manifest';
 import { CATERING_TAGLINE, CONTACT, DELIVERY, acaiBowlEventServiceHtml, ACAI_BOWL_EVENT, flavorIngredientsHtml, HOME_HERO, LOADED_TEAS, MONTHLY_TEA_CLUB } from '../src/lib/brand-content';
 import { PROTEIN_COFFEE, proteinCoffeeIcedPriceCents, proteinCoffeeOptionalAddInSlugs, proteinCoffeeProductDescriptionHtml, proteinCoffeeProductShortDescription, PROTEIN_COFFEE_PRODUCT_SLUG } from '../src/lib/protein-coffee-menu';
-import { MEGA_TEA_KIT_COLLECTIONS, MEGA_TEA_KITS_MENU, megaTeaKitDescriptionHtml, megaTeaKitPriceCents, megaTeaKitProductName, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
+import { MEGA_TEA_KIT_COLLECTIONS, MEGA_TEA_KITS_MENU, megaTeaKitDescriptionHtml, megaTeaKitOptionalAddInSlugs, megaTeaKitPriceCents, megaTeaKitProductName, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
 import { MENU_FLAVORS } from '../src/lib/menu-flavors';
-import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaProductDescriptionHtml, loadedTeaProductShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
+import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaOptionalAddInSlugs, loadedTeaProductDescriptionHtml, loadedTeaProductShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
 import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents, acaiBowlShortDescription } from '../src/lib/acai-bowls-menu';
 import { WAFFLES_MENU, waffleDescriptionHtml, waffleExtraAddInSlugs, waffleExtraModifierSlug, wafflePriceCents, waffleShortDescription } from '../src/lib/waffles-menu';
 import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
@@ -624,140 +624,23 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
     price: Math.round(addOn.price * 100),
   }));
 
+  const megaTeaKitAddIns = MEGA_TEA_KITS_MENU.optionalAddOns.map((addOn) => ({
+    slug: addOn.slug,
+    name: addOn.name,
+    category: 'mega-tea-kits',
+    description: `${addOn.name} add-on for Mega Tea Kits.`,
+    price: Math.round(addOn.price * 100),
+  }));
+
+  const loadedTeaAddIns = LOADED_TEAS_MENU.optionalAddOns.map((addOn) => ({
+    slug: addOn.slug,
+    name: addOn.name,
+    category: 'loaded-teas',
+    description: addOn.description,
+    price: Math.round(addOn.price * 100),
+  }));
+
   const addIns = [
-    {
-      slug: 'flavor-enhancer',
-      name: 'Flavor Enhancer',
-      category: 'flavor',
-      description: 'Flavor enhancer add-in.',
-      price: 100,
-    },
-    {
-      slug: 'collagen-unflavored',
-      name: 'Collagen — Unflavored',
-      category: 'collagen',
-      description: 'Unflavored collagen add-in for loaded teas and kits.',
-      price: 300,
-    },
-    {
-      slug: 'collagen-strawberry-lemonade',
-      name: 'Collagen — Strawberry Lemonade',
-      category: 'collagen',
-      description: 'Strawberry lemonade collagen add-in.',
-      price: 300,
-    },
-    {
-      slug: 'extra-b12',
-      name: 'Extra B12',
-      category: 'wellness',
-      description: 'Extra B12 wellness booster.',
-      price: 300,
-    },
-    {
-      slug: 'extra-hydration',
-      name: 'Extra Hydration',
-      category: 'wellness',
-      description: 'Extra hydration booster for your blend.',
-      price: 300,
-    },
-    {
-      slug: 'watermelon-hydrate',
-      name: 'Watermelon Hydrate',
-      category: 'wellness',
-      description: 'Watermelon hydration add-in booster.',
-      price: 300,
-    },
-    {
-      slug: 'nrg-regular',
-      name: 'NRG (Regular)',
-      category: 'energy',
-      description: 'NRG clean energy add-in — regular.',
-      price: 150,
-    },
-    {
-      slug: 'nrg-flavor',
-      name: 'NRG (Flavor)',
-      category: 'energy',
-      description: 'NRG clean energy add-in — flavored.',
-      price: 150,
-    },
-    {
-      slug: 'extra-tea-lemon',
-      name: 'Extra Tea — Lemon',
-      category: 'tea',
-      description: 'Extra lemon tea shot for your blend.',
-      price: 200,
-    },
-    {
-      slug: 'extra-tea-raspberry',
-      name: 'Extra Tea — Raspberry',
-      category: 'tea',
-      description: 'Extra raspberry tea shot for your blend.',
-      price: 200,
-    },
-    {
-      slug: 'extra-tea-chai',
-      name: 'Extra Tea — Chai',
-      category: 'tea',
-      description: 'Extra chai tea shot for your blend.',
-      price: 200,
-    },
-    {
-      slug: 'extra-tea-sweet-ginger',
-      name: 'Extra Tea — Sweet Ginger',
-      category: 'tea',
-      description: 'Extra sweet ginger tea shot for your blend.',
-      price: 200,
-    },
-    {
-      slug: 'aloe-mango',
-      name: 'Aloe — Mango',
-      category: 'aloe',
-      description: 'Mango aloe add-in.',
-      price: 300,
-    },
-    {
-      slug: 'aloe-mandarin',
-      name: 'Aloe — Mandarin',
-      category: 'aloe',
-      description: 'Mandarin aloe add-in.',
-      price: 300,
-    },
-    {
-      slug: 'aloe-unflavored',
-      name: 'Aloe — Unflavored',
-      category: 'aloe',
-      description: 'Unflavored aloe add-in.',
-      price: 300,
-    },
-    {
-      slug: 'aloe-grape',
-      name: 'Aloe — Grape',
-      category: 'aloe',
-      description: 'Grape aloe add-in.',
-      price: 300,
-    },
-    {
-      slug: 'cr7',
-      name: 'CR7',
-      category: 'wellness',
-      description: 'CR7 wellness add-in.',
-      price: 300,
-    },
-    {
-      slug: 'immunity',
-      name: 'Immunity',
-      category: 'wellness',
-      description: 'Immunity wellness booster.',
-      price: 200,
-    },
-    {
-      slug: 'probiotics',
-      name: 'Probiotics',
-      category: 'wellness',
-      description: 'Probiotics wellness booster.',
-      price: 200,
-    },
     {
       slug: 'additional-topping',
       name: 'Additional Topping',
@@ -769,6 +652,8 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
     ...waffleExtraAddIns,
     ...proteinCoffeeAddIns,
     ...proteinShakeAddIns,
+    ...megaTeaKitAddIns,
+    ...loadedTeaAddIns,
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
@@ -1667,7 +1552,7 @@ async function seedFaqs(): Promise<void> {
       category: 'mega-tea-kits',
       question: 'What add-ins are available for kits?',
       answer:
-        'Optional add-ins include collagen (unflavored and strawberry lemonade), extra B12, extra hydration, watermelon hydrate, NRG (regular and flavor), extra tea shots (lemon, raspberry, chai, sweet ginger), aloe (mango, mandarin, unflavored, grape), and CR7. Availability and pricing are managed in the admin portal.',
+        'Mega Tea Kit add-ons include Lift Off, Aloe Vera, NRG or Tea, Collagen, and Flavor Enhancer — $10.00 each.',
       order: 3,
     },
     {
@@ -1818,11 +1703,20 @@ async function main(): Promise<void> {
   const categoryIds = await seedCategories();
   const flavorIds = await seedFlavors();
   const addInIds = await seedAddIns();
-  const addInOptions = Object.values(addInIds).map((addInId) => ({
-    addInId,
-    maxQuantity: 5,
-    included: false,
-  }));
+  const loadedTeaAddInOptions = loadedTeaOptionalAddInSlugs()
+    .filter((slug) => addInIds[slug])
+    .map((slug) => ({
+      addInId: addInIds[slug],
+      maxQuantity: slug === 'ltea-fat-reducing-shot' ? 1 : 5,
+      included: false,
+    }));
+  const megaTeaKitAddInOptions = megaTeaKitOptionalAddInSlugs()
+    .filter((slug) => addInIds[slug])
+    .map((slug) => ({
+      addInId: addInIds[slug],
+      maxQuantity: 5,
+      included: false,
+    }));
   const proteinCoffeeAddInOptions = proteinCoffeeOptionalAddInSlugs()
     .filter((slug) => addInIds[slug])
     .map((slug) => ({
@@ -1841,9 +1735,9 @@ async function main(): Promise<void> {
 
   await seedServices();
   await seedProducts(categoryIds, flavorIds, addInIds);
-  await seedMegaTeaKitProducts(categoryIds, flavorIds, addInOptions);
+  await seedMegaTeaKitProducts(categoryIds, flavorIds, megaTeaKitAddInOptions);
   await seedProteinCoffeeProducts(categoryIds, proteinCoffeeAddInOptions);
-  await seedLoadedTeaProducts(categoryIds, addInOptions);
+  await seedLoadedTeaProducts(categoryIds, loadedTeaAddInOptions);
   await seedAcaiBowlProducts(categoryIds, addInIds);
   await seedWaffleProducts(categoryIds, addInIds);
   await seedProteinShakeProducts(categoryIds, proteinShakeAddInOptions);

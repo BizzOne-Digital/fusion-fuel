@@ -67,7 +67,7 @@ export default async function ProductDetailPage({
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6">
         <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Menu', href: '/menu' }, { label: name }]} />
         {isMegaTeaKit ? (
-          <MegaTeaKitProductDetail product={product} flavors={flavors} locale={typedLocale} />
+          <MegaTeaKitProductDetail product={product} flavors={flavors} addIns={productAddIns} locale={typedLocale} />
         ) : isLoadedTea ? (
           <LoadedTeaProductDetail product={product} addIns={productAddIns} locale={typedLocale} />
         ) : isProteinShake ? (

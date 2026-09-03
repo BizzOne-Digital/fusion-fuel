@@ -168,6 +168,7 @@ export function LoadedTeaProductDetail({ product, addIns, locale }: LoadedTeaPro
             locale={locale}
             selected={selectedAddIns}
             onChange={setSelectedAddIns}
+            title={locale === 'es' ? 'Complementos opcionales' : 'Optional Add-Ons'}
           />
 
           <div className="flex flex-wrap items-center justify-between gap-4 border-t border-grey/15 pt-6">

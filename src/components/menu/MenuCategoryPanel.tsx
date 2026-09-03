@@ -7,6 +7,7 @@ import { ProteinShakesCategoryExplorer } from '@/components/menu/ProteinShakesCa
 import { ACAI_BOWLS_MENU, acaiBowlPricingSummary } from '@/lib/acai-bowls-menu';
 import { PROTEIN_COFFEE, proteinCoffeePricingSummary } from '@/lib/protein-coffee-menu';
 import { PROTEIN_SHAKES_MENU, proteinShakePricingSummary } from '@/lib/protein-shakes-menu';
+import { MEGA_TEA_KITS_MENU, megaTeaKitIncludesSummary, megaTeaKitPricingSummary } from '@/lib/mega-tea-kits-menu';
 import { DONUT_OF_THE_DAY_MENU } from '@/lib/donut-of-the-day-menu';
 import type { IFlavor } from '@/models/Flavor';
 import type { IProduct } from '@/models/Product';
@@ -82,6 +83,17 @@ function CategoryPricingNote({ slug }: { slug: string }) {
         <p className="font-semibold text-carbon">{PROTEIN_SHAKES_MENU.headline}</p>
         <p>{PROTEIN_SHAKES_MENU.servingNote}</p>
         <p className="text-sm leading-relaxed">{proteinShakePricingSummary()}</p>
+      </div>
+    );
+  }
+
+  if (slug === 'mega-tea-kits') {
+    return (
+      <div className="mt-2 mb-6 max-w-3xl space-y-1 text-grey">
+        <p className="font-semibold text-carbon">{MEGA_TEA_KITS_MENU.headline}</p>
+        <p className="text-sm leading-relaxed">
+          Includes {megaTeaKitIncludesSummary()}. {megaTeaKitPricingSummary()}.
+        </p>
       </div>
     );
   }

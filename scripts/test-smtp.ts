@@ -13,8 +13,11 @@ async function main(): Promise<void> {
   await sendEmail({
     to,
     subject: 'Fusion Fuel SMTP test',
-    text: 'SMTP is configured correctly. Catering form submissions will be delivered to this inbox.',
-    html: '<p><strong>SMTP test successful.</strong></p><p>Catering form submissions will be delivered to this inbox.</p>',
+    text: `SMTP is configured correctly for ${to}.
+
+Order confirmations, catering requests, and contact form submissions will be delivered to this inbox.`,
+    html: `<p><strong>SMTP test successful.</strong></p>
+<p>Order confirmations, catering requests, and contact form submissions will be delivered to <strong>${to}</strong>.</p>`,
   });
 
   console.log('Test email sent successfully.');

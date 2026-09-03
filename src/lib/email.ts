@@ -36,6 +36,9 @@ function getTransporter(): Transporter {
             pass: process.env.SMTP_PASS.replace(/\s/g, ''),
           }
         : undefined,
+    tls: {
+      minVersion: 'TLSv1.2',
+    },
   });
 
   return transporter;

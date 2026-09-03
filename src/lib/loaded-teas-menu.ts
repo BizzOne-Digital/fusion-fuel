@@ -27,6 +27,75 @@ export const LOADED_TEAS_MENU = {
     { slug: '24oz', name: '24 oz', price: LOADED_TEA_STANDARD_PRICES['24oz'] },
     { slug: '32oz', name: '32 oz', price: LOADED_TEA_STANDARD_PRICES['32oz'] },
   ] as const,
+  optionalAddOns: [
+    {
+      slug: 'ltea-probiotics',
+      name: 'Probiotics',
+      description: 'Gut health',
+      price: 2,
+    },
+    {
+      slug: 'ltea-collagen',
+      name: 'Collagen',
+      description: 'Improves skin, nails, hair, reduce cellulite',
+      price: 3,
+    },
+    {
+      slug: 'ltea-immunity-shot',
+      name: 'Immunity Shot',
+      description: '1,000mg vitamin C, Zinc Multivitamins',
+      price: 2,
+    },
+    {
+      slug: 'ltea-extra-caffeine',
+      name: 'Extra Caffeine',
+      description: '45–85 mg',
+      price: 2,
+    },
+    {
+      slug: 'ltea-fat-reducing-shot',
+      name: 'Fat Reducing Shot',
+      description: 'Targets belly fat & control hunger (optional flavors)',
+      price: 6,
+    },
+    {
+      slug: 'ltea-nitric-oxide',
+      name: 'Nitric Oxide',
+      description: 'Improves circulation, no stimulant',
+      price: 3,
+    },
+    {
+      slug: 'ltea-protein-boost',
+      name: 'Protein Boost',
+      description: '7g of protein',
+      price: 3,
+    },
+    {
+      slug: 'ltea-tea-or-coffee-shot',
+      name: 'Tea or Coffee Shot',
+      description: '40 mg',
+      price: 2,
+    },
+    {
+      slug: 'ltea-boba',
+      name: 'Boba',
+      description: 'Strawberry & Mango',
+      price: 2,
+    },
+    {
+      slug: 'ltea-extra-b12',
+      name: 'Extra B12',
+      description: '75mg',
+      price: 3,
+    },
+    {
+      slug: 'ltea-greens',
+      name: 'Greens',
+      description:
+        'Vegan, non-GMO, turmeric, ginger, ashwagandha, wheatgrass, super foods, and more',
+      price: 2,
+    },
+  ] as const,
   items: [
     {
       slug: 'bloom',
@@ -250,6 +319,14 @@ export function loadedTeaPricingSummary(): string {
 
 export function loadedTeaPricingNote(): string {
   return loadedTeaPricingSummary();
+}
+
+export function loadedTeaOptionalAddInSlugs(): string[] {
+  return LOADED_TEAS_MENU.optionalAddOns.map((addOn) => addOn.slug);
+}
+
+export function loadedTeaOptionalAddOnsSummary(): string {
+  return LOADED_TEAS_MENU.optionalAddOns.map((addOn) => addOn.name).join(' · ');
 }
 
 export function loadedTeaDescriptionHtml(item: LoadedTeaMenuItem): string {

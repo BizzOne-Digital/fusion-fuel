@@ -7,6 +7,7 @@ import { getLocalized, formatPrice, hasPrice, sanitizeHtml } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
+import { AddInSelector } from '@/components/products/AddInSelector';
 import {
   MEGA_TEA_KITS_MENU,
   isMegaTeaKitProduct,
@@ -16,17 +17,20 @@ import {
 import { resolveFlavorImage } from '@/lib/site-images';
 import type { IFlavor } from '@/models/Flavor';
 import type { IProduct } from '@/models/Product';
+import type { IAddIn } from '@/models/AddIn';
 import type { Locale } from '@/types';
 
 interface MegaTeaKitProductDetailProps {
   product: IProduct;
   flavors: IFlavor[];
+  addIns: IAddIn[];
   locale: Locale;
 }
 
-export function MegaTeaKitProductDetail({ product, flavors, locale }: MegaTeaKitProductDetailProps) {
+export function MegaTeaKitProductDetail({ product, flavors, addIns, locale }: MegaTeaKitProductDetailProps) {
   const { addItem } = useCart();
   const [flavorId, setFlavorId] = useState('');
+  const [selectedAddIns, setSelectedAddIns] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
 
   const name = getLocalized(product.name, locale);
@@ -34,6 +38,17 @@ export function MegaTeaKitProductDetail({ product, flavors, locale }: MegaTeaKit
   const description = getLocalized(product.description, locale);
   const kitSize = product.kitSizes[0];
   const unitPrice = kitSize?.price ?? product.basePrice;
+
+  const addInTotal = useMemo(
+    () =>
+      Object.entries(selectedAddIns).reduce((sum, [id, qty]) => {
+        const addIn = addIns.find((entry) => String(entry._id) === id);
+        return sum + (addIn?.price ?? 0) * qty;
+      }, 0),
+    [selectedAddIns, addIns]
+  );
+
+  const linePrice = unitPrice + addInTotal;
 
   const collectionSlug = megaTeaKitCollectionFromProduct(product.slug);
 
@@ -64,7 +79,7 @@ export function MegaTeaKitProductDetail({ product, flavors, locale }: MegaTeaKit
     ? { url: flavorImage.url, alt: flavorImage.alt || selectedFlavorName }
     : MEGA_TEA_KITS_MENU.heroImage;
 
-  const canAdd = Boolean(selectedFlavor && kitSize && hasPrice(unitPrice));
+  const canAdd = Boolean(selectedFlavor && kitSize && hasPrice(linePrice));
 
   const handleAdd = async () => {
     if (!canAdd || !selectedFlavor || !kitSize) return;
@@ -75,6 +90,9 @@ export function MegaTeaKitProductDetail({ product, flavors, locale }: MegaTeaKit
       kitSizeKey: kitSize.key,
       flavorIds: [String(selectedFlavor._id)],
       notes: megaTeaKitFlavorNote(selectedFlavorName),
+      addIns: Object.entries(selectedAddIns)
+        .filter(([, quantity]) => quantity > 0)
+        .map(([addInId, quantity]) => ({ addInId, quantity })),
     });
     setLoading(false);
   };
@@ -99,9 +117,9 @@ export function MegaTeaKitProductDetail({ product, flavors, locale }: MegaTeaKit
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
         <p className="mt-2 text-grey">{shortDescription}</p>
-        {hasPrice(unitPrice) && (
+        {hasPrice(linePrice) && (
           <p className="mt-4 font-display text-3xl text-pink">
-            {formatPrice(unitPrice, 'USD', locale)}
+            {formatPrice(linePrice, 'USD', locale)}
           </p>
         )}
         <div
@@ -140,16 +158,27 @@ export function MegaTeaKitProductDetail({ product, flavors, locale }: MegaTeaKit
             </div>
           </div>
 
+          {addIns.length > 0 ? (
+            <AddInSelector
+              product={product}
+              addIns={addIns}
+              locale={locale}
+              selected={selectedAddIns}
+              onChange={setSelectedAddIns}
+              title={locale === 'es' ? 'Complementos opcionales' : 'Optional Add-Ons'}
+            />
+          ) : null}
+
           <div className="flex flex-wrap items-center justify-between gap-4 border-t border-grey/15 pt-6">
             <p className="font-display text-2xl">
-              {hasPrice(unitPrice) ? formatPrice(unitPrice, 'USD', locale) : formatPrice(null, 'USD', locale)}
+              {hasPrice(linePrice) ? formatPrice(linePrice, 'USD', locale) : formatPrice(null, 'USD', locale)}
             </p>
             <Button onClick={handleAdd} loading={loading} disabled={!canAdd}>
               {locale === 'es' ? 'Agregar al carrito' : 'Add to cart'}
             </Button>
           </div>
 
-          {!canAdd && hasPrice(unitPrice) && (
+          {!canAdd && hasPrice(linePrice) && (
             <p className="text-sm text-grey">
               {locale === 'es' ? 'Elige un sabor para continuar.' : 'Select a flavor to continue.'}
             </p>

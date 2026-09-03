@@ -92,11 +92,9 @@ export function ProteinCoffeeProductDetail({ product, addIns, locale }: ProteinC
         <h1 className="font-display text-5xl">{name}</h1>
         <p className="mt-2 text-grey">{PROTEIN_COFFEE.servingNote}</p>
         <p className="mt-2 text-sm leading-relaxed text-grey">{proteinCoffeePricingSummary()}</p>
-        {selectedFlavor && (
-          <p className="mt-4 font-display text-3xl text-pink">
-            {formatPrice(linePrice, 'USD', locale)}
-          </p>
-        )}
+        <p className="mt-4 font-display text-3xl text-pink">
+          {formatPrice(linePrice, 'USD', locale)}
+        </p>
 
         <div className="mt-8 space-y-6 rounded-2xl border border-grey/15 bg-cream p-6">
           <div>
@@ -151,15 +149,13 @@ export function ProteinCoffeeProductDetail({ product, addIns, locale }: ProteinC
           />
 
           <div className="flex flex-wrap items-center justify-between gap-4 border-t border-grey/15 pt-6">
-            <p className="font-display text-2xl">
-              {selectedFlavor ? formatPrice(linePrice, 'USD', locale) : '—'}
-            </p>
+            <p className="font-display text-2xl">{formatPrice(linePrice, 'USD', locale)}</p>
             <Button onClick={handleAdd} loading={loading} disabled={!canAdd}>
               {locale === 'es' ? 'Agregar al carrito' : 'Add to cart'}
             </Button>
           </div>
 
-          {!canAdd && (
+          {!selectedFlavor && hasPrice(linePrice) && (
             <p className="text-sm text-grey">
               {locale === 'es' ? 'Elige un sabor para continuar.' : 'Select a flavor to continue.'}
             </p>
