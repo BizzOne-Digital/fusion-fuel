@@ -12,7 +12,7 @@ export const MEGA_TEA_KIT_PRODUCT_SLUG = 'mega-tea-kit-builder';
 export const MEGA_TEA_KITS_MENU = {
   headline: 'Mega Tea Kits',
   description: 'Make loaded teas at home with premium boosters and your choice of flavor enhancer.',
-  price: 10,
+  price: 12,
   heroImage: {
     url: '/images/mega-tea-kits/hero.jpg',
     alt: 'Mega Tea Kit with colorful flavor pouches and an iced loaded tea',
