@@ -6,7 +6,6 @@ import {
   getHomeFallback,
   getPublishedProducts,
   getPublishedCategories,
-  getPublishedAddIns,
   getPublishedServices,
   getSiteSettings,
 } from '@/lib/data';
@@ -34,12 +33,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [page, products, categories, addIns, services, settings] =
+  const [page, products, categories, services, settings] =
     await Promise.all([
       getPageByKey('home'),
       getPublishedProducts({ limit: 12 }),
       getPublishedCategories(),
-      getPublishedAddIns(),
       getPublishedServices(),
       getSiteSettings(),
     ]);
@@ -66,7 +64,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       hero={hero}
       products={products}
       categories={categories}
-      addIns={addIns}
       services={services}
       settings={settings}
     />

@@ -9,11 +9,10 @@ import { AcaiBowlEventSection } from '@/components/sections/AcaiBowlEventSection
 import { MonthlyTeaClubSection } from '@/components/sections/MonthlyTeaClubSection';
 import { SITE_IMAGES } from '@/lib/site-images';
 import { Button } from '@/components/ui/Button';
-import { CATERING_TAGLINE, CONTACT, DELIVERY, LOADED_TEAS, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
+import { CATERING_TAGLINE, CONTACT, DELIVERY, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
 import type { Locale } from '@/types';
 import type { IProduct } from '@/models/Product';
 import type { IProductCategory } from '@/models/ProductCategory';
-import type { IAddIn } from '@/models/AddIn';
 import type { IService } from '@/models/Service';
 import type { ISiteSettings } from '@/models/SiteSettings';
 
@@ -38,7 +37,6 @@ interface HomePageSectionsProps {
   };
   products: IProduct[];
   categories: IProductCategory[];
-  addIns: IAddIn[];
   services: IService[];
   settings: Partial<ISiteSettings>;
 }
@@ -48,7 +46,6 @@ export function HomePageSections({
   hero,
   products,
   categories,
-  addIns,
   services,
   settings,
 }: HomePageSectionsProps) {
@@ -56,10 +53,6 @@ export function HomePageSections({
   const facebook = settings.social?.find((s) => s.platform === 'facebook');
   const heroTitle = getLocalized(hero.title, locale);
   const { fuel: fuelLine, boost: boostLine } = splitBrandSlogan(heroTitle);
-  const addOnLabels =
-    addIns.length > 0
-      ? addIns.map((addIn) => ({ id: String(addIn._id), label: getLocalized(addIn.name, locale) }))
-      : LOADED_TEAS.addOns.map((name) => ({ id: name, label: name }));
 
   return (
     <div className="min-w-0 w-full max-w-full overflow-x-hidden">
@@ -80,22 +73,6 @@ export function HomePageSections({
 
       {/* Monthly Tea Club */}      <SectionReveal>
         <MonthlyTeaClubSection kitHref={MEGA_TEA_KITS_MENU_HREF} />
-      </SectionReveal>
-
-      <SectionReveal>
-        <section className="section-yellow py-16">
-          <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <h3 className="font-display text-3xl text-carbon">Add-Ons Available</h3>
-            <p className="mt-2 text-sm text-grey">{LOADED_TEAS.combinations}</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              {addOnLabels.map(({ id, label }) => (
-                <span key={id} className="rounded-full bg-white/80 px-4 py-2 text-sm text-carbon shadow-sm">
-                  {label}
-                </span>
-              ))}
-            </div>
-          </div>
-        </section>
       </SectionReveal>
 
       {/* 13. Catering */}
