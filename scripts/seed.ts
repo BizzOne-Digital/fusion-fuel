@@ -29,7 +29,7 @@ import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaOptionalAddInSlugs,
 import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents, acaiBowlShortDescription } from '../src/lib/acai-bowls-menu';
 import { WAFFLES_MENU, waffleDescriptionHtml, waffleExtraAddInSlugs, waffleExtraModifierSlug, wafflePriceCents, waffleShortDescription } from '../src/lib/waffles-menu';
 import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
-import { MAKE_YOUR_OWN_LOADED_TEA_MENU } from '../src/lib/make-your-own-loaded-tea-menu';
+import { MAKE_YOUR_OWN_LOADED_TEA_MENU, MYOLT_DRINKS, myoltOptionalAddInSlugs, myoltPaidAddonPriceCents, myoltPriceCents, myoltProductDescriptionHtml, myoltProductShortDescription, myoltProductSlug } from '../src/lib/make-your-own-loaded-tea-menu';
 import {
   PROTEIN_TREATS_MENU,
   proteinTreatDescriptionHtml,
@@ -644,6 +644,20 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
     price: Math.round(addOn.price * 100),
   }));
 
+  const myoltPaidPrice = myoltPaidAddonPriceCents();
+  const myoltAddIns = myoltOptionalAddInSlugs().map((slug) => ({
+    slug,
+    name:
+      slug === 'myolt-additional-flavor'
+        ? 'Additional Flavor — Make Your Own Loaded Tea'
+        : slug === 'myolt-hydration-support'
+          ? 'Hydration Support — Make Your Own Loaded Tea'
+          : `MYO Loaded Tea — ${slug.replace('myolt-', '').replace(/-/g, ' ')}`,
+    category: 'make-your-own-loaded-tea',
+    description: 'Optional $1 add-on for Make Your Own Loaded Tea.',
+    price: myoltPaidPrice,
+  }));
+
   const addIns = [
     {
       slug: 'additional-topping',
@@ -658,6 +672,7 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
     ...proteinShakeAddIns,
     ...megaTeaKitAddIns,
     ...loadedTeaAddIns,
+    ...myoltAddIns,
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
@@ -1515,6 +1530,81 @@ async function seedProteinTreatProducts(
   console.log(`Protein treat products upserted (${PROTEIN_TREATS_MENU.items.length} records).`);
 }
 
+async function seedMakeYourOwnLoadedTeaProducts(
+  categoryIds: Record<string, Types.ObjectId>,
+  addInIds: Record<string, Types.ObjectId>
+): Promise<void> {
+  const activeSlugs = MYOLT_DRINKS.map((drink) => myoltProductSlug(drink.slug));
+  const addInOptions = myoltOptionalAddInSlugs()
+    .filter((slug) => addInIds[slug])
+    .map((slug) => ({
+      addInId: addInIds[slug],
+      maxQuantity: slug === 'myolt-additional-flavor' ? 10 : 1,
+      included: false,
+    }));
+
+  for (const [index, drink] of MYOLT_DRINKS.entries()) {
+    const sku = `FFB-MYOLT-${String(index + 1).padStart(3, '0')}`;
+    const slug = myoltProductSlug(drink.slug);
+
+    await Product.findOneAndUpdate(
+      { slug },
+      {
+        $set: {
+          slug,
+          sku,
+          name: loc(drink.name),
+          shortDescription: loc(myoltProductShortDescription(drink)),
+          description: rich(myoltProductDescriptionHtml(drink)),
+          productType: 'single',
+          categoryId: categoryIds['make-your-own-loaded-tea'],
+          images: [img(MAKE_YOUR_OWN_LOADED_TEA_MENU.image.url, MAKE_YOUR_OWN_LOADED_TEA_MENU.image.alt)],
+          basePrice: myoltPriceCents(drink),
+          variants: [
+            {
+              sku: `${sku}-STD`,
+              name: loc('Standard'),
+              price: myoltPriceCents(drink),
+              inventory: 0,
+            },
+          ],
+          flavorIds: [],
+          kitSizes: [],
+          addInOptions,
+          inventory: {
+            trackInventory: false,
+            quantity: 0,
+            lowStockThreshold: 5,
+            allowBackorder: false,
+          },
+          allergens: [],
+          dietaryTags: [],
+          seo: {
+            title: `${drink.name} | ${BRAND.name}`,
+            description: myoltProductShortDescription(drink),
+          },
+          status: 'published',
+          featured: index === 0,
+          order: index,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+  }
+
+  const staleProducts = await Product.find({
+    categoryId: categoryIds['make-your-own-loaded-tea'],
+    slug: { $nin: activeSlugs },
+    status: 'published',
+  }).select('slug');
+
+  for (const stale of staleProducts) {
+    await Product.updateOne({ _id: stale._id }, { $set: { status: 'archived' } });
+  }
+
+  console.log(`Make Your Own Loaded Tea products upserted (${MYOLT_DRINKS.length} records).`);
+}
+
 async function seedFaqs(): Promise<void> {
   const faqs = [
     {
@@ -1746,6 +1836,7 @@ async function main(): Promise<void> {
   await seedWaffleProducts(categoryIds, addInIds);
   await seedProteinShakeProducts(categoryIds, proteinShakeAddInOptions);
   await seedProteinTreatProducts(categoryIds);
+  await seedMakeYourOwnLoadedTeaProducts(categoryIds, addInIds);
   await seedFaqs();
   await seedPromotions();
 

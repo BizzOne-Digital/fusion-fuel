@@ -73,6 +73,7 @@ export function inferProductCategorySlug(productSlug: string): string {
   }
   if (productSlug.startsWith('acai-bowl-')) return 'acai-bowls';
   if (productSlug.startsWith('waffle-')) return 'waffles';
+  if (productSlug.startsWith('myolt-')) return 'make-your-own-loaded-tea';
   if (productSlug.includes('protein-truffles')) return 'protein-treats';
   if (productSlug.includes('protein-mini-donuts')) return 'protein-treats';
   if (productSlug.includes('pie-in-a-cup')) return 'protein-treats';

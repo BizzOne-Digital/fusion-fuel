@@ -25,6 +25,8 @@ import { ProteinTreatProductDetail } from '@/components/products/ProteinTreatPro
 import { isPieInACupProduct, isProteinTreatProduct } from '@/lib/protein-treats-menu';
 import { ProteinCoffeeProductDetail } from '@/components/products/ProteinCoffeeProductDetail';
 import { isProteinCoffeeProduct } from '@/lib/protein-coffee-menu';
+import { MakeYourOwnLoadedTeaProductDetail } from '@/components/products/MakeYourOwnLoadedTeaProductDetail';
+import { isMakeYourOwnLoadedTeaProduct } from '@/lib/make-your-own-loaded-tea-menu';
 import { ProductAddToCart } from '@/components/products/ProductAddToCart';
 import { resolveProductAddIns } from '@/lib/product-add-ins';
 import { ProductJsonLd } from '@/components/seo/ProductJsonLd';
@@ -62,6 +64,7 @@ export default async function ProductDetailPage({
   const isPieInACup = isPieInACupProduct(slug);
   const isProteinTreat = isProteinTreatProduct(slug) && !isPieInACup;
   const isProteinCoffee = isProteinCoffeeProduct(slug);
+  const isMakeYourOwnLoadedTea = isMakeYourOwnLoadedTeaProduct(slug);
 
   return (
     <>
@@ -94,6 +97,12 @@ export default async function ProductDetailPage({
           <ProteinTreatProductDetail product={product} locale={typedLocale} />
         ) : isProteinCoffee ? (
           <ProteinCoffeeProductDetail product={product} addIns={productAddIns} locale={typedLocale} />
+        ) : isMakeYourOwnLoadedTea ? (
+          <MakeYourOwnLoadedTeaProductDetail
+            product={product}
+            addIns={productAddIns}
+            locale={typedLocale}
+          />
         ) : (
         <div className="grid gap-12 lg:grid-cols-2">
           <div>

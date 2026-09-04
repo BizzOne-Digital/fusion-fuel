@@ -82,7 +82,7 @@ export function MenuCategoryPanel({
         ) : category.slug === 'donut-of-the-day' ? (
           <DonutOfTheDaySpotlight locale={locale} />
         ) : category.slug === MAKE_YOUR_OWN_LOADED_TEA_MENU.slug ? (
-          <MakeYourOwnLoadedTeaCategoryExplorer flavors={flavors} locale={locale} />
+          <MakeYourOwnLoadedTeaCategoryExplorer locale={locale} />
         ) : category.slug === 'protein-coffee' || category.slug === 'acai-bowls' || category.slug === 'waffles' ? (
           <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
         ) : (
@@ -122,7 +122,7 @@ export function MenuCategoryPanel({
             ) : cat.slug === 'donut-of-the-day' ? (
               <DonutOfTheDaySpotlight locale={locale} />
             ) : isMakeYourOwnLoadedTea ? (
-              <MakeYourOwnLoadedTeaCategoryExplorer flavors={flavors} locale={locale} />
+              <MakeYourOwnLoadedTeaCategoryExplorer locale={locale} />
             ) : cat.slug === 'protein-coffee' || cat.slug === 'acai-bowls' || cat.slug === 'waffles' ? (
               <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
             ) : (

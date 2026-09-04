@@ -27,6 +27,10 @@ export function ModifierChipGroup({
   const atMax = max != null && selected.length >= max;
 
   const toggle = (option: string) => {
+    if (max === 1) {
+      onChange(selected.includes(option) ? [] : [option]);
+      return;
+    }
     if (selected.includes(option)) {
       onChange(selected.filter((entry) => entry !== option));
       return;
