@@ -30,8 +30,7 @@ export function ProteinShakesCategoryExplorer({ locale }: { locale: Locale }) {
 
         <div className="min-w-0 flex-1">
           <h3 className="font-display text-xl text-carbon lg:text-2xl">{PROTEIN_SHAKES_MENU.headline}</h3>
-          <p className="mt-2 text-sm text-grey">{PROTEIN_SHAKES_MENU.servingNote}</p>
-          <p className="mt-1 text-sm text-grey">{proteinShakePricingSummary()}</p>
+          <p className="mt-2 text-sm text-grey">{proteinShakePricingSummary()}</p>
           <p className="mt-3 text-sm font-semibold text-pink group-hover:underline">
             {locale === 'es' ? 'Ver sabores para ordenar →' : 'See flavors to order →'}
           </p>

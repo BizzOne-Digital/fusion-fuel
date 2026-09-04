@@ -29,6 +29,7 @@ import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaOptionalAddInSlugs,
 import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents, acaiBowlShortDescription } from '../src/lib/acai-bowls-menu';
 import { WAFFLES_MENU, waffleDescriptionHtml, waffleExtraAddInSlugs, waffleExtraModifierSlug, wafflePriceCents, waffleShortDescription } from '../src/lib/waffles-menu';
 import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
+import { MAKE_YOUR_OWN_LOADED_TEA_MENU } from '../src/lib/make-your-own-loaded-tea-menu';
 import {
   PROTEIN_TREATS_MENU,
   proteinTreatDescriptionHtml,
@@ -502,6 +503,7 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
     { slug: 'waffles', name: 'Waffles', order: 5 },
     { slug: 'protein-treats', name: 'Protein Treats', order: 6 },
     { slug: 'donut-of-the-day', name: 'Donut of the Day', order: 7 },
+    { slug: 'make-your-own-loaded-tea', name: 'Make Your Own Loaded Tea', order: 8 },
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
@@ -511,7 +513,9 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
     const descriptionHtml =
       category.slug === 'donut-of-the-day'
         ? `<p>${DONUT_OF_THE_DAY_MENU.description}</p><p><strong>${donutOfTheDayPricingSummary()}</strong></p><p><em>${DONUT_OF_THE_DAY_MENU.footnote}</em></p>`
-        : `<p>Explore our ${category.name} selection. Ingredient and nutrition details are added when confirmed by the business.</p>`;
+        : category.slug === 'make-your-own-loaded-tea'
+          ? `<p>${MAKE_YOUR_OWN_LOADED_TEA_MENU.description}</p>`
+          : `<p>Explore our ${category.name} selection. Ingredient and nutrition details are added when confirmed by the business.</p>`;
 
     const doc = await ProductCategory.findOneAndUpdate(
       { slug: category.slug },

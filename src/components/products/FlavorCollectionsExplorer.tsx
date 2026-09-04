@@ -112,6 +112,8 @@ interface FlavorCollectionsExplorerProps {
   locale: Locale;
   kitProductId?: string;
   kitHref?: string;
+  primaryCtaHref?: string;
+  primaryCtaLabel?: string;
   title?: string;
   subtitle?: string;
   showCollectionNav?: boolean;
@@ -122,11 +124,17 @@ export function FlavorCollectionsExplorer({
   flavors,
   locale,
   kitHref = '/menu?category=mega-tea-kits',
+  primaryCtaHref,
+  primaryCtaLabel,
   title,
   subtitle,
   showCollectionNav = true,
   textOnly = false,
 }: FlavorCollectionsExplorerProps) {
+  const orderHref = primaryCtaHref ?? kitHref;
+  const orderLabel =
+    primaryCtaLabel ??
+    (locale === 'es' ? 'Ver kits Mega Tea' : 'View Mega Tea kits');
   const collectionGroups = useMemo(
     () =>
       FLAVOR_COLLECTIONS.map((collection) => ({
@@ -172,10 +180,10 @@ export function FlavorCollectionsExplorer({
 
         <div className="mt-8 flex flex-wrap gap-4 border-t border-white/10 pt-8">
           <Link
-            href={kitHref}
+            href={orderHref}
             className="inline-block rounded-full bg-lime px-6 py-3 text-sm font-bold uppercase tracking-wide text-ink transition hover:bg-white"
           >
-            {locale === 'es' ? 'Ver kits Mega Tea' : 'View Mega Tea kits'}
+            {orderLabel}
           </Link>
           <Link
             href="/contact"
