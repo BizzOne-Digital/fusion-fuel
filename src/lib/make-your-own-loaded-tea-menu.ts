@@ -141,7 +141,7 @@ export const MYOLT_DRINKS: MyoltDrink[] = [
   {
     slug: 'mega-tea',
     name: 'Mega Tea',
-    price: 10,
+    price: 12,
     includedSummary: 'LiftOff + herbal tea + aloe + one flavor',
     websiteNotice: 'Contains caffeine from Herbal Tea Concentrate and LiftOff.',
     requiredGroups: [

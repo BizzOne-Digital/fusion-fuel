@@ -35,6 +35,7 @@ export const SITE_IMAGES = {
     'donut-of-the-day': '/images/donut-of-the-day.png',
     donuts: '/images/donut-of-the-day.png',
     'make-your-own-loaded-tea': '/images/loaded-teas/hero.jpg',
+    'bulk-products': '/images/mega-tea-kit.png',
     'protein-treats': '/images/protein-treats/protein-truffles.png',
     'add-ins': '/images/mega-tea-kit.png',
     'new-and-seasonal-items': '/images/mega-tea.png',

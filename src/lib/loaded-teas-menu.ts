@@ -5,15 +5,15 @@ function formatUsd(amount: number): string {
 }
 
 export const LOADED_TEA_STANDARD_PRICES = {
-  '24oz': 6.9,
-  '32oz': 8.9,
+  '24oz': 12,
+  '32oz': 14,
 } as const;
 
 export const LOADED_TEA_PREMIUM_SLUGS = ['mango-breeze', 'yellowstone'] as const;
 
 export const LOADED_TEA_PREMIUM_PRICES = {
-  '24oz': 10.99,
-  '32oz': 12.99,
+  '24oz': 12,
+  '32oz': 14,
 } as const;
 
 export const LOADED_TEAS_MENU = {

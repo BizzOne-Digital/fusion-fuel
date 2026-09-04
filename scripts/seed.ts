@@ -30,6 +30,7 @@ import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acai
 import { WAFFLES_MENU, waffleDescriptionHtml, waffleExtraAddInSlugs, waffleExtraModifierSlug, wafflePriceCents, waffleShortDescription } from '../src/lib/waffles-menu';
 import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
 import { MAKE_YOUR_OWN_LOADED_TEA_MENU, MYOLT_DRINKS, myoltOptionalAddInSlugs, myoltPaidAddonPriceCents, myoltPriceCents, myoltProductDescriptionHtml, myoltProductShortDescription, myoltProductSlug } from '../src/lib/make-your-own-loaded-tea-menu';
+import { BULK_PRODUCTS_MENU } from '../src/lib/bulk-products-menu';
 import {
   PROTEIN_TREATS_MENU,
   proteinTreatDescriptionHtml,
@@ -504,6 +505,7 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
     { slug: 'protein-treats', name: 'Protein Treats', order: 6 },
     { slug: 'donut-of-the-day', name: 'Donut of the Day', order: 7 },
     { slug: 'make-your-own-loaded-tea', name: 'Make Your Own Loaded Tea', order: 8 },
+    { slug: 'bulk-products', name: 'Bulk Products', order: 9 },
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
@@ -515,7 +517,9 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
         ? `<p>${DONUT_OF_THE_DAY_MENU.description}</p><p><strong>${donutOfTheDayPricingSummary()}</strong></p><p><em>${DONUT_OF_THE_DAY_MENU.footnote}</em></p>`
         : category.slug === 'make-your-own-loaded-tea'
           ? `<p>${MAKE_YOUR_OWN_LOADED_TEA_MENU.description}</p>`
-          : `<p>Explore our ${category.name} selection. Ingredient and nutrition details are added when confirmed by the business.</p>`;
+          : category.slug === 'bulk-products'
+            ? `<p>${BULK_PRODUCTS_MENU.description}</p><p><a href="${BULK_PRODUCTS_MENU.shopUrl}" target="_blank" rel="noopener noreferrer">Shop bulk products online</a></p>`
+            : `<p>Explore our ${category.name} selection. Ingredient and nutrition details are added when confirmed by the business.</p>`;
 
     const doc = await ProductCategory.findOneAndUpdate(
       { slug: category.slug },

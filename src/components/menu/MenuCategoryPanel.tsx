@@ -7,6 +7,8 @@ import { ProteinShakesCategoryExplorer } from '@/components/menu/ProteinShakesCa
 import { MakeYourOwnLoadedTeaCategoryExplorer } from '@/components/menu/MakeYourOwnLoadedTeaCategoryExplorer';
 import { DONUT_OF_THE_DAY_MENU } from '@/lib/donut-of-the-day-menu';
 import { MAKE_YOUR_OWN_LOADED_TEA_MENU } from '@/lib/make-your-own-loaded-tea-menu';
+import { BULK_PRODUCTS_MENU } from '@/lib/bulk-products-menu';
+import { BulkProductsCategoryExplorer } from '@/components/menu/BulkProductsCategoryExplorer';
 import type { IFlavor } from '@/models/Flavor';
 import type { IProduct } from '@/models/Product';
 import type { IProductCategory } from '@/models/ProductCategory';
@@ -52,7 +54,11 @@ function DonutOfTheDaySpotlight({ locale }: { locale: Locale }) {
 }
 
 function isMenuSpotlightCategory(slug: string): boolean {
-  return slug === 'donut-of-the-day' || slug === MAKE_YOUR_OWN_LOADED_TEA_MENU.slug;
+  return (
+    slug === 'donut-of-the-day' ||
+    slug === MAKE_YOUR_OWN_LOADED_TEA_MENU.slug ||
+    slug === BULK_PRODUCTS_MENU.slug
+  );
 }
 
 export function MenuCategoryPanel({
@@ -83,6 +89,8 @@ export function MenuCategoryPanel({
           <DonutOfTheDaySpotlight locale={locale} />
         ) : category.slug === MAKE_YOUR_OWN_LOADED_TEA_MENU.slug ? (
           <MakeYourOwnLoadedTeaCategoryExplorer locale={locale} />
+        ) : category.slug === BULK_PRODUCTS_MENU.slug ? (
+          <BulkProductsCategoryExplorer locale={locale} />
         ) : category.slug === 'protein-coffee' || category.slug === 'acai-bowls' || category.slug === 'waffles' ? (
           <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
         ) : (
@@ -102,9 +110,18 @@ export function MenuCategoryPanel({
         const isLoadedTeas = cat.slug === 'mega-teas';
         const isProteinShakes = cat.slug === 'protein-shakes';
         const isMakeYourOwnLoadedTea = cat.slug === MAKE_YOUR_OWN_LOADED_TEA_MENU.slug;
+        const isBulkProducts = cat.slug === BULK_PRODUCTS_MENU.slug;
         const isSpotlight = isMenuSpotlightCategory(cat.slug);
 
-        if (!isSpotlight && !isKits && !isLoadedTeas && !isProteinShakes && categoryProducts.length === 0) return null;
+        if (
+          !isSpotlight &&
+          !isKits &&
+          !isLoadedTeas &&
+          !isProteinShakes &&
+          !isBulkProducts &&
+          categoryProducts.length === 0
+        )
+          return null;
 
         return (
           <section key={cat.slug} id={cat.slug} className="scroll-mt-24">
@@ -123,6 +140,8 @@ export function MenuCategoryPanel({
               <DonutOfTheDaySpotlight locale={locale} />
             ) : isMakeYourOwnLoadedTea ? (
               <MakeYourOwnLoadedTeaCategoryExplorer locale={locale} />
+            ) : isBulkProducts ? (
+              <BulkProductsCategoryExplorer locale={locale} />
             ) : cat.slug === 'protein-coffee' || cat.slug === 'acai-bowls' || cat.slug === 'waffles' ? (
               <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
             ) : (
