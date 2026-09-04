@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { EMAIL_REGEX } from '@/lib/constants';
 
+export const BOOKING_GUEST_COUNT_MIN = 50;
+export const BOOKING_GUEST_COUNT_MAX = 150;
+
 export const bookingStepEventSchema = z.object({
   serviceSlug: z.string().trim().min(1, 'Please select a catering service'),
   eventType: z.string().trim().min(2).max(120),
@@ -10,7 +13,17 @@ export const bookingStepScheduleSchema = z.object({
   preferredDate: z.coerce.date({ invalid_type_error: 'Preferred date is required' }),
   alternateDate: z.coerce.date().optional(),
   startTime: z.string().trim().min(1, 'Start time is required').max(10),
-  guestCount: z.coerce.number().int().min(1).max(10000),
+  guestCount: z.coerce
+    .number()
+    .int()
+    .min(
+      BOOKING_GUEST_COUNT_MIN,
+      `Guest count must be between ${BOOKING_GUEST_COUNT_MIN} and ${BOOKING_GUEST_COUNT_MAX}`
+    )
+    .max(
+      BOOKING_GUEST_COUNT_MAX,
+      `Guest count must be between ${BOOKING_GUEST_COUNT_MIN} and ${BOOKING_GUEST_COUNT_MAX}`
+    ),
 });
 
 export const bookingStepVenueSchema = z.object({

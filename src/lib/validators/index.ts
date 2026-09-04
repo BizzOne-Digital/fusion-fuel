@@ -11,6 +11,8 @@ export {
   bookingStepEventSchema,
   bookingStepScheduleSchema,
   bookingStepVenueSchema,
+  BOOKING_GUEST_COUNT_MIN,
+  BOOKING_GUEST_COUNT_MAX,
 } from './booking';
 export type { BookingInput } from './booking';
 

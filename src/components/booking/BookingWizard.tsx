@@ -10,6 +10,8 @@ import {
   bookingStepVenueSchema,
   bookingStepContactSchema,
   bookingStepDetailsSchema,
+  BOOKING_GUEST_COUNT_MIN,
+  BOOKING_GUEST_COUNT_MAX,
   type BookingInput,
 } from '@/lib/validators';
 import { Input } from '@/components/ui/Input';
@@ -91,7 +93,18 @@ export function BookingWizard({ services }: BookingWizardProps) {
           <Input label="Preferred date" type="date" {...register('preferredDate')} error={errors.preferredDate?.message} />
           <Input label="Alternate date (optional)" type="date" {...register('alternateDate')} />
           <Input label="Start time" type="time" {...register('startTime')} error={errors.startTime?.message} />
-          <Input label="Guest count" type="number" {...register('guestCount')} error={errors.guestCount?.message} />
+          <Input
+            label="Guest count"
+            type="number"
+            min={BOOKING_GUEST_COUNT_MIN}
+            max={BOOKING_GUEST_COUNT_MAX}
+            placeholder={`${BOOKING_GUEST_COUNT_MIN}–${BOOKING_GUEST_COUNT_MAX}`}
+            {...register('guestCount')}
+            error={errors.guestCount?.message}
+          />
+          <p className="text-sm text-grey">
+            Events are available for {BOOKING_GUEST_COUNT_MIN}–{BOOKING_GUEST_COUNT_MAX} guests.
+          </p>
           <Button type="button" variant="outline" onClick={() => setStep(0)}>Back</Button>
           <Button type="submit">Next</Button>
         </form>

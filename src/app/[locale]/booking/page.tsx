@@ -14,8 +14,7 @@ export default async function BookingPage({ params }: { params: Promise<{ locale
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Book Catering' }]} />
       <h1 className="font-display text-5xl">Book Catering</h1>
       <p className="mt-4 text-grey">
-        Request an event — including our {ACAI_BOWL_EVENT.name} for {ACAI_BOWL_EVENT.guestPackages.join(', ')} guests.
-        Confirmation follows after review.
+        Request an event — including our {ACAI_BOWL_EVENT.name}. Confirmation follows after review.
       </p>
       <div className="mt-6 rounded-2xl border border-grey/15 bg-cream p-5 text-sm text-carbon">
         <p className="font-semibold">{ACAI_BOWL_EVENT.deposit}</p>
