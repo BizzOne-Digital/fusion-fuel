@@ -14,7 +14,7 @@ export const PROTEIN_SHAKES_MENU = {
   servingNote: '24 oz & 32 oz',
   heroImage: {
     url: '/images/protein-shakes/menu-poster.jpg',
-    alt: 'Fusion Fuel protein shakes — Banana Split, Brownie Batter, Strawberry Cookie, and more',
+    alt: 'Fusion Fuel & Boost Co. protein shakes — six flavors in 24 oz and 32 oz cups',
   },
   sizes: [
     { slug: '24oz', name: '24 oz', price: PROTEIN_SHAKE_PRICES['24oz'], variantSuffix: '24' },
