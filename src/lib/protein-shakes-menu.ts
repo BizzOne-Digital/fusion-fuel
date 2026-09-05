@@ -13,8 +13,8 @@ export const PROTEIN_SHAKES_MENU = {
   headline: 'Protein Shakes',
   servingNote: '24 oz & 32 oz',
   heroImage: {
-    url: '/images/protein-shakes/hero.png',
-    alt: 'Lineup of Fusion Fuel protein shakes',
+    url: '/images/protein-shakes/menu-poster.jpg',
+    alt: 'Fusion Fuel protein shakes — Banana Split, Brownie Batter, Strawberry Cookie, and more',
   },
   sizes: [
     { slug: '24oz', name: '24 oz', price: PROTEIN_SHAKE_PRICES['24oz'], variantSuffix: '24' },
@@ -22,9 +22,24 @@ export const PROTEIN_SHAKES_MENU = {
   ] as const,
   items: [
     {
-      slug: 'dulce-de-leche',
-      name: 'Dulce de Leche',
-      image: '/images/protein-shakes/dulce-de-leche.jpg',
+      slug: 'banana-split',
+      name: 'Banana Split',
+      image: '/images/protein-shakes/banana-split.jpg',
+    },
+    {
+      slug: 'brownie-batter',
+      name: 'Brownie Batter',
+      image: '/images/protein-shakes/brownie-batter.jpg',
+    },
+    {
+      slug: 'strawberry-cookie',
+      name: 'Strawberry Cookie',
+      image: '/images/protein-shakes/strawberry-cookie.jpg',
+    },
+    {
+      slug: 'strawberry-banana',
+      name: 'Strawberry Banana',
+      image: '/images/protein-shakes/strawberry-banana.jpg',
     },
     {
       slug: 'chunky-monkey',
@@ -32,34 +47,9 @@ export const PROTEIN_SHAKES_MENU = {
       image: '/images/protein-shakes/chunky-monkey.jpg',
     },
     {
-      slug: 'strawberry-cheesecake',
-      name: 'Strawberry Cheesecake',
-      image: '/images/protein-shakes/strawberry-cheesecake.jpg',
-    },
-    {
-      slug: 'birthday-cake',
-      name: 'Birthday Cake',
-      image: '/images/protein-shakes/birthday-cake.png',
-    },
-    {
-      slug: 'mango-pineapple',
-      name: 'Mango Pineapple',
-      image: '/images/protein-shakes/mango-pineapple.png',
-    },
-    {
-      slug: 'tropical-green-glow',
-      name: 'Tropical Green Glow',
-      image: '/images/protein-shakes/tropical-green-glow.png',
-    },
-    {
-      slug: 'pb-and-j',
-      name: 'PB&J Protein Shake',
-      image: '/images/protein-shakes/pb-and-j.png',
-    },
-    {
-      slug: 'oreo',
-      name: 'Oreo',
-      image: '/images/protein-shakes/oreo.jpg',
+      slug: 'smores',
+      name: "S'mores",
+      image: '/images/protein-shakes/smores.jpg',
     },
   ],
   optionalAddOns: [

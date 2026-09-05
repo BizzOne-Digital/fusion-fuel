@@ -77,7 +77,7 @@ export function HomePageSections({
       {/* Açaí Bowl Event Experience */}      <AcaiBowlEventSection />
 
       {/* Monthly Tea Club */}      <SectionReveal>
-        <MonthlyTeaClubSection kitHref={MEGA_TEA_KITS_MENU_HREF} />
+        <MonthlyTeaClubSection />
       </SectionReveal>
 
       {/* 13. Catering */}
@@ -128,7 +128,7 @@ export function HomePageSections({
             <h2 className="font-display text-3xl">{MONTHLY_TEA_CLUB.cta}</h2>
             <p className="mt-4 text-grey">{MONTHLY_TEA_CLUB.ctaDetail}</p>
             <p className="mt-2 text-sm text-grey">{DELIVERY.local}</p>
-            <Link href="/contact" className="mt-6 inline-block text-pink font-semibold hover:underline">Contact us to subscribe →</Link>
+            <Link href="/menu?category=monthly-tea-club" className="mt-6 inline-block text-pink font-semibold hover:underline">Sign up for the club →</Link>
           </div>
         </section>
       </SectionReveal>
@@ -207,7 +207,7 @@ export function HomePageSections({
           <div className="mx-auto max-w-4xl px-4 text-center lg:px-6">
             <h2 className="font-display text-5xl text-white">{MONTHLY_TEA_CLUB.taglines.secondary}</h2>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Link href={MEGA_TEA_KITS_MENU_HREF}>
+              <Link href="/menu?category=monthly-tea-club">
                 <Button size="lg">{MONTHLY_TEA_CLUB.cta}</Button>
               </Link>
               <Link href="/booking"><Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-ink">Book Catering</Button></Link>

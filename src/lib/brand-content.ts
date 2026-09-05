@@ -13,52 +13,65 @@ export const CONTACT = {
 } as const;
 
 export const MONTHLY_TEA_CLUB = {
-  name: 'Monthly Tea Club',
-  intro: 'Introducing our Monthly Tea Club',
-  posterImage: '/brand/monthly-tea-club-poster.png',
-  boxTagline: 'Your Monthly Boost of Flavor, Energy & Good Vibes!',
+  name: 'Monthly Mega Tea Club',
+  intro: 'Monthly Mega Tea Club',
+  posterImage: '/brand/monthly-mega-tea-club-poster.jpg',
+  boxTagline: 'Mega Tea Kits In. Good Vibes Out.',
   taglines: {
-    primary: 'New Flavors. Good Energy. Delivered.',
-    secondary: 'Sip More. Love More. Feel Amazing!',
-    value: 'More Tea. More Value. More Happiness!',
-    product: 'Real Ingredients. Real Results. Made For You.',
+    primary: 'New flavors delivered to your door.',
+    secondary: 'Sip More. Love More.',
+    value: 'A surprise every month.',
+    product: 'Surprise yourself with curated monthly tea kits.',
   },
+  surpriseNote:
+    'Pick how many kits you want each month — flavors are a monthly surprise, delivered locally or shipped nationwide.',
   cta: 'Join the Club',
-  ctaDetail: 'Text or DM us to subscribe or learn more!',
-  joinHeadline: 'JOIN THE CLUB!',
+  ctaDetail: 'Text or DM us to subscribe, or complete the sign-up form below.',
+  joinHeadline: 'JOIN THE CLUB',
   plans: [
-    { servings: 6, label: '6 Tea Kit Box' },
-    { servings: 12, label: '12 Tea Kit Box' },
-    { servings: 20, label: '20 Tea Kit Box' },
-    { servings: 30, label: '30 Tea Kit Box' },
+    { kits: 6, label: '6 Kits', slug: '6-kits' },
+    { kits: 12, label: '12 Kits', slug: '12-kits' },
+    { kits: 20, label: '20 Kits', slug: '20-kits' },
+    { kits: 30, label: '30 Kits', slug: '30-kits' },
+  ],
+  fulfillmentOptions: [
+    {
+      slug: 'local-delivery',
+      label: 'Local Delivery',
+      description: 'Delivered within 3 miles ($25 minimum order).',
+    },
+    {
+      slug: 'nationwide-shipping',
+      label: 'Nationwide Shipping',
+      description: 'Shipped anywhere in the U.S.',
+    },
   ],
   features: [
     {
-      title: 'Surprise Every Month',
+      title: 'New Flavors Every Month',
       description:
-        'A curated box of loaded tea blends, exclusive recipes, and seasonal favorites delivered to your door.',
+        'Every box features surprise loaded tea blends you have not tried before — curated fresh each month.',
     },
     {
-      title: 'Premium Ingredients',
-      description:
-        'Made with high-quality ingredients to fuel your day and support your wellness.',
+      title: 'Easy Step-by-Step Guide',
+      description: 'Each kit includes simple instructions so you can mix perfect teas at home.',
     },
     {
-      title: 'New Flavors Monthly',
-      description: "Discover exciting new blends you won't find anywhere else.",
+      title: 'Customizable Add-Ons',
+      description: 'Enhance your kits with wellness boosters and add-ins when you sign up.',
     },
     {
-      title: 'Made Just For You',
+      title: 'A Surprise Every Month',
       description:
-        'Everything you need to create delicious, refreshing, and energizing teas at home.',
+        'You choose how many kits — we surprise you with new flavors, delivered or shipped to your door.',
     },
   ],
   whatsInside: [
-    '5+ Loaded Tea Blends',
+    'Surprise Loaded Tea Kits',
     'Easy Step-by-Step Guide',
     'Wellness Boosters & Add-Ins',
-    'Sweet Extras & Surprises',
     'New Flavors Every Month',
+    'Delivered or Shipped Monthly',
   ],
 } as const;
 
@@ -188,7 +201,8 @@ export function monthlyTeaClubServiceHtml(): string {
     `<p>${c.boxTagline}</p>`,
     `<h3>What's Inside</h3>`,
     `<ul>${c.whatsInside.map((item) => `<li>${item}</li>`).join('')}</ul>`,
-    `<h3>Choose Your Plan</h3>`,
+    `<p>${c.surpriseNote}</p>`,
+    `<h3>Choose Your Box</h3>`,
     `<ul>${c.plans.map((plan) => `<li>${plan.label}</li>`).join('')}</ul>`,
     `<h3>Why Join</h3>`,
     `<ul>${c.features.map((feature) => `<li><strong>${feature.title}</strong> — ${feature.description}</li>`).join('')}</ul>`,

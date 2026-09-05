@@ -497,7 +497,7 @@ async function seedPages(): Promise<void> {
 async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
   const categories = [
     { slug: 'mega-teas', name: 'Loaded Teas', order: 0 },
-    { slug: 'monthly-tea-club', name: 'Monthly Tea Club', order: 1 },
+    { slug: 'monthly-tea-club', name: 'Monthly Mega Tea Club', order: 1 },
     { slug: 'mega-tea-kits', name: 'Mega Tea Kits', order: 2 },
     { slug: 'acai-bowls', name: 'Açaí Bowls', order: 3 },
     { slug: 'protein-coffee', name: 'Protein Coffee', order: 4 },
@@ -521,7 +521,7 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
           : category.slug === 'bulk-products'
             ? `<p>${BULK_PRODUCTS_MENU.description}</p><p><a href="${BULK_PRODUCTS_MENU.shopUrl}" target="_blank" rel="noopener noreferrer">Shop bulk products online</a></p>`
             : category.slug === 'monthly-tea-club'
-              ? `<p><strong>${MONTHLY_TEA_CLUB.intro}</strong></p><p>${MONTHLY_TEA_CLUB.taglines.primary}</p><p>${MONTHLY_TEA_CLUB.ctaDetail}</p>`
+              ? `<p><strong>${MONTHLY_TEA_CLUB.intro}</strong></p><p>${MONTHLY_TEA_CLUB.taglines.primary}</p><p>${MONTHLY_TEA_CLUB.surpriseNote}</p><p>${MONTHLY_TEA_CLUB.ctaDetail}</p>`
               : `<p>Explore our ${category.name} selection. Ingredient and nutrition details are added when confirmed by the business.</p>`;
 
     const doc = await ProductCategory.findOneAndUpdate(
@@ -866,7 +866,7 @@ async function seedServices(): Promise<void> {
       slug: 'mega-tea-kit-program-club',
       name: loc(MONTHLY_TEA_CLUB.name),
       shortDescription: loc(
-        `${MONTHLY_TEA_CLUB.taglines.primary} Choose 6, 12, 20, or 30 tea kit boxes with loaded blends, guides, and wellness add-ins.`
+        `${MONTHLY_TEA_CLUB.taglines.primary} Choose 6, 12, 20, or 30 kits per month with surprise flavors, guides, and wellness add-ins.`
       ),
       description: rich(
         `<p><strong>${MONTHLY_TEA_CLUB.intro}</strong></p><p>${MONTHLY_TEA_CLUB.taglines.primary}</p><p>${MONTHLY_TEA_CLUB.boxTagline}</p>`
@@ -1428,7 +1428,16 @@ async function seedProteinShakeProducts(
   categoryIds: Record<string, Types.ObjectId>,
   addInOptions: Array<{ addInId: Types.ObjectId; maxQuantity: number; included: boolean }>
 ): Promise<void> {
-  const legacySlugs = PROTEIN_SHAKES_MENU.items.map((item) => proteinShakeProductSlug(item.slug));
+  const legacySlugs = [
+    ...PROTEIN_SHAKES_MENU.items.map((item) => proteinShakeProductSlug(item.slug)),
+    'protein-shake-dulce-de-leche',
+    'protein-shake-strawberry-cheesecake',
+    'protein-shake-birthday-cake',
+    'protein-shake-mango-pineapple',
+    'protein-shake-tropical-green-glow',
+    'protein-shake-pb-and-j',
+    'protein-shake-oreo',
+  ];
 
   await Product.updateMany(
     { slug: { $in: legacySlugs } },
@@ -1682,23 +1691,30 @@ async function seedFaqs(): Promise<void> {
     },
     {
       category: 'monthly-tea-club',
-      question: 'What is the Monthly Tea Club?',
+      question: 'What is the Monthly Mega Tea Club?',
       answer:
-        'Our Monthly Tea Club delivers a curated box of loaded tea blends, an easy step-by-step guide, wellness boosters, sweet extras, and new flavors each month. Choose a 6, 12, 20, or 30 tea kit box plan.',
+        'Our Monthly Mega Tea Club delivers surprise loaded tea kits each month with an easy step-by-step guide, wellness boosters, and sweet extras. Choose 6, 12, 20, or 30 kits per month.',
       order: 0,
     },
     {
       category: 'monthly-tea-club',
-      question: 'How do I join the Monthly Tea Club?',
+      question: 'How do I join the Monthly Mega Tea Club?',
       answer:
         `${MONTHLY_TEA_CLUB.ctaDetail} Call ${CONTACT.phone}, email ${CONTACT.email}, or message us on Instagram at ${CONTACT.instagramHandle}.`,
       order: 1,
     },
     {
       category: 'monthly-tea-club',
+      question: 'Are the tea flavors the same every month?',
+      answer:
+        'No — Monthly Mega Tea Club kits feature surprise flavors that change each month. You choose how many kits you receive (6, 12, 20, or 30), and we curate new blends for your box.',
+      order: 2,
+    },
+    {
+      category: 'monthly-tea-club',
       question: 'Do you offer local delivery or shipping?',
       answer: `${DELIVERY.local} ${DELIVERY.nationwide}`,
-      order: 2,
+      order: 3,
     },
     {
       category: 'mega-tea-kits',
