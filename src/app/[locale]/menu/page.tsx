@@ -7,7 +7,6 @@ import {
 } from '@/lib/data';
 import { MenuCategorySidebar } from '@/components/products/MenuCategorySidebar';
 import { MenuCategoryPanel } from '@/components/menu/MenuCategoryPanel';
-import { MenuProductSizesSection } from '@/components/menu/MenuProductSizesSection';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { LOADED_TEAS_MENU_VIEWS, loadedTeasMenuHref } from '@/lib/make-your-own-loaded-tea-menu';
 import type { Locale } from '@/types';
@@ -75,8 +74,6 @@ export default async function MenuPage({
             />
           </div>
         </div>
-
-        <MenuProductSizesSection locale={typedLocale} />
       </div>
     </div>
   );

@@ -51,6 +51,41 @@ export const PROTEIN_SHAKES_MENU = {
       name: "S'mores",
       image: '/images/protein-shakes/smores.jpg',
     },
+    {
+      slug: 'dulce-de-leche',
+      name: 'Dulce de Leche',
+      image: '/images/protein-shakes/dulce-de-leche.jpg',
+    },
+    {
+      slug: 'strawberry-cheesecake',
+      name: 'Strawberry Cheesecake',
+      image: '/images/protein-shakes/strawberry-cheesecake.jpg',
+    },
+    {
+      slug: 'birthday-cake',
+      name: 'Birthday Cake',
+      image: '/images/protein-shakes/birthday-cake.png',
+    },
+    {
+      slug: 'mango-pineapple',
+      name: 'Mango Pineapple',
+      image: '/images/protein-shakes/mango-pineapple.png',
+    },
+    {
+      slug: 'tropical-green-glow',
+      name: 'Tropical Green Glow',
+      image: '/images/protein-shakes/tropical-green-glow.png',
+    },
+    {
+      slug: 'pb-and-j',
+      name: 'PB&J Protein Shake',
+      image: '/images/protein-shakes/pb-and-j.png',
+    },
+    {
+      slug: 'oreo',
+      name: 'Oreo',
+      image: '/images/protein-shakes/oreo.jpg',
+    },
   ],
   optionalAddOns: [
     { slug: 'pshk-extra-protein', name: 'Extra Protein', price: 3.0 },

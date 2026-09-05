@@ -55,8 +55,7 @@ export function MegaTeaKitsCategoryExplorer({
             <div className="min-w-0 flex-1">
               <h3 className="font-display text-xl text-carbon lg:text-2xl">{MAKE_YOUR_OWN_MEGA_TEA_KIT.name}</h3>
               <p className="mt-2 text-sm leading-relaxed text-grey">{MAKE_YOUR_OWN_MEGA_TEA_KIT.description}</p>
-              <p className="mt-3 text-sm font-semibold text-pink">{megaTeaKitPricingSummary()}</p>
-              <p className="mt-2 text-sm font-semibold text-carbon group-hover:text-pink">
+              <p className="mt-3 text-sm font-semibold text-carbon group-hover:text-pink">
                 {locale === 'es' ? 'Arma tu kit →' : 'Build your kit →'}
               </p>
             </div>
