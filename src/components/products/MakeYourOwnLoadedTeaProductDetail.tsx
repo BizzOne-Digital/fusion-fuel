@@ -8,10 +8,12 @@ import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { ModifierChipGroup } from '@/components/products/ModifierChipGroup';
 import {
+  LOADED_TEAS_MENU_VIEWS,
   MAKE_YOUR_OWN_LOADED_TEA_MENU,
   MYOLT_OPTIONAL_ADDONS,
   MYOLT_PAID_ADDON_PRICE,
   isMakeYourOwnLoadedTeaProduct,
+  loadedTeasMenuHref,
   myoltDrinkFromProductSlug,
   myoltLinePriceCents,
   myoltOrderNotes,
@@ -109,7 +111,7 @@ export function MakeYourOwnLoadedTeaProductDetail({
 
       <div>
         <Link
-          href="/menu?category=make-your-own-loaded-tea"
+          href={loadedTeasMenuHref(LOADED_TEAS_MENU_VIEWS.makeYourOwn)}
           className="text-sm font-semibold text-pink hover:underline"
         >
           {locale === 'es' ? '← Volver a Make Your Own Loaded Tea' : '← Back to Make Your Own Loaded Tea'}

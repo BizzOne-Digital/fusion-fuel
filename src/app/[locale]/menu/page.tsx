@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import {
   getPublishedCategories,
@@ -8,6 +9,7 @@ import { MenuCategorySidebar } from '@/components/products/MenuCategorySidebar';
 import { MenuCategoryPanel } from '@/components/menu/MenuCategoryPanel';
 import { MenuProductSizesSection } from '@/components/menu/MenuProductSizesSection';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { LOADED_TEAS_MENU_VIEWS, loadedTeasMenuHref } from '@/lib/make-your-own-loaded-tea-menu';
 import type { Locale } from '@/types';
 
 export default async function MenuPage({
@@ -15,12 +17,16 @@ export default async function MenuPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ category?: string; kitCollection?: string }>;
+  searchParams: Promise<{ category?: string; kitCollection?: string; view?: string }>;
 }) {
   const { locale } = await params;
-  const { category, kitCollection } = await searchParams;
+  const { category, kitCollection, view } = await searchParams;
   setRequestLocale(locale);
   const typedLocale = locale as Locale;
+
+  if (category === 'make-your-own-loaded-tea') {
+    redirect(loadedTeasMenuHref(LOADED_TEAS_MENU_VIEWS.makeYourOwn));
+  }
 
   const [flavors, categories, products] = await Promise.all([
     getPublishedFlavors(250),
@@ -65,6 +71,7 @@ export default async function MenuPage({
               locale={typedLocale}
               kitHref={kitHref}
               kitCollection={kitCollection}
+              loadedTeaView={view}
             />
           </div>
         </div>

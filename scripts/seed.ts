@@ -505,8 +505,7 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
     { slug: 'waffles', name: 'Waffles', order: 6 },
     { slug: 'protein-treats', name: 'Protein Treats', order: 7 },
     { slug: 'donut-of-the-day', name: 'Donut of the Day', order: 8 },
-    { slug: 'make-your-own-loaded-tea', name: 'Make Your Own Loaded Tea', order: 9 },
-    { slug: 'bulk-products', name: 'Bulk Products', order: 10 },
+    { slug: 'bulk-products', name: 'Bulk Products', order: 9 },
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
@@ -516,8 +515,8 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
     const descriptionHtml =
       category.slug === 'donut-of-the-day'
         ? `<p>${DONUT_OF_THE_DAY_MENU.description}</p><p><strong>${donutOfTheDayPricingSummary()}</strong></p><p><em>${DONUT_OF_THE_DAY_MENU.footnote}</em></p>`
-        : category.slug === 'make-your-own-loaded-tea'
-          ? `<p>${MAKE_YOUR_OWN_LOADED_TEA_MENU.description}</p>`
+        : category.slug === 'mega-teas'
+          ? `<p>${LOADED_TEAS_MENU.headline} and ${MAKE_YOUR_OWN_LOADED_TEA_MENU.headline}.</p>`
           : category.slug === 'bulk-products'
             ? `<p>${BULK_PRODUCTS_MENU.description}</p><p><a href="${BULK_PRODUCTS_MENU.shopUrl}" target="_blank" rel="noopener noreferrer">Shop bulk products online</a></p>`
             : category.slug === 'monthly-tea-club'
@@ -1625,7 +1624,7 @@ async function seedMakeYourOwnLoadedTeaProducts(
           shortDescription: loc(myoltProductShortDescription(drink)),
           description: rich(myoltProductDescriptionHtml(drink)),
           productType: 'single',
-          categoryId: categoryIds['make-your-own-loaded-tea'],
+          categoryId: categoryIds['mega-teas'],
           images: [img(MAKE_YOUR_OWN_LOADED_TEA_MENU.image.url, MAKE_YOUR_OWN_LOADED_TEA_MENU.image.alt)],
           basePrice: myoltPriceCents(drink),
           variants: [
@@ -1661,7 +1660,7 @@ async function seedMakeYourOwnLoadedTeaProducts(
   }
 
   const staleProducts = await Product.find({
-    categoryId: categoryIds['make-your-own-loaded-tea'],
+    categoryId: categoryIds['mega-teas'],
     slug: { $nin: activeSlugs },
     status: 'published',
   }).select('slug');

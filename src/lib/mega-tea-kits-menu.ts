@@ -47,6 +47,12 @@ export const MEGA_TEA_KITS_MENU = {
   ] as const,
 } as const;
 
+export const MAKE_YOUR_OWN_MEGA_TEA_KIT = {
+  name: 'Make Your Own Mega Tea Kit',
+  description: MEGA_TEA_KITS_MENU.description,
+  image: MEGA_TEA_KITS_MENU.heroImage,
+} as const;
+
 export function megaTeaKitOptionalAddInSlugs(): string[] {
   return MEGA_TEA_KITS_MENU.optionalAddOns.map((addOn) => addOn.slug);
 }

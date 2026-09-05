@@ -11,6 +11,17 @@ export const MAKE_YOUR_OWN_LOADED_TEA_MENU = {
   },
 } as const;
 
+/** Sub-views under Menu → Loaded Teas (`mega-teas` category). */
+export const LOADED_TEAS_MENU_VIEWS = {
+  loadedTeas: 'loaded-teas',
+  makeYourOwn: 'make-your-own',
+} as const;
+
+export function loadedTeasMenuHref(view?: string): string {
+  if (!view) return '/menu?category=mega-teas';
+  return `/menu?category=mega-teas&view=${view}`;
+}
+
 export const MYOLT_PRODUCT_SLUG_PREFIX = 'myolt-';
 
 export const MYOLT_FLAVORS = [

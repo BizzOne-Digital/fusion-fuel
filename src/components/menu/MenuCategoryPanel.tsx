@@ -4,9 +4,7 @@ import { ProductGrid } from '@/components/products/ProductGrid';
 import { MegaTeaKitsCategoryExplorer } from '@/components/menu/MegaTeaKitsCategoryExplorer';
 import { LoadedTeasCategoryExplorer } from '@/components/menu/LoadedTeasCategoryExplorer';
 import { ProteinShakesCategoryExplorer } from '@/components/menu/ProteinShakesCategoryExplorer';
-import { MakeYourOwnLoadedTeaCategoryExplorer } from '@/components/menu/MakeYourOwnLoadedTeaCategoryExplorer';
 import { DONUT_OF_THE_DAY_MENU } from '@/lib/donut-of-the-day-menu';
-import { MAKE_YOUR_OWN_LOADED_TEA_MENU } from '@/lib/make-your-own-loaded-tea-menu';
 import { BULK_PRODUCTS_MENU } from '@/lib/bulk-products-menu';
 import { MONTHLY_TEA_CLUB_MENU } from '@/lib/monthly-tea-club-menu';
 import { BulkProductsCategoryExplorer } from '@/components/menu/BulkProductsCategoryExplorer';
@@ -25,6 +23,7 @@ interface MenuCategoryPanelProps {
   kitProductId?: string;
   kitHref: string;
   kitCollection?: string;
+  loadedTeaView?: string;
 }
 
 function productsForCategory(
@@ -58,7 +57,7 @@ function DonutOfTheDaySpotlight({ locale }: { locale: Locale }) {
 function isMenuSpotlightCategory(slug: string): boolean {
   return (
     slug === 'donut-of-the-day' ||
-    slug === MAKE_YOUR_OWN_LOADED_TEA_MENU.slug ||
+    slug === 'mega-teas' ||
     slug === BULK_PRODUCTS_MENU.slug ||
     slug === MONTHLY_TEA_CLUB_MENU.slug
   );
@@ -68,9 +67,9 @@ export function MenuCategoryPanel({
   category,
   categories,
   products,
-  flavors,
   locale,
   kitCollection,
+  loadedTeaView,
 }: MenuCategoryPanelProps) {
   if (category) {
     const categoryProducts = productsForCategory(products, categories, category.slug);
@@ -89,13 +88,11 @@ export function MenuCategoryPanel({
             activeCollection={kitCollection}
           />
         ) : category.slug === 'mega-teas' ? (
-          <LoadedTeasCategoryExplorer locale={locale} />
+          <LoadedTeasCategoryExplorer locale={locale} view={loadedTeaView} />
         ) : category.slug === 'protein-shakes' ? (
           <ProteinShakesCategoryExplorer locale={locale} />
         ) : category.slug === 'donut-of-the-day' ? (
           <DonutOfTheDaySpotlight locale={locale} />
-        ) : category.slug === MAKE_YOUR_OWN_LOADED_TEA_MENU.slug ? (
-          <MakeYourOwnLoadedTeaCategoryExplorer locale={locale} />
         ) : category.slug === BULK_PRODUCTS_MENU.slug ? (
           <BulkProductsCategoryExplorer locale={locale} />
         ) : category.slug === 'protein-coffee' || category.slug === 'acai-bowls' || category.slug === 'waffles' ? (
@@ -116,7 +113,6 @@ export function MenuCategoryPanel({
         const isKits = cat.slug === 'mega-tea-kits';
         const isLoadedTeas = cat.slug === 'mega-teas';
         const isProteinShakes = cat.slug === 'protein-shakes';
-        const isMakeYourOwnLoadedTea = cat.slug === MAKE_YOUR_OWN_LOADED_TEA_MENU.slug;
         const isBulkProducts = cat.slug === BULK_PRODUCTS_MENU.slug;
         const isMonthlyTeaClub = cat.slug === MONTHLY_TEA_CLUB_MENU.slug;
         const isSpotlight = isMenuSpotlightCategory(cat.slug);
@@ -146,13 +142,11 @@ export function MenuCategoryPanel({
                 activeCollection={kitCollection}
               />
             ) : cat.slug === 'mega-teas' ? (
-              <LoadedTeasCategoryExplorer locale={locale} />
+              <LoadedTeasCategoryExplorer locale={locale} view={loadedTeaView} />
             ) : cat.slug === 'protein-shakes' ? (
               <ProteinShakesCategoryExplorer locale={locale} />
             ) : cat.slug === 'donut-of-the-day' ? (
               <DonutOfTheDaySpotlight locale={locale} />
-            ) : isMakeYourOwnLoadedTea ? (
-              <MakeYourOwnLoadedTeaCategoryExplorer locale={locale} />
             ) : isBulkProducts ? (
               <BulkProductsCategoryExplorer locale={locale} />
             ) : cat.slug === 'protein-coffee' || cat.slug === 'acai-bowls' || cat.slug === 'waffles' ? (
