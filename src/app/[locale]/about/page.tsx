@@ -1,9 +1,20 @@
 import { setRequestLocale } from 'next-intl/server';
 import { getPageByKey } from '@/lib/data';
+import { generatePageMetadata } from '@/lib/seo';
 import { getLocalized } from '@/lib/utils';
 import { PageSectionRenderer } from '@/components/sections/PageSectionRenderer';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import type { Metadata } from 'next';
 import type { Locale } from '@/types';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return generatePageMetadata('about', locale as Locale, '/about');
+}
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

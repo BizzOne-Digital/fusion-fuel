@@ -2,10 +2,21 @@ import Image from 'next/image';
 import { setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { getPublishedServices } from '@/lib/data';
+import { generatePageMetadata } from '@/lib/seo';
 import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
 import { getServiceImage } from '@/lib/site-images';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import type { Metadata } from 'next';
 import type { Locale } from '@/types';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return generatePageMetadata('services', locale as Locale, '/services');
+}
 
 export default async function ServicesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

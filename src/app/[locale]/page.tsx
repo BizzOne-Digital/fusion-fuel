@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
-import { BRAND } from '@/lib/constants';
+import { HomePageSections } from '@/components/sections/HomePageSections';
+import { SITE_IMAGES } from '@/lib/site-images';
+import { generatePageMetadata } from '@/lib/seo';
+import type { Locale } from '@/types';
 import {
   getPageByKey,
   getHomeFallback,
@@ -9,9 +12,6 @@ import {
   getPublishedServices,
   getSiteSettings,
 } from '@/lib/data';
-import { HomePageSections } from '@/components/sections/HomePageSections';
-import { SITE_IMAGES } from '@/lib/site-images';
-import type { Locale } from '@/types';
 
 export async function generateMetadata({
   params,
@@ -19,14 +19,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const page = await getPageByKey('home');
-  const fallback = getHomeFallback(locale as Locale);
-  const seo = page?.seo ?? fallback.seo;
-
-  return {
-    title: seo?.title ?? BRAND.name,
-    description: seo?.description,
-  };
+  return generatePageMetadata('home', locale as Locale, '');
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {

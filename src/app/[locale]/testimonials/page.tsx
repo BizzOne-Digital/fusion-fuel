@@ -1,8 +1,19 @@
 import { setRequestLocale } from 'next-intl/server';
 import { getPublishedTestimonials } from '@/lib/data';
+import { generatePageMetadata } from '@/lib/seo';
 import { getLocalized } from '@/lib/utils';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import type { Metadata } from 'next';
 import type { Locale } from '@/types';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return generatePageMetadata('testimonials', locale as Locale, '/testimonials');
+}
 
 export default async function TestimonialsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

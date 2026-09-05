@@ -5,11 +5,22 @@ import {
   getPublishedFlavors,
   getPublishedProducts,
 } from '@/lib/data';
+import { generatePageMetadata } from '@/lib/seo';
 import { MenuCategorySidebar } from '@/components/products/MenuCategorySidebar';
 import { MenuCategoryPanel } from '@/components/menu/MenuCategoryPanel';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { LOADED_TEAS_MENU_VIEWS, loadedTeasMenuHref } from '@/lib/make-your-own-loaded-tea-menu';
+import type { Metadata } from 'next';
 import type { Locale } from '@/types';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return generatePageMetadata('menu', locale as Locale, '/menu');
+}
 
 export default async function MenuPage({
   params,

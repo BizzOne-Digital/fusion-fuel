@@ -1,10 +1,21 @@
 import { setRequestLocale } from 'next-intl/server';
 import { getPublishedFaqs } from '@/lib/data';
+import { generatePageMetadata } from '@/lib/seo';
 import { getLocalized, sanitizeHtml } from '@/lib/utils';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Accordion } from '@/components/ui/Accordion';
 import { FAQJsonLd } from '@/components/seo/FAQJsonLd';
+import type { Metadata } from 'next';
 import type { Locale } from '@/types';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return generatePageMetadata('faqs', locale as Locale, '/faqs');
+}
 
 export default async function FaqsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;

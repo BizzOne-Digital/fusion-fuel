@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { getProductBySlug, getPublishedFlavors, getPublishedAddIns } from '@/lib/data';
+import { BRAND } from '@/lib/constants';
+import { buildMetadata } from '@/lib/seo';
 import { getLocalized, sanitizeHtml } from '@/lib/utils';
 import {
   inferProductCategorySlug,
@@ -33,7 +35,33 @@ import { ProductJsonLd } from '@/components/seo/ProductJsonLd';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/Button';
 import { formatPrice, hasPrice } from '@/lib/utils';
+import type { Metadata } from 'next';
 import type { Locale } from '@/types';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const product = await getProductBySlug(slug);
+  if (!product) return {};
+
+  const typedLocale = locale as Locale;
+  const name = getLocalized(product.name, typedLocale);
+  const title = product.seo?.title?.trim() ?? `${name} | ${BRAND.name}`;
+  const description =
+    product.seo?.description?.trim() ?? getLocalized(product.shortDescription, typedLocale);
+  const image = product.images[0]?.url;
+
+  return buildMetadata({
+    title,
+    description,
+    locale: typedLocale,
+    path: `/products/${slug}`,
+    image,
+  });
+}
 
 export default async function ProductDetailPage({
   params,

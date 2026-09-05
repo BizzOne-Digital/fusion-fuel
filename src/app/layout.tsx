@@ -1,5 +1,7 @@
-import type { Viewport } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Bebas_Neue, Inter } from 'next/font/google';
+import { BRAND } from '@/lib/constants';
+import { DEFAULT_SEO_KEYWORDS, getSiteUrl } from '@/lib/seo';
 import './globals.css';
 
 const inter = Inter({
@@ -19,6 +21,26 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
+  themeColor: '#07090A',
+};
+
+export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
+  applicationName: BRAND.name,
+  title: {
+    default: BRAND.name,
+    template: `%s | ${BRAND.shortName}`,
+  },
+  description: BRAND.tagline.en,
+  keywords: [...DEFAULT_SEO_KEYWORDS],
+  authors: [{ name: BRAND.name }],
+  creator: BRAND.name,
+  publisher: BRAND.name,
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

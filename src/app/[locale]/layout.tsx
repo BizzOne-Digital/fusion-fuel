@@ -9,6 +9,7 @@ import { Toaster } from '@/components/ui/Toast';
 import { CartProvider } from '@/context/CartContext';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { OrganizationJsonLd } from '@/components/seo/OrganizationJsonLd';
+import { WebSiteJsonLd } from '@/components/seo/WebSiteJsonLd';
 import type { Locale } from '@/types';
 
 export function generateStaticParams() {
@@ -38,6 +39,7 @@ export default async function LocaleLayout({
       <AuthProvider>
         <CartProvider>
           <OrganizationJsonLd settings={settings} />
+          <WebSiteJsonLd />
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[300] focus:rounded focus:bg-lime focus:px-4 focus:py-2"

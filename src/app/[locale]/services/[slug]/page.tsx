@@ -3,12 +3,42 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { getServiceBySlug, getPublishedServices } from '@/lib/data';
+import { BRAND } from '@/lib/constants';
+import { buildMetadata } from '@/lib/seo';
 import { getLocalized, sanitizeHtml, formatPrice, hasPrice } from '@/lib/utils';
 import { getServiceImage } from '@/lib/site-images';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Accordion } from '@/components/ui/Accordion';
 import { Button } from '@/components/ui/Button';
+import type { Metadata } from 'next';
 import type { Locale } from '@/types';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const service = await getServiceBySlug(slug);
+  if (!service) return {};
+
+  const typedLocale = locale as Locale;
+  const name = getLocalized(service.name, typedLocale);
+  const title = service.seo?.title?.trim() ?? `${name} | ${BRAND.name}`;
+  const description =
+    service.seo?.description?.trim() ?? getLocalized(service.shortDescription, typedLocale);
+  const image = service.heroImage?.url?.includes('/placeholders/')
+    ? getServiceImage(slug)
+    : service.heroImage?.url ?? getServiceImage(slug);
+
+  return buildMetadata({
+    title,
+    description,
+    locale: typedLocale,
+    path: `/services/${slug}`,
+    image,
+  });
+}
 
 export default async function ServiceDetailPage({
   params,
