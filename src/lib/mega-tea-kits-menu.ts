@@ -17,6 +17,19 @@ export const MEGA_TEA_KITS_MENU = {
     url: '/images/mega-tea-kits/hero.jpg',
     alt: 'Mega Tea Kit with colorful flavor pouches and an iced loaded tea',
   },
+  factsImage: {
+    url: '/images/mega-tea-kits/facts.jpg',
+    alt: 'Mega Tea Kit facts — individually packaged kits with herbal tea, LiftOff, collagen, aloe, and beverage enhancer',
+  },
+  kitProducts: [
+    'Herbal Tea Concentrate',
+    'LiftOff',
+    'Collagen',
+    'Aloe',
+    'Beverage Enhancer',
+  ] as const,
+  convenienceNote:
+    'Mega Tea Kits are individually packaged for consumer convenience — everything you need to make loaded tea at home.',
   includes: [
     'Probiotics',
     'Collagen',

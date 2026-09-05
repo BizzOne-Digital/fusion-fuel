@@ -7,6 +7,7 @@ import { HomeHeroSection } from '@/components/sections/HomeHeroSection';
 import { HomeMenuCategoriesSection } from '@/components/sections/HomeMenuCategoriesSection';
 import { AcaiBowlEventSection } from '@/components/sections/AcaiBowlEventSection';
 import { MonthlyTeaClubSection } from '@/components/sections/MonthlyTeaClubSection';
+import { MegaTeaKitFactsSection } from '@/components/sections/MegaTeaKitFactsSection';
 import { SITE_IMAGES } from '@/lib/site-images';
 import { Button } from '@/components/ui/Button';
 import { CATERING_TAGLINE, CONTACT, DELIVERY, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
@@ -67,6 +68,10 @@ export function HomePageSections({
       {/* Menu categories */}
       <SectionReveal>
         <HomeMenuCategoriesSection categories={categories} locale={locale} />
+      </SectionReveal>
+
+      <SectionReveal>
+        <MegaTeaKitFactsSection locale={locale} kitHref={MEGA_TEA_KITS_MENU_HREF} />
       </SectionReveal>
 
       {/* Açaí Bowl Event Experience */}      <AcaiBowlEventSection />

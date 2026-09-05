@@ -9,6 +9,7 @@ export interface ModifierChipGroupProps {
   options: readonly string[];
   selected: string[];
   max?: number;
+  showSelectionCount?: boolean;
   priceCents?: number;
   locale: Locale;
   onChange: (next: string[]) => void;
@@ -20,6 +21,7 @@ export function ModifierChipGroup({
   options,
   selected,
   max,
+  showSelectionCount = true,
   priceCents = 0,
   locale,
   onChange,
@@ -75,7 +77,7 @@ export function ModifierChipGroup({
           );
         })}
       </div>
-      {max != null ? (
+      {max != null && showSelectionCount ? (
         <p className="mt-2 text-xs text-grey">
           {selected.length} / {max} selected
         </p>

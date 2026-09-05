@@ -25,6 +25,51 @@ import type { Locale } from '@/types';
 
 const STEPS = ['Event', 'Schedule', 'Venue', 'Contact', 'Details', 'Review', 'Done'] as const;
 
+const PRODUCT_INTEREST_LABELS: Record<string, string> = {
+  'mega-tea-kits': 'Mega Tea Kits',
+  catering: 'Catering',
+};
+
+function formatReviewDate(value: unknown, locale: Locale): string {
+  if (!value) return '—';
+  const date = value instanceof Date ? value : new Date(String(value));
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleDateString(locale === 'es' ? 'es-US' : 'en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+function formatReviewTime(value?: string): string {
+  if (!value) return '—';
+  const [hours, minutes] = value.split(':').map(Number);
+  if (Number.isNaN(hours)) return value;
+  const date = new Date();
+  date.setHours(hours, minutes ?? 0, 0, 0);
+  return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+function ReviewSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="rounded-2xl border border-grey/15 bg-white p-5 shadow-sm">
+      <h3 className="font-display text-xl text-carbon">{title}</h3>
+      <dl className="mt-4 grid gap-4 sm:grid-cols-2">{children}</dl>
+    </section>
+  );
+}
+
+function ReviewField({ label, value }: { label: string; value?: string | number | null }) {
+  const display = value != null && String(value).trim() !== '' ? String(value) : '—';
+  return (
+    <div>
+      <dt className="text-xs font-semibold uppercase tracking-wide text-grey">{label}</dt>
+      <dd className="mt-1 text-sm text-carbon">{display}</dd>
+    </div>
+  );
+}
+
 interface BookingWizardProps {
   services: IService[];
 }
@@ -62,13 +107,27 @@ export function BookingWizard({ services }: BookingWizardProps) {
 
   if (step === 6) {
     return (
-      <div className="rounded-2xl bg-cream p-8 text-center">
-        <h2 className="font-display text-3xl">Request Received</h2>
-        <p className="mt-4">Reference: <strong>{reference}</strong></p>
-        <p className="mt-2 text-grey">This is a request, not a confirmed booking. Our team will follow up soon.</p>
+      <div className="rounded-2xl border border-lime/30 bg-cream p-8 text-center shadow-sm">
+        <p className="text-sm font-semibold uppercase tracking-wide text-pink">Request received</p>
+        <h2 className="mt-2 font-display text-3xl text-carbon">Thank you!</h2>
+        <p className="mt-4 text-grey">
+          Your catering request has been submitted. Our team will review the details and follow up soon.
+        </p>
+        <p className="mt-6 rounded-xl bg-white px-4 py-3 text-sm text-carbon">
+          Reference number: <strong className="font-display text-lg text-pink">{reference}</strong>
+        </p>
+        <p className="mt-3 text-xs text-grey">
+          This is a request, not a confirmed booking. We will contact you to confirm availability.
+        </p>
       </div>
     );
   }
+
+  const selectedService = services.find((service) => service.slug === formData.serviceSlug);
+  const serviceName = selectedService ? getLocalized(selectedService.name, locale) : formData.serviceSlug;
+  const productInterests = (formData.productInterests ?? [])
+    .map((interest) => PRODUCT_INTEREST_LABELS[interest] ?? interest)
+    .join(', ');
 
   return (
     <div>
@@ -156,10 +215,64 @@ export function BookingWizard({ services }: BookingWizardProps) {
       )}
 
       {step === 5 && (
-        <div className="space-y-4">
-          <pre className="overflow-auto rounded-xl bg-cream p-4 text-sm">{JSON.stringify(formData, null, 2)}</pre>
-          <Button type="button" variant="outline" onClick={() => setStep(4)}>Back</Button>
-          <Button loading={loading} onClick={submit}>Submit Request</Button>
+        <div className="space-y-6">
+          <div>
+            <h2 className="font-display text-3xl text-carbon">Review your request</h2>
+            <p className="mt-2 text-sm text-grey">
+              Please confirm your catering details before submitting.
+            </p>
+          </div>
+
+          <ReviewSection title="Event">
+            <ReviewField label="Catering service" value={serviceName} />
+            <ReviewField label="Event type" value={formData.eventType} />
+          </ReviewSection>
+
+          <ReviewSection title="Schedule">
+            <ReviewField label="Preferred date" value={formatReviewDate(formData.preferredDate, locale)} />
+            <ReviewField label="Alternate date" value={formatReviewDate(formData.alternateDate, locale)} />
+            <ReviewField label="Start time" value={formatReviewTime(formData.startTime)} />
+            <ReviewField label="Guest count" value={formData.guestCount} />
+          </ReviewSection>
+
+          <ReviewSection title="Venue">
+            <ReviewField
+              label="Fulfillment"
+              value={formData.fulfillmentMethod === 'pickup' ? 'Pickup' : 'Delivery'}
+            />
+            <ReviewField label="Venue name" value={formData.venueName} />
+            <ReviewField label="Street" value={formData.street} />
+            <ReviewField label="City" value={formData.city} />
+            <ReviewField label="State" value={formData.state} />
+            <ReviewField label="ZIP" value={formData.zip} />
+          </ReviewSection>
+
+          <ReviewSection title="Contact">
+            <ReviewField label="Contact name" value={formData.contactName} />
+            <ReviewField label="Organization" value={formData.organization} />
+            <ReviewField label="Email" value={formData.email} />
+            <ReviewField label="Phone" value={formData.phone} />
+            <ReviewField
+              label="Preferred contact"
+              value={formData.preferredContactMethod === 'phone' ? 'Phone' : 'Email'}
+            />
+          </ReviewSection>
+
+          <ReviewSection title="Details">
+            <ReviewField label="Product interests" value={productInterests} />
+            <ReviewField label="Dietary notes" value={formData.dietaryNotes} />
+            <ReviewField label="Budget range" value={formData.budgetRange} />
+            <ReviewField label="Special instructions" value={formData.specialInstructions} />
+          </ReviewSection>
+
+          <div className="flex flex-wrap gap-3 border-t border-grey/15 pt-6">
+            <Button type="button" variant="outline" onClick={() => setStep(4)}>
+              Back
+            </Button>
+            <Button loading={loading} onClick={submit}>
+              Submit Request
+            </Button>
+          </div>
         </div>
       )}
     </div>

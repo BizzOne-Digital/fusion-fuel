@@ -43,13 +43,6 @@ export const MYOLT_HERBAL_TEA_OPTIONS = ['Original', 'Lemon', 'Peach', 'Raspberr
 
 export const MYOLT_COLLAGEN_OPTIONS = ['Unflavored', 'Strawberry Lemonade'] as const;
 
-export const MYOLT_HYDRATION_OPTIONS = [
-  'No hydration add-on',
-  'H24 Hydrate — Watermelon',
-  'CR7 Drive',
-  'H3O',
-] as const;
-
 export const MYOLT_PAID_ADDON_PRICE = 1;
 
 export const MYOLT_OPTIONAL_ADDONS = {
@@ -60,6 +53,7 @@ export const MYOLT_OPTIONAL_ADDONS = {
   'herbal-tea': { label: 'Herbal tea', addInSlug: 'myolt-herbal-tea' },
   'immunity-essentials': { label: 'Immunity Essentials', addInSlug: 'myolt-immunity-essentials' },
   creatine: { label: 'Creatine', addInSlug: 'myolt-creatine' },
+  hydration: { label: 'Hydration option', addInSlug: 'myolt-hydration-support' },
 } as const;
 
 export type MyoltOptionalAddonKey = keyof typeof MYOLT_OPTIONAL_ADDONS;
@@ -68,6 +62,7 @@ export interface MyoltRequiredGroup {
   id: string;
   title: string;
   options: readonly string[];
+  multiSelect?: boolean;
 }
 
 export interface MyoltDrink {
@@ -78,7 +73,6 @@ export interface MyoltDrink {
   websiteNotice: string;
   requiredGroups: MyoltRequiredGroup[];
   optionalAddons: MyoltOptionalAddonKey[];
-  hydration: boolean;
 }
 
 export const MYOLT_DRINKS: MyoltDrink[] = [
@@ -90,11 +84,10 @@ export const MYOLT_DRINKS: MyoltDrink[] = [
     websiteNotice:
       'Caffeine-free. Does not include LiftOff, NRG or Herbal Tea Concentrate.',
     requiredGroups: [
-      { id: 'aloe', title: 'Choose Aloe', options: MYOLT_ALOE_OPTIONS },
-      { id: 'flavor', title: 'Choose one flavor', options: MYOLT_FLAVORS },
+      { id: 'aloe', title: 'Choose Aloe', options: MYOLT_ALOE_OPTIONS, multiSelect: true },
+      { id: 'flavor', title: 'Choose flavors', options: MYOLT_FLAVORS, multiSelect: true },
     ],
-    optionalAddons: ['probiotics', 'fiber'],
-    hydration: true,
+    optionalAddons: ['probiotics', 'fiber', 'hydration'],
   },
   {
     slug: 'mini-energy',
@@ -104,10 +97,9 @@ export const MYOLT_DRINKS: MyoltDrink[] = [
     websiteNotice: 'Contains caffeine from LiftOff.',
     requiredGroups: [
       { id: 'liftoff', title: 'Choose LiftOff', options: MYOLT_LIFTOFF_OPTIONS },
-      { id: 'flavor', title: 'Choose one flavor', options: MYOLT_FLAVORS },
+      { id: 'flavor', title: 'Choose flavors', options: MYOLT_FLAVORS, multiSelect: true },
     ],
-    optionalAddons: ['aloe', 'collagen', 'herbal-tea'],
-    hydration: true,
+    optionalAddons: ['aloe', 'collagen', 'herbal-tea', 'hydration'],
   },
   {
     slug: 'beauty-refresher',
@@ -117,12 +109,11 @@ export const MYOLT_DRINKS: MyoltDrink[] = [
     websiteNotice:
       'Caffeine-free when prepared without LiftOff, NRG or Herbal Tea Concentrate.',
     requiredGroups: [
-      { id: 'aloe', title: 'Choose Aloe', options: MYOLT_ALOE_OPTIONS },
+      { id: 'aloe', title: 'Choose Aloe', options: MYOLT_ALOE_OPTIONS, multiSelect: true },
       { id: 'collagen', title: 'Choose Collagen', options: MYOLT_COLLAGEN_OPTIONS },
-      { id: 'flavor', title: 'Choose one flavor', options: MYOLT_FLAVORS },
+      { id: 'flavor', title: 'Choose flavors', options: MYOLT_FLAVORS, multiSelect: true },
     ],
-    optionalAddons: ['probiotics', 'fiber'],
-    hydration: true,
+    optionalAddons: ['probiotics', 'fiber', 'hydration'],
   },
   {
     slug: 'energy-tea',
@@ -133,10 +124,9 @@ export const MYOLT_DRINKS: MyoltDrink[] = [
     requiredGroups: [
       { id: 'herbal-tea', title: 'Choose Herbal Tea', options: MYOLT_HERBAL_TEA_OPTIONS },
       { id: 'liftoff', title: 'Choose LiftOff', options: MYOLT_LIFTOFF_OPTIONS },
-      { id: 'flavor', title: 'Choose one flavor', options: MYOLT_FLAVORS },
+      { id: 'flavor', title: 'Choose flavors', options: MYOLT_FLAVORS, multiSelect: true },
     ],
-    optionalAddons: ['aloe', 'collagen'],
-    hydration: true,
+    optionalAddons: ['aloe', 'collagen', 'hydration'],
   },
   {
     slug: 'mega-tea',
@@ -147,11 +137,10 @@ export const MYOLT_DRINKS: MyoltDrink[] = [
     requiredGroups: [
       { id: 'herbal-tea', title: 'Choose Herbal Tea', options: MYOLT_HERBAL_TEA_OPTIONS },
       { id: 'liftoff', title: 'Choose LiftOff', options: MYOLT_LIFTOFF_OPTIONS },
-      { id: 'aloe', title: 'Choose Aloe', options: MYOLT_ALOE_OPTIONS },
-      { id: 'flavor', title: 'Choose one flavor', options: MYOLT_FLAVORS },
+      { id: 'aloe', title: 'Choose Aloe', options: MYOLT_ALOE_OPTIONS, multiSelect: true },
+      { id: 'flavor', title: 'Choose flavors', options: MYOLT_FLAVORS, multiSelect: true },
     ],
-    optionalAddons: ['collagen', 'probiotics', 'fiber'],
-    hydration: true,
+    optionalAddons: ['collagen', 'probiotics', 'fiber', 'hydration'],
   },
   {
     slug: 'mega-beauty-tea',
@@ -162,12 +151,11 @@ export const MYOLT_DRINKS: MyoltDrink[] = [
     requiredGroups: [
       { id: 'herbal-tea', title: 'Choose Herbal Tea', options: MYOLT_HERBAL_TEA_OPTIONS },
       { id: 'liftoff', title: 'Choose LiftOff', options: MYOLT_LIFTOFF_OPTIONS },
-      { id: 'aloe', title: 'Choose Aloe', options: MYOLT_ALOE_OPTIONS },
+      { id: 'aloe', title: 'Choose Aloe', options: MYOLT_ALOE_OPTIONS, multiSelect: true },
       { id: 'collagen', title: 'Choose Collagen', options: MYOLT_COLLAGEN_OPTIONS },
-      { id: 'flavor', title: 'Choose one flavor', options: MYOLT_FLAVORS },
+      { id: 'flavor', title: 'Choose flavors', options: MYOLT_FLAVORS, multiSelect: true },
     ],
     optionalAddons: ['probiotics', 'fiber', 'immunity-essentials', 'creatine'],
-    hydration: true,
   },
 ];
 
@@ -193,70 +181,46 @@ export function myoltPaidAddonPriceCents(): number {
   return Math.round(MYOLT_PAID_ADDON_PRICE * 100);
 }
 
-export function myoltAdditionalFlavorAddInSlug(): string {
-  return 'myolt-additional-flavor';
-}
-
-export function myoltHydrationAddInSlug(): string {
-  return 'myolt-hydration-support';
-}
-
 export function myoltOptionalAddInSlugs(): string[] {
-  const slugs = new Set<string>([
-    myoltAdditionalFlavorAddInSlug(),
-    myoltHydrationAddInSlug(),
-    ...Object.values(MYOLT_OPTIONAL_ADDONS).map((addon) => addon.addInSlug),
-  ]);
-  return [...slugs];
-}
-
-export function myoltHydrationIsPaid(hydration: string): boolean {
-  return hydration !== MYOLT_HYDRATION_OPTIONS[0];
+  return Object.values(MYOLT_OPTIONAL_ADDONS).map((addon) => addon.addInSlug);
 }
 
 export interface MyoltOrderInput {
   drink: MyoltDrink;
-  required: Record<string, string>;
-  extraFlavors: string[];
+  required: Record<string, string[]>;
   optionalAddons: MyoltOptionalAddonKey[];
-  hydration: string;
 }
 
 export function myoltOrderNotes(input: MyoltOrderInput): string {
   const lines = [`${input.drink.name}`];
 
   for (const group of input.drink.requiredGroups) {
-    const value = input.required[group.id];
-    if (value) lines.push(`${group.title}: ${value}`);
-  }
-
-  if (input.extraFlavors.length > 0) {
-    lines.push(`Additional flavors: ${input.extraFlavors.join(', ')}`);
+    const values = input.required[group.id] ?? [];
+    if (values.length > 0) {
+      lines.push(`${group.title}: ${values.join(', ')}`);
+    }
   }
 
   for (const key of input.optionalAddons) {
     lines.push(MYOLT_OPTIONAL_ADDONS[key].label);
   }
 
-  if (myoltHydrationIsPaid(input.hydration)) {
-    lines.push(`Hydration: ${input.hydration}`);
-  }
-
   return lines.join(' · ');
 }
 
 export function myoltPaidAddonCount(input: MyoltOrderInput): number {
-  let count = input.extraFlavors.length + input.optionalAddons.length;
-  if (myoltHydrationIsPaid(input.hydration)) count += 1;
-  return count;
+  return input.optionalAddons.length;
 }
 
 export function myoltLinePriceCents(input: MyoltOrderInput): number {
   return myoltPriceCents(input.drink) + myoltPaidAddonCount(input) * myoltPaidAddonPriceCents();
 }
 
-export function myoltRequiredComplete(drink: MyoltDrink, required: Record<string, string>): boolean {
-  return drink.requiredGroups.every((group) => Boolean(required[group.id]?.trim()));
+export function myoltRequiredComplete(
+  drink: MyoltDrink,
+  required: Record<string, string[]>
+): boolean {
+  return drink.requiredGroups.every((group) => (required[group.id] ?? []).length > 0);
 }
 
 export function myoltProductShortDescription(drink: MyoltDrink): string {
@@ -268,11 +232,7 @@ export function myoltProductDescriptionHtml(drink: MyoltDrink): string {
     .map((group) => `<li><strong>${group.title}:</strong> ${group.options.join(', ')}</li>`)
     .join('');
 
-  const optionalLabels = [
-    'Additional flavor',
-    ...drink.optionalAddons.map((key) => MYOLT_OPTIONAL_ADDONS[key].label),
-    ...(drink.hydration ? ['Hydration option'] : []),
-  ];
+  const optionalLabels = drink.optionalAddons.map((key) => MYOLT_OPTIONAL_ADDONS[key].label);
 
-  return `<p>${drink.includedSummary}</p><p><strong>Required modifiers</strong></p><ul>${requiredHtml}</ul><p><strong>Optional modifiers (+$${MYOLT_PAID_ADDON_PRICE} each)</strong></p><ul>${optionalLabels.map((label) => `<li>${label}</li>`).join('')}</ul><p><em>${drink.websiteNotice}</em></p>`;
+  return `<p>${drink.includedSummary}</p><p><strong>Required modifiers</strong></p><ul>${requiredHtml}</ul><p><strong>Add-ons (+$${MYOLT_PAID_ADDON_PRICE} each)</strong></p><ul>${optionalLabels.map((label) => `<li>${label}</li>`).join('')}</ul><p><em>${drink.websiteNotice}</em></p>`;
 }
