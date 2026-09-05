@@ -129,6 +129,24 @@ export function acaiBowlModifierConfig(item: AcaiBowlMenuItem): AcaiBowlModifier
   };
 }
 
+export function acaiBowlValidateSelections(
+  config: AcaiBowlModifierConfig,
+  includedFruits: string[],
+  includedToppings: string[]
+): boolean {
+  if (includedFruits.length === 0 || includedFruits.length > config.includedFruitMax) {
+    return false;
+  }
+
+  if (config.includedToppingMax === 0) {
+    return true;
+  }
+
+  return (
+    includedToppings.length > 0 && includedToppings.length <= config.includedToppingMax
+  );
+}
+
 export function acaiBowlModifierSlug(kind: 'extra-fruit' | 'extra-topping', name: string): string {
   const base = name
     .toLowerCase()

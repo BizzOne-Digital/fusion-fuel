@@ -21,7 +21,7 @@ import Service from '../src/models/Service';
 import SiteSettings from '../src/models/SiteSettings';
 import { SITE_IMAGES, getCategoryImage, getServiceImage, getProductFallbackImage, getFlavorImage } from '../src/lib/site-images';
 import { FLAVOR_IMAGE_BY_SLUG } from '../src/lib/flavor-image-manifest';
-import { CATERING_TAGLINE, CONTACT, DELIVERY, acaiBowlEventServiceHtml, ACAI_BOWL_EVENT, flavorIngredientsHtml, HOME_HERO, LOADED_TEAS, MONTHLY_TEA_CLUB } from '../src/lib/brand-content';
+import { CATERING_TAGLINE, CONTACT, DELIVERY, acaiBowlEventServiceHtml, ACAI_BOWL_EVENT, flavorIngredientsHtml, HOME_HERO, LOADED_TEAS, MONTHLY_TEA_CLUB, monthlyTeaClubServiceHtml } from '../src/lib/brand-content';
 import { PROTEIN_COFFEE, proteinCoffeeIcedPriceCents, proteinCoffeeOptionalAddInSlugs, proteinCoffeeProductDescriptionHtml, proteinCoffeeProductShortDescription, PROTEIN_COFFEE_PRODUCT_SLUG } from '../src/lib/protein-coffee-menu';
 import { MEGA_TEA_KIT_COLLECTIONS, MEGA_TEA_KITS_MENU, megaTeaKitDescriptionHtml, megaTeaKitOptionalAddInSlugs, megaTeaKitPriceCents, megaTeaKitProductName, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
 import { MENU_FLAVORS } from '../src/lib/menu-flavors';
@@ -177,7 +177,7 @@ async function seedSiteSettings(): Promise<void> {
               title: loc('Shop'),
               links: [
                 { label: loc('Products'), href: '/en/products' },
-                { label: loc('Monthly Tea Club'), href: '/en/menu?category=mega-tea-kits' },
+                { label: loc('Monthly Tea Club'), href: '/en/menu?category=monthly-tea-club' },
                 { label: loc('Pricing'), href: '/en/pricing' },
               ],
             },
@@ -219,7 +219,7 @@ async function seedSiteSettings(): Promise<void> {
 function buildPages() {
   const ctaShop = {
     label: loc(MONTHLY_TEA_CLUB.cta),
-    href: '/en/menu?category=mega-tea-kits',
+    href: '/en/menu?category=monthly-tea-club',
     variant: 'primary' as const,
   };
 
@@ -276,7 +276,7 @@ function buildPages() {
           ),
           cta: {
             label: loc(MONTHLY_TEA_CLUB.cta),
-            href: '/en/menu?category=mega-tea-kits',
+            href: '/en/menu?category=monthly-tea-club',
             variant: 'primary' as const,
           },
           order: 2,
@@ -497,15 +497,16 @@ async function seedPages(): Promise<void> {
 async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
   const categories = [
     { slug: 'mega-teas', name: 'Loaded Teas', order: 0 },
-    { slug: 'mega-tea-kits', name: 'Mega Tea Kits', order: 1 },
-    { slug: 'acai-bowls', name: 'Açaí Bowls', order: 2 },
-    { slug: 'protein-coffee', name: 'Protein Coffee', order: 3 },
-    { slug: 'protein-shakes', name: 'Protein Shakes', order: 4 },
-    { slug: 'waffles', name: 'Waffles', order: 5 },
-    { slug: 'protein-treats', name: 'Protein Treats', order: 6 },
-    { slug: 'donut-of-the-day', name: 'Donut of the Day', order: 7 },
-    { slug: 'make-your-own-loaded-tea', name: 'Make Your Own Loaded Tea', order: 8 },
-    { slug: 'bulk-products', name: 'Bulk Products', order: 9 },
+    { slug: 'monthly-tea-club', name: 'Monthly Tea Club', order: 1 },
+    { slug: 'mega-tea-kits', name: 'Mega Tea Kits', order: 2 },
+    { slug: 'acai-bowls', name: 'Açaí Bowls', order: 3 },
+    { slug: 'protein-coffee', name: 'Protein Coffee', order: 4 },
+    { slug: 'protein-shakes', name: 'Protein Shakes', order: 5 },
+    { slug: 'waffles', name: 'Waffles', order: 6 },
+    { slug: 'protein-treats', name: 'Protein Treats', order: 7 },
+    { slug: 'donut-of-the-day', name: 'Donut of the Day', order: 8 },
+    { slug: 'make-your-own-loaded-tea', name: 'Make Your Own Loaded Tea', order: 9 },
+    { slug: 'bulk-products', name: 'Bulk Products', order: 10 },
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
@@ -519,7 +520,9 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
           ? `<p>${MAKE_YOUR_OWN_LOADED_TEA_MENU.description}</p>`
           : category.slug === 'bulk-products'
             ? `<p>${BULK_PRODUCTS_MENU.description}</p><p><a href="${BULK_PRODUCTS_MENU.shopUrl}" target="_blank" rel="noopener noreferrer">Shop bulk products online</a></p>`
-            : `<p>Explore our ${category.name} selection. Ingredient and nutrition details are added when confirmed by the business.</p>`;
+            : category.slug === 'monthly-tea-club'
+              ? `<p><strong>${MONTHLY_TEA_CLUB.intro}</strong></p><p>${MONTHLY_TEA_CLUB.taglines.primary}</p><p>${MONTHLY_TEA_CLUB.ctaDetail}</p>`
+              : `<p>Explore our ${category.name} selection. Ingredient and nutrition details are added when confirmed by the business.</p>`;
 
     const doc = await ProductCategory.findOneAndUpdate(
       { slug: category.slug },
@@ -859,13 +862,65 @@ async function seedServices(): Promise<void> {
       6,
       'Special events and organizers'
     ),
-    serviceTemplate(
-      'mega-tea-kit-program-club',
-      'Monthly Tea Club',
-      `${MONTHLY_TEA_CLUB.taglines.primary} Choose 6, 12, 20, or 30 tea kit boxes with loaded blends, guides, and wellness add-ins.`,
-      7,
-      'Monthly subscribers and at-home tea customers'
-    ),
+    {
+      slug: 'mega-tea-kit-program-club',
+      name: loc(MONTHLY_TEA_CLUB.name),
+      shortDescription: loc(
+        `${MONTHLY_TEA_CLUB.taglines.primary} Choose 6, 12, 20, or 30 tea kit boxes with loaded blends, guides, and wellness add-ins.`
+      ),
+      description: rich(
+        `<p><strong>${MONTHLY_TEA_CLUB.intro}</strong></p><p>${MONTHLY_TEA_CLUB.taglines.primary}</p><p>${MONTHLY_TEA_CLUB.boxTagline}</p>`
+      ),
+      detailContent: rich(monthlyTeaClubServiceHtml()),
+      thumbnail: img(SITE_IMAGES.monthlyTeaClubPoster, MONTHLY_TEA_CLUB.name),
+      heroImage: img(SITE_IMAGES.monthlyTeaClubPoster, `${MONTHLY_TEA_CLUB.name} hero`),
+      startingPrice: undefined,
+      seo: {
+        title: `${MONTHLY_TEA_CLUB.name} | ${BRAND.name}`,
+        description: `${MONTHLY_TEA_CLUB.taglines.primary} ${MONTHLY_TEA_CLUB.ctaDetail}`,
+      },
+      faqs: [
+        {
+          question: loc('What is the Monthly Tea Club?'),
+          answer: rich(
+            `<p>Our Monthly Tea Club delivers a curated box of loaded tea blends, an easy step-by-step guide, wellness boosters, sweet extras, and new flavors each month. Choose a 6, 12, 20, or 30 tea kit box plan.</p>`
+          ),
+          order: 0,
+        },
+        {
+          question: loc('How do I join the Monthly Tea Club?'),
+          answer: rich(
+            `<p>${MONTHLY_TEA_CLUB.ctaDetail} Call ${CONTACT.phone}, email ${CONTACT.email}, or message us on Instagram at ${CONTACT.instagramHandle}.</p>`
+          ),
+          order: 1,
+        },
+        {
+          question: loc('Do you offer local delivery or shipping?'),
+          answer: rich(`<p>${DELIVERY.local} ${DELIVERY.nationwide}</p>`),
+          order: 2,
+        },
+      ],
+      sections: [
+        {
+          title: loc("What's Inside"),
+          body: rich(
+            `<ul>${MONTHLY_TEA_CLUB.whatsInside.map((item) => `<li>${item}</li>`).join('')}</ul>`
+          ),
+          image: img(SITE_IMAGES.monthlyTeaClubPoster, 'Monthly Tea Club box'),
+          order: 0,
+        },
+        {
+          title: loc('Choose Your Plan'),
+          body: rich(
+            `<ul>${MONTHLY_TEA_CLUB.plans.map((plan) => `<li>${plan.label}</li>`).join('')}</ul><p>${MONTHLY_TEA_CLUB.taglines.value}</p>`
+          ),
+          image: img(SITE_IMAGES.megaTeaKit, 'Mega Tea Kit flavors'),
+          order: 1,
+        },
+      ],
+      status: 'published' as const,
+      order: 7,
+    },
   ];
 
   for (const service of services) {
@@ -1626,38 +1681,44 @@ async function seedFaqs(): Promise<void> {
       order: 1,
     },
     {
-      category: 'mega-tea-kits',
+      category: 'monthly-tea-club',
       question: 'What is the Monthly Tea Club?',
       answer:
         'Our Monthly Tea Club delivers a curated box of loaded tea blends, an easy step-by-step guide, wellness boosters, sweet extras, and new flavors each month. Choose a 6, 12, 20, or 30 tea kit box plan.',
       order: 0,
     },
     {
-      category: 'mega-tea-kits',
+      category: 'monthly-tea-club',
       question: 'How do I join the Monthly Tea Club?',
       answer:
         `${MONTHLY_TEA_CLUB.ctaDetail} Call ${CONTACT.phone}, email ${CONTACT.email}, or message us on Instagram at ${CONTACT.instagramHandle}.`,
       order: 1,
     },
     {
+      category: 'monthly-tea-club',
+      question: 'Do you offer local delivery or shipping?',
+      answer: `${DELIVERY.local} ${DELIVERY.nationwide}`,
+      order: 2,
+    },
+    {
       category: 'mega-tea-kits',
       question: 'How many flavors can I choose in a tea kit box?',
       answer:
         'Flavor selection limits depend on kit size and admin configuration. The kit builder supports searchable flavor selection with limits set per serving size.',
-      order: 2,
+      order: 0,
     },
     {
       category: 'mega-tea-kits',
       question: 'What add-ins are available for kits?',
       answer:
         'Mega Tea Kit optional add-ons include Probiotics ($2), Collagen ($3), Lift Off ($3), NRG ($2), and Tea ($2).',
-      order: 3,
+      order: 1,
     },
     {
       category: 'mega-tea-kits',
-      question: 'Do you offer local delivery or shipping?',
+      question: 'Do you offer local delivery or shipping for kits?',
       answer: `${DELIVERY.local} ${DELIVERY.nationwide}`,
-      order: 4,
+      order: 2,
     },
     {
       category: 'products',

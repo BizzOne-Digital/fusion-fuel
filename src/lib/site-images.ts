@@ -28,6 +28,7 @@ export const SITE_IMAGES = {
   categories: {
     'mega-teas': '/images/mega-tea.png',
     'mega-tea-kits': '/images/mega-tea-kits/hero.jpg',
+    'monthly-tea-club': '/brand/monthly-tea-club-poster.png',
     'acai-bowls': '/images/acai-bowl.png',
     'protein-coffee': '/images/protein-coffee/iced-lineup.png',
     'protein-shakes': '/images/protein-shakes/hero.png',
@@ -48,7 +49,7 @@ export const SITE_IMAGES = {
     'wedding-catering': '/images/catering.png',
     'private-party-catering': '/images/catering.png',
     'special-event-catering': '/images/catering.png',
-    'mega-tea-kit-program-club': '/images/mega-tea-kit.png',
+    'mega-tea-kit-program-club': '/brand/monthly-tea-club-poster.png',
   } as Record<string, string>,
   productDefaults: {
     default: '/images/mega-tea.png',

@@ -179,6 +179,25 @@ export const ACAI_BOWL_EVENT = {
   ],
 } as const;
 
+export function monthlyTeaClubServiceHtml(): string {
+  const c = MONTHLY_TEA_CLUB;
+  return [
+    `<p><strong>${c.intro}</strong></p>`,
+    `<p>${c.taglines.primary}</p>`,
+    `<p><em>${c.taglines.secondary}</em></p>`,
+    `<p>${c.boxTagline}</p>`,
+    `<h3>What's Inside</h3>`,
+    `<ul>${c.whatsInside.map((item) => `<li>${item}</li>`).join('')}</ul>`,
+    `<h3>Choose Your Plan</h3>`,
+    `<ul>${c.plans.map((plan) => `<li>${plan.label}</li>`).join('')}</ul>`,
+    `<h3>Why Join</h3>`,
+    `<ul>${c.features.map((feature) => `<li><strong>${feature.title}</strong> — ${feature.description}</li>`).join('')}</ul>`,
+    `<p><strong>${c.joinHeadline}</strong> ${c.ctaDetail}</p>`,
+    `<p>${DELIVERY.local} ${DELIVERY.nationwide}</p>`,
+    `<p>Phone: ${CONTACT.phone} · Email: ${CONTACT.email} · Instagram: ${CONTACT.instagramHandle}</p>`,
+  ].join('');
+}
+
 export function acaiBowlEventServiceHtml(): string {
   const e = ACAI_BOWL_EVENT;
   return [

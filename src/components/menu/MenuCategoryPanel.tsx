@@ -8,7 +8,9 @@ import { MakeYourOwnLoadedTeaCategoryExplorer } from '@/components/menu/MakeYour
 import { DONUT_OF_THE_DAY_MENU } from '@/lib/donut-of-the-day-menu';
 import { MAKE_YOUR_OWN_LOADED_TEA_MENU } from '@/lib/make-your-own-loaded-tea-menu';
 import { BULK_PRODUCTS_MENU } from '@/lib/bulk-products-menu';
+import { MONTHLY_TEA_CLUB_MENU } from '@/lib/monthly-tea-club-menu';
 import { BulkProductsCategoryExplorer } from '@/components/menu/BulkProductsCategoryExplorer';
+import { MonthlyTeaClubCategoryExplorer } from '@/components/menu/MonthlyTeaClubCategoryExplorer';
 import type { IFlavor } from '@/models/Flavor';
 import type { IProduct } from '@/models/Product';
 import type { IProductCategory } from '@/models/ProductCategory';
@@ -57,7 +59,8 @@ function isMenuSpotlightCategory(slug: string): boolean {
   return (
     slug === 'donut-of-the-day' ||
     slug === MAKE_YOUR_OWN_LOADED_TEA_MENU.slug ||
-    slug === BULK_PRODUCTS_MENU.slug
+    slug === BULK_PRODUCTS_MENU.slug ||
+    slug === MONTHLY_TEA_CLUB_MENU.slug
   );
 }
 
@@ -74,8 +77,12 @@ export function MenuCategoryPanel({
 
     return (
       <div>
-        <h2 className="font-display text-3xl md:text-4xl">{getLocalized(category.name, locale)}</h2>
-        {category.slug === 'mega-tea-kits' ? (
+        {category.slug !== MONTHLY_TEA_CLUB_MENU.slug && (
+          <h2 className="font-display text-3xl md:text-4xl">{getLocalized(category.name, locale)}</h2>
+        )}
+        {category.slug === MONTHLY_TEA_CLUB_MENU.slug ? (
+          <MonthlyTeaClubCategoryExplorer />
+        ) : category.slug === 'mega-tea-kits' ? (
           <MegaTeaKitsCategoryExplorer
             products={categoryProducts}
             locale={locale}
@@ -111,6 +118,7 @@ export function MenuCategoryPanel({
         const isProteinShakes = cat.slug === 'protein-shakes';
         const isMakeYourOwnLoadedTea = cat.slug === MAKE_YOUR_OWN_LOADED_TEA_MENU.slug;
         const isBulkProducts = cat.slug === BULK_PRODUCTS_MENU.slug;
+        const isMonthlyTeaClub = cat.slug === MONTHLY_TEA_CLUB_MENU.slug;
         const isSpotlight = isMenuSpotlightCategory(cat.slug);
 
         if (
@@ -119,14 +127,19 @@ export function MenuCategoryPanel({
           !isLoadedTeas &&
           !isProteinShakes &&
           !isBulkProducts &&
+          !isMonthlyTeaClub &&
           categoryProducts.length === 0
         )
           return null;
 
         return (
           <section key={cat.slug} id={cat.slug} className="scroll-mt-24">
-            <h2 className="font-display text-3xl">{getLocalized(cat.name, locale)}</h2>
-            {isKits ? (
+            {!isMonthlyTeaClub && (
+              <h2 className="font-display text-3xl">{getLocalized(cat.name, locale)}</h2>
+            )}
+            {isMonthlyTeaClub ? (
+              <MonthlyTeaClubCategoryExplorer />
+            ) : isKits ? (
               <MegaTeaKitsCategoryExplorer
                 products={categoryProducts}
                 locale={locale}

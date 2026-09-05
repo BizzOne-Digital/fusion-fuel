@@ -22,12 +22,19 @@ const PLAN_BADGES = ['Starter', 'Most Popular', 'Best Value', 'Bulk'] as const;
 
 interface MonthlyTeaClubSectionProps {
   kitHref: string;
+  /** When true, reduces outer padding for use inside the menu category panel. */
+  embedded?: boolean;
 }
 
-export function MonthlyTeaClubSection({ kitHref }: MonthlyTeaClubSectionProps) {
+export function MonthlyTeaClubSection({ kitHref, embedded = false }: MonthlyTeaClubSectionProps) {
   return (
     <section className="relative w-full overflow-x-hidden bg-white text-carbon">
-      <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-24">
+      <div
+        className={cn(
+          'relative mx-auto max-w-7xl px-4 lg:px-8',
+          embedded ? 'py-8 lg:py-10' : 'py-20 lg:py-24'
+        )}
+      >
         {/* Intro */}
         <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16">
           <div className="relative mx-auto w-full max-w-lg lg:max-w-none">

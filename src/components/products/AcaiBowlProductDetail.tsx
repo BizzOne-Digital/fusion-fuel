@@ -15,6 +15,7 @@ import {
   acaiBowlModifierConfig,
   acaiBowlModifierSlug,
   acaiBowlOrderNotes,
+  acaiBowlValidateSelections,
   isAcaiBowlProduct,
 } from '@/lib/acai-bowls-menu';
 import { productUsesPlaceholderCard } from '@/lib/product-placeholder';
@@ -77,8 +78,7 @@ export function AcaiBowlProductDetail({
   const canAdd =
     Boolean(modifierConfig) &&
     hasPrice(unitPrice) &&
-    includedFruits.length > 0 &&
-    (modifierConfig?.includedToppingMax === 0 || includedToppings.length > 0);
+    acaiBowlValidateSelections(modifierConfig!, includedFruits, includedToppings);
 
   const handleAdd = async () => {
     if (!canAdd || !modifierConfig) return;
@@ -145,13 +145,6 @@ export function AcaiBowlProductDetail({
         <p className="mt-4 text-sm italic text-grey">{ACAI_BOWLS_MENU.footnote}</p>
 
         <div className="mt-8 space-y-6 rounded-2xl border border-grey/15 bg-cream p-6">
-          <p className="text-sm font-semibold text-carbon">
-            {locale === 'es' ? 'Incluido en tu bowl' : 'Included with your bowl'}:{' '}
-            {locale === 'es'
-              ? `hasta ${modifierConfig.includedFruitMax} frutas y ${modifierConfig.includedToppingMax} toppings`
-              : `up to ${modifierConfig.includedFruitMax} fruits and ${modifierConfig.includedToppingMax} toppings`}
-          </p>
-
           <AcaiBowlModifierGroups
             locale={locale}
             includedFruitMax={modifierConfig.includedFruitMax}
