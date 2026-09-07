@@ -1,9 +1,10 @@
 import { setRequestLocale } from 'next-intl/server';
-import { getPageByKey } from '@/lib/data';
+import { getPublishedTestimonials } from '@/lib/data';
 import { generatePageMetadata } from '@/lib/seo';
-import { getLocalized } from '@/lib/utils';
-import { PageSectionRenderer } from '@/components/sections/PageSectionRenderer';
+import { AboutPageSections } from '@/components/sections/AboutPageSections';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { ABOUT_STORY } from '@/lib/about-content';
+import { getLocalized } from '@/lib/utils';
 import type { Metadata } from 'next';
 import type { Locale } from '@/types';
 
@@ -19,24 +20,14 @@ export async function generateMetadata({
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const page = await getPageByKey('about');
+  const typedLocale = locale as Locale;
+  const testimonials = await getPublishedTestimonials(3);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 lg:px-6">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'About' }]} />
-      <h1 className="font-display text-5xl">{page ? getLocalized(page.title, locale as Locale) : 'About Us'}</h1>
-      {page?.hero?.subtitle && <p className="mt-4 max-w-3xl text-lg text-grey">{getLocalized(page.hero.subtitle, locale as Locale)}</p>}
-      <div className="mt-12 space-y-0">
-        {(page?.sections ?? []).map((section) => (
-          <PageSectionRenderer key={section.key} section={section} locale={locale as Locale} />
-        ))}
-      </div>
-      {!page && (
-        <p className="mt-8 text-grey">
-          Fusion Fuel & Boost Co. provides energizing, flavorful products designed to complement an active lifestyle.
-          Catering is available for corporate, medical, school, wedding, and private events.
-        </p>
-      )}
+      <h1 className="font-display text-5xl">{getLocalized(ABOUT_STORY.title, typedLocale)}</h1>
+      <AboutPageSections locale={typedLocale} testimonials={testimonials} />
     </div>
   );
 }

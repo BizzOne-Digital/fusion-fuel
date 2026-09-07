@@ -147,7 +147,7 @@ export function AcaiBowlEventSection() {
               </Link>
             </div>
             <p className="mt-4 text-sm text-grey">
-              Questions? Call {CONTACT.phone}
+              Questions? Call {CONTACT.phoneDisplay}
             </p>
           </div>
 

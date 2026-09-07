@@ -32,7 +32,7 @@ export default async function BookingPage({ params }: { params: Promise<{ locale
         <p className="font-semibold">{ACAI_BOWL_EVENT.deposit}</p>
         <p className="mt-2">{ACAI_BOWL_EVENT.balance}</p>
         <p className="mt-3 text-grey">{ACAI_BOWL_EVENT.serviceArea}</p>
-        <p className="mt-1 text-grey">Call {CONTACT.phone} with questions.</p>
+        <p className="mt-1 text-grey">Call {CONTACT.phoneDisplay} with questions.</p>
       </div>
       <div className="mt-10"><BookingWizard services={services} /></div>
     </div>

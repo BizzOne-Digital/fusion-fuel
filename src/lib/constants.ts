@@ -4,8 +4,8 @@ export const BRAND = {
   name: 'Fusion Fuel & Boost Co.',
   shortName: 'Fusion Fuel',
   tagline: {
-    en: 'Premium fuel for body and mind',
-    es: 'Combustible premium para cuerpo y mente',
+    en: 'Fuel Your Day. Boost Your Life.',
+    es: 'Impulsa tu día. Potencia tu vida.',
   } satisfies LocalizedString,
   domain: 'fusionfuelboost.com',
 } as const;
@@ -26,12 +26,12 @@ export const BRAND_COLORS = {
 
 export const BUSINESS_DEFAULTS = {
   email: 'fusionfuelboostco@gmail.com',
-  phone: '+1 813-842-2594',
+  phone: '+17867122133',
   address: {
-    street: '123 Energy Lane',
-    city: 'Austin',
-    state: 'TX',
-    zip: '78701',
+    street: '',
+    city: 'Wimauma',
+    state: 'FL',
+    zip: '',
     country: 'US',
   },
   timezone: 'America/Chicago',

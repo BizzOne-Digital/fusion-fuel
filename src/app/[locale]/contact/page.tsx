@@ -33,7 +33,13 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             {settings.social?.map((link) => (
               <div key={link.url}>
                 <dt className="text-sm text-grey">
-                  {link.platform === 'instagram' ? 'Instagram' : link.platform === 'facebook' ? 'Facebook' : link.platform}
+                  {link.platform === 'instagram'
+                    ? 'Instagram'
+                    : link.platform === 'facebook'
+                      ? 'Facebook'
+                      : link.platform === 'tiktok'
+                        ? 'TikTok'
+                        : link.platform}
                 </dt>
                 <dd>
                   <a

@@ -121,15 +121,15 @@ async function seedSiteSettings(): Promise<void> {
         key: SITE_SETTINGS_KEY,
         businessName: BRAND.name,
         tagline: {
-          en: 'FUEL YOUR DAY. BOOST YOUR LIFE.',
-          es: ES,
+          en: 'Fuel Your Day. Boost Your Life.',
+          es: 'Impulsa tu día. Potencia tu vida.',
         },
         contactEmail: CONTACT.email,
-        contactPhone: CONTACT.phone,
+        contactPhone: CONTACT.phoneDisplay,
         address: {
           street: '',
-          city: '',
-          state: '',
+          city: 'Wimauma',
+          state: 'FL',
           zip: '',
           country: 'US',
         },
@@ -193,14 +193,19 @@ async function seedSiteSettings(): Promise<void> {
         },
         social: [
           {
+            platform: 'facebook',
+            url: CONTACT.facebookUrl,
+            label: CONTACT.facebookLabel,
+          },
+          {
             platform: 'instagram',
             url: CONTACT.instagramUrl,
             label: CONTACT.instagramHandle,
           },
           {
-            platform: 'facebook',
-            url: CONTACT.facebookUrl,
-            label: CONTACT.facebookLabel,
+            platform: 'tiktok',
+            url: CONTACT.tiktokUrl,
+            label: CONTACT.tiktokHandle,
           },
         ],
         hours: [...DEFAULT_BUSINESS_HOURS],
@@ -301,28 +306,37 @@ function buildPages() {
       status: 'published' as const,
       hero: {
         title: loc('Our Story'),
-        subtitle: loc('Bold flavor. Everyday fuel. Built for people on the move.'),
+        subtitle: loc('Fuel Your Day. Boost Your Life.'),
         backgroundImage: img(SITE_IMAGES.aboutTeam, 'About Fusion Fuel'),
       },
       sections: [
         {
-          key: 'mission',
+          key: 'story',
           type: 'text' as const,
-          title: loc('Mission'),
+          title: loc('About Us'),
           body: rich(
-            '<p>Fusion Fuel & Boost Co. provides energizing, flavorful products for customers who want convenient options throughout the day. We focus on customization, quality ingredients, and memorable experiences—without making unverified health claims.</p>'
+            '<p>Welcome to Fusion Fuel & Boost Co., a family-owned and operated business based in Wimauma, Florida.</p><p>Our journey began with a nutrition club in Bradenton. Today we offer energizing teas, Mega Tea kits, protein shakes, protein coffee, açaí bowls, waffles, protein treats, and catering throughout Hillsborough and Manatee counties.</p>'
           ),
           order: 0,
+        },
+        {
+          key: 'mission',
+          type: 'text' as const,
+          title: loc('Our Mission'),
+          body: rich(
+            '<p>Our mission is to provide delicious, convenient nutrition options while creating a welcoming and personalized experience for every customer.</p>'
+          ),
+          order: 1,
         },
         {
           key: 'values',
           type: 'features' as const,
           title: loc('What We Stand For'),
           body: rich(
-            '<ul><li>Made-to-order freshness</li><li>Flavorful, customizable menu items</li><li>Transparent ingredient information when provided</li><li>Professional catering for teams and events</li></ul>'
+            '<p>Family, community, quality, and genuine care. We believe nutrition should be flavorful, convenient, and enjoyable.</p>'
           ),
           images: [img(SITE_IMAGES.aboutTeam, 'Brand values')],
-          order: 1,
+          order: 2,
           theme: 'dark' as const,
         },
       ],
@@ -462,7 +476,7 @@ function buildPages() {
       status: 'published' as const,
       hero: {
         title: loc('Get in Touch'),
-        subtitle: loc(`Email ${CONTACT.email} or call ${CONTACT.phone}. Text or DM us on Instagram to join the Monthly Tea Club.`),
+        subtitle: loc(`Email ${CONTACT.email} or call ${CONTACT.phoneDisplay}. Text or DM us on Instagram to join the Monthly Tea Club.`),
         backgroundImage: img(SITE_IMAGES.contact, 'Contact Fusion Fuel'),
       },
       sections: [
@@ -471,7 +485,7 @@ function buildPages() {
           type: 'text' as const,
           title: loc('Contact Information'),
           body: rich(
-            `<p><strong>Email:</strong> ${CONTACT.email}<br/><strong>Phone:</strong> ${CONTACT.phone}<br/><strong>Instagram:</strong> ${CONTACT.instagramHandle}<br/><strong>Facebook:</strong> <a href="${CONTACT.facebookUrl}">${CONTACT.facebookLabel}</a></p><p>${MONTHLY_TEA_CLUB.ctaDetail}</p><p>${DELIVERY.local} ${DELIVERY.nationwide}</p>`
+            `<p><strong>Email:</strong> ${CONTACT.email}<br/><strong>Phone:</strong> ${CONTACT.phoneDisplay}<br/><strong>Instagram:</strong> ${CONTACT.instagramHandle}<br/><strong>Facebook:</strong> <a href="${CONTACT.facebookUrl}">${CONTACT.facebookLabel}</a></p><p>${MONTHLY_TEA_CLUB.ctaDetail}</p><p>${DELIVERY.local} ${DELIVERY.nationwide}</p>`
           ),
           order: 0,
         },
@@ -889,7 +903,7 @@ async function seedServices(): Promise<void> {
         {
           question: loc('How do I join the Monthly Tea Club?'),
           answer: rich(
-            `<p>${MONTHLY_TEA_CLUB.ctaDetail} Call ${CONTACT.phone}, email ${CONTACT.email}, or message us on Instagram at ${CONTACT.instagramHandle}.</p>`
+            `<p>${MONTHLY_TEA_CLUB.ctaDetail} Call ${CONTACT.phoneDisplay}, email ${CONTACT.email}, or message us on Instagram at ${CONTACT.instagramHandle}.</p>`
           ),
           order: 1,
         },
@@ -1702,7 +1716,7 @@ async function seedFaqs(): Promise<void> {
       category: 'monthly-tea-club',
       question: 'How do I join the Monthly Mega Tea Club?',
       answer:
-        `${MONTHLY_TEA_CLUB.ctaDetail} Call ${CONTACT.phone}, email ${CONTACT.email}, or message us on Instagram at ${CONTACT.instagramHandle}.`,
+        `${MONTHLY_TEA_CLUB.ctaDetail} Call ${CONTACT.phoneDisplay}, email ${CONTACT.email}, or message us on Instagram at ${CONTACT.instagramHandle}.`,
       order: 1,
     },
     {

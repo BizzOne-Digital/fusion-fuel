@@ -271,7 +271,7 @@ export function MonthlyTeaClubJoinPanel() {
             <li>
               Phone:{' '}
               <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`} className="font-semibold text-carbon hover:text-pink">
-                {CONTACT.phone}
+                {CONTACT.phoneDisplay}
               </a>
             </li>
             <li>

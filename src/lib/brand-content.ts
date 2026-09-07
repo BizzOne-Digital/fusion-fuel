@@ -3,13 +3,16 @@
 import { MENU_FLAVORS } from '@/lib/menu-flavors';
 
 export const CONTACT = {
-  phone: '+1 813-842-2594',
+  phone: '+17867122133',
+  phoneDisplay: '786-712-2133',
   email: 'fusionfuelboostco@gmail.com',
-  instagramHandle: '@fusionfuelboost2025',
-  instagramUrl: 'https://www.instagram.com/fusionfuelboost2025/',
-  instagramQrImage: '/brand/instagram-qr.png',
-  facebookUrl: 'https://www.facebook.com/share/1SyawX94pF/',
+  instagramHandle: '@fusionfuelandboostco',
+  instagramUrl: 'https://www.instagram.com/fusionfuelandboostco/',
+  facebookUrl: 'https://www.facebook.com/fusionfuelandboostco',
   facebookLabel: 'Fusion Fuel & Boost Co.',
+  tiktokHandle: '@fusionfuelandboostco',
+  tiktokUrl: 'https://www.tiktok.com/@fusionfuelandboostco',
+  instagramQrImage: '/brand/instagram-qr.png',
 } as const;
 
 export const MONTHLY_TEA_CLUB = {
@@ -208,7 +211,7 @@ export function monthlyTeaClubServiceHtml(): string {
     `<ul>${c.features.map((feature) => `<li><strong>${feature.title}</strong> — ${feature.description}</li>`).join('')}</ul>`,
     `<p><strong>${c.joinHeadline}</strong> ${c.ctaDetail}</p>`,
     `<p>${DELIVERY.local} ${DELIVERY.nationwide}</p>`,
-    `<p>Phone: ${CONTACT.phone} · Email: ${CONTACT.email} · Instagram: ${CONTACT.instagramHandle}</p>`,
+    `<p>Phone: ${CONTACT.phoneDisplay} · Email: ${CONTACT.email} · Instagram: ${CONTACT.instagramHandle}</p>`,
   ].join('');
 }
 

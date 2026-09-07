@@ -85,12 +85,12 @@ const PAGE_FALLBACKS: Record<string, Record<Locale, { title: string; description
     en: {
       title: `About Us | ${BRAND.name}`,
       description:
-        'Learn about Fusion Fuel & Boost Co. — loaded teas, protein-forward menu items, mega tea kits, and catering for events across Tampa Bay.',
+        'Family-owned Fusion Fuel & Boost Co. in Wimauma, FL — loaded teas, Mega Tea kits, protein shakes, catering for schools, medical offices, businesses, and celebrations.',
     },
     es: {
       title: `Sobre nosotros | ${BRAND.name}`,
       description:
-        'Conoce Fusion Fuel & Boost Co. — loaded teas, menú con proteína, kits mega tea y catering para eventos en Tampa Bay.',
+        'Fusion Fuel & Boost Co., negocio familiar en Wimauma, FL — loaded teas, kits Mega Tea, batidos de proteína y catering para escuelas, consultorios y celebraciones.',
     },
   },
   services: {
