@@ -1601,7 +1601,10 @@ async function seedMakeYourOwnLoadedTeaProducts(
   categoryIds: Record<string, Types.ObjectId>,
   addInIds: Record<string, Types.ObjectId>
 ): Promise<void> {
-  const activeSlugs = MYOLT_DRINKS.map((drink) => myoltProductSlug(drink.slug));
+  const activeSlugs = [
+    LOADED_TEA_PRODUCT_SLUG,
+    ...MYOLT_DRINKS.map((drink) => myoltProductSlug(drink.slug)),
+  ];
   const addInOptions = myoltOptionalAddInSlugs()
     .filter((slug) => addInIds[slug])
     .map((slug) => ({
