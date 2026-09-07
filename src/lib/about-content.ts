@@ -6,6 +6,61 @@ function loc(en: string, es: string): LocalizedString {
 
 export const ABOUT_TAGLINE = 'Fuel Your Day. Boost Your Life.';
 
+export const ABOUT_HERO = {
+  eyebrow: loc('Our Story', 'Nuestra historia'),
+  badge: loc('Family-Owned & Operated', 'Negocio familiar'),
+  subtitle: loc(
+    'Home-based in Wimauma, serving Hillsborough & Manatee counties with energizing teas, protein favorites, and catering made with heart.',
+    'Desde Wimauma, servimos los condados de Hillsborough y Manatee con loaded teas, favoritos con proteína y catering hecho con cariño.'
+  ),
+} as const;
+
+export const ABOUT_HIGHLIGHTS = [
+  {
+    label: loc('Based in', 'Ubicados en'),
+    value: loc('Wimauma, FL', 'Wimauma, FL'),
+  },
+  {
+    label: loc('Serving', 'Servimos'),
+    value: loc('Hillsborough & Manatee', 'Hillsborough y Manatee'),
+  },
+  {
+    label: loc('Since', 'Desde'),
+    value: loc('Bradenton roots', 'Raíces en Bradenton'),
+  },
+] as const;
+
+export const ABOUT_VALUE_PILLARS = [
+  {
+    title: loc('Family', 'Familia'),
+    description: loc(
+      'Every order is prepared with care by our family, for yours.',
+      'Cada pedido se prepara con cuidado por nuestra familia, para la tuya.'
+    ),
+  },
+  {
+    title: loc('Community', 'Comunidad'),
+    description: loc(
+      'Schools, pop-ups, and local organizations we love to support.',
+      'Escuelas, pop-ups y organizaciones locales que nos encanta apoyar.'
+    ),
+  },
+  {
+    title: loc('Quality', 'Calidad'),
+    description: loc(
+      'Flavorful, convenient nutrition you can feel good about.',
+      'Nutrición sabrosa y conveniente de la que puedes sentirte bien.'
+    ),
+  },
+  {
+    title: loc('Genuine Care', 'Cuidado genuino'),
+    description: loc(
+      'Friendly, personalized service on every order and event.',
+      'Servicio amable y personalizado en cada pedido y evento.'
+    ),
+  },
+] as const;
+
 export const ABOUT_STORY = {
   title: loc('About Us', 'Sobre nosotros'),
   paragraphs: [

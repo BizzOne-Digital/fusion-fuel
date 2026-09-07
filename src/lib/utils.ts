@@ -48,6 +48,20 @@ export function slugify(value: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+/** Strip locale prefix from internal paths so next-intl Link does not double-prefix (/en/en/...). */
+export function normalizeAppHref(href: string): string {
+  if (!href || href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+    return href;
+  }
+
+  const normalized = href.startsWith('/') ? href : `/${href}`;
+  const match = normalized.match(/^\/(en|es)(?=\/|$)(.*)$/);
+  if (!match) return normalized;
+
+  const remainder = match[2] || '';
+  return remainder ? remainder : '/';
+}
+
 /** Convert Mongoose lean documents (ObjectId, Date, etc.) to plain JSON for Client Components. */
 export function serializeForClient<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;

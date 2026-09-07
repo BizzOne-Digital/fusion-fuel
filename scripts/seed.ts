@@ -151,7 +151,7 @@ async function seedSiteSettings(): Promise<void> {
         announcement: {
           enabled: true,
           message: loc('Mega Tea Kits • 100+ Flavor Combinations'),
-          link: '/en/menu?category=mega-tea-kits',
+          link: '/menu?category=mega-tea-kits',
           backgroundColor: '#E8F000',
           textColor: '#07090A',
         },
@@ -171,22 +171,23 @@ async function seedSiteSettings(): Promise<void> {
         locales: [...SUPPORTED_LOCALES],
         defaultLocale: 'en',
         footer: {
-          tagline: loc('Premium fuel for body and mind.'),
+          tagline: loc('Fuel Your Day. Boost Your Life.'),
           columns: [
             {
               title: loc('Shop'),
               links: [
-                { label: loc('Products'), href: '/en/products' },
-                { label: loc('Monthly Tea Club'), href: '/en/menu?category=monthly-tea-club' },
-                { label: loc('Pricing'), href: '/en/pricing' },
+                { label: loc('Menu'), href: '/menu' },
+                { label: loc('Monthly Tea Club'), href: '/menu?category=monthly-tea-club' },
+                { label: loc('Pricing'), href: '/pricing' },
               ],
             },
             {
               title: loc('Company'),
               links: [
-                { label: loc('About'), href: '/en/about' },
-                { label: loc('Services'), href: '/en/services' },
-                { label: loc('Contact'), href: '/en/contact' },
+                { label: loc('About'), href: '/about' },
+                { label: loc('Services'), href: '/services' },
+                { label: loc('Contact'), href: '/contact' },
+                { label: loc('FAQs'), href: '/faqs' },
               ],
             },
           ],
@@ -209,10 +210,7 @@ async function seedSiteSettings(): Promise<void> {
           },
         ],
         hours: [...DEFAULT_BUSINESS_HOURS],
-        legalLinks: [
-          { label: loc('Privacy Policy'), href: '/en/privacy' },
-          { label: loc('Terms of Service'), href: '/en/terms' },
-        ],
+        legalLinks: [],
       },
     },
     { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -224,13 +222,13 @@ async function seedSiteSettings(): Promise<void> {
 function buildPages() {
   const ctaShop = {
     label: loc(MONTHLY_TEA_CLUB.cta),
-    href: '/en/menu?category=monthly-tea-club',
+    href: '/menu?category=monthly-tea-club',
     variant: 'primary' as const,
   };
 
   const ctaCatering = {
     label: loc('Book Catering'),
-    href: '/en/booking',
+    href: '/booking',
     variant: 'secondary' as const,
   };
 
@@ -281,7 +279,7 @@ function buildPages() {
           ),
           cta: {
             label: loc(MONTHLY_TEA_CLUB.cta),
-            href: '/en/menu?category=monthly-tea-club',
+            href: '/menu?category=monthly-tea-club',
             variant: 'primary' as const,
           },
           order: 2,

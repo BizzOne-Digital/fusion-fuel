@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { Logo } from './Logo';
-import { getLocalized } from '@/lib/utils';
+import { getLocalized, normalizeAppHref } from '@/lib/utils';
 import type { ISiteSettings } from '@/models/SiteSettings';
 import type { Locale } from '@/types';
 
@@ -68,7 +68,7 @@ export async function Footer({ settings, locale }: FooterProps) {
               <ul className="space-y-2">
                 {col.links.map((link, j) => (
                   <li key={j}>
-                    <Link href={link.href} className="text-sm text-carbon/80 hover:text-carbon">
+                    <Link href={normalizeAppHref(link.href)} className="text-sm text-carbon/80 hover:text-carbon">
                       {getLocalized(link.label, locale)}
                     </Link>
                   </li>
@@ -89,7 +89,7 @@ export async function Footer({ settings, locale }: FooterProps) {
           <p>© {new Date().getFullYear()} {settings.businessName ?? 'Fusion Fuel & Boost Co.'}. {t('rights')}</p>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             {(settings.legalLinks ?? []).map((link, i) => (
-              <Link key={i} href={link.href} className="hover:text-carbon">
+              <Link key={i} href={normalizeAppHref(link.href)} className="hover:text-carbon">
                 {getLocalized(link.label, locale)}
               </Link>
             ))}
