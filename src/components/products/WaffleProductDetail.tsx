@@ -19,6 +19,7 @@ import {
   waffleOrderNotes,
 } from '@/lib/waffles-menu';
 import { productUsesPlaceholderCard } from '@/lib/product-placeholder';
+import { getAddInUnitPrice } from '@/lib/product-add-ins';
 import type { IProduct } from '@/models/Product';
 import type { IAddIn } from '@/models/AddIn';
 import type { Locale } from '@/types';
@@ -62,10 +63,10 @@ export function WaffleProductDetail({
     let total = 0;
     for (const topping of extraToppings) {
       const addIn = addInBySlug.get(waffleExtraModifierSlug(topping));
-      total += addIn?.price ?? 0;
+      total += addIn ? getAddInUnitPrice(product, addIn) : 0;
     }
     return total;
-  }, [extraToppings, addInBySlug, isBuildYourOwn]);
+  }, [extraToppings, addInBySlug, isBuildYourOwn, product]);
 
   const unitPrice = product.basePrice + extraTotal;
   const canAdd = isBuildYourOwn

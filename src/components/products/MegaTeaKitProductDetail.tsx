@@ -4,13 +4,15 @@ import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
+import { formatKitPriceSummary, getPrimaryProductImage } from '@/lib/product-display';
+import { getAddInUnitPrice } from '@/lib/product-add-ins';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { AddInSelector } from '@/components/products/AddInSelector';
 import {
   MEGA_TEA_KITS_MENU,
-  isMegaTeaKitProduct,
+  isMegaTeaKitDetailProduct,
   megaTeaKitCollectionFromProduct,
   megaTeaKitFlavorNote,
   megaTeaKitPricingSummary,
@@ -42,9 +44,9 @@ export function MegaTeaKitProductDetail({ product, flavors, addIns, locale }: Me
     () =>
       Object.entries(selectedAddIns).reduce((sum, [id, qty]) => {
         const addIn = addIns.find((entry) => String(entry._id) === id);
-        return sum + (addIn?.price ?? 0) * qty;
+        return sum + (addIn ? getAddInUnitPrice(product, addIn) : 0) * qty;
       }, 0),
-    [selectedAddIns, addIns]
+    [selectedAddIns, addIns, product]
   );
 
   const linePrice = unitPrice + addInTotal;
@@ -74,9 +76,13 @@ export function MegaTeaKitProductDetail({ product, flavors, addIns, locale }: Me
   const flavorImage = selectedFlavor
     ? resolveFlavorImage(selectedFlavor, selectedFlavorName)
     : null;
-  const displayImage = flavorImage?.url
-    ? { url: flavorImage.url, alt: flavorImage.alt || selectedFlavorName }
-    : MEGA_TEA_KITS_MENU.heroImage;
+  const productImage = getPrimaryProductImage(product);
+  const displayImage = productImage ??
+    (flavorImage?.url
+      ? { url: flavorImage.url, alt: flavorImage.alt || selectedFlavorName }
+      : MEGA_TEA_KITS_MENU.heroImage);
+  const pricingSummary =
+    formatKitPriceSummary(product, locale) || megaTeaKitPricingSummary();
 
   const canAdd = Boolean(selectedFlavor && kitSize && hasPrice(linePrice));
 
@@ -96,7 +102,7 @@ export function MegaTeaKitProductDetail({ product, flavors, addIns, locale }: Me
     setLoading(false);
   };
 
-  if (!isMegaTeaKitProduct(product.slug)) return null;
+  if (!isMegaTeaKitDetailProduct(product.slug)) return null;
 
   return (
     <div className="grid gap-12 lg:grid-cols-2">
@@ -115,7 +121,7 @@ export function MegaTeaKitProductDetail({ product, flavors, addIns, locale }: Me
       </div>
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
-        <p className="mt-2 text-sm leading-relaxed text-grey">{megaTeaKitPricingSummary()}</p>
+        <p className="mt-2 text-sm leading-relaxed text-grey">{pricingSummary}</p>
         <p className="mt-4 font-display text-3xl text-pink">
           {formatPrice(linePrice, 'USD', locale)}
         </p>

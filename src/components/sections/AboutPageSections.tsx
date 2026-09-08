@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { SectionReveal } from '@/components/motion/SectionReveal';
+import { BrandPosterShowcase } from '@/components/sections/BrandPosterShowcase';
+import { LifestyleMontage } from '@/components/sections/LifestyleMontage';
 import { Button } from '@/components/ui/Button';
 import {
   ABOUT_CONNECT,
@@ -202,6 +204,16 @@ export function AboutPageSections({ locale, testimonials }: AboutPageSectionsPro
           </div>
         </section>
       </SectionReveal>
+
+      <BrandPosterShowcase
+        locale={locale}
+        title={locale === 'es' ? 'Explora el menú' : 'Explore the Menu'}
+        subtitle={
+          locale === 'es'
+            ? 'Posters, sabores y favoritos de Fusion Fuel & Boost Co.'
+            : 'Posters, flavors, and favorites from Fusion Fuel & Boost Co.'
+        }
+      />
 
       {/* Story */}
       <SectionReveal>
@@ -416,6 +428,10 @@ export function AboutPageSections({ locale, testimonials }: AboutPageSectionsPro
           </div>
         </section>
       </SectionReveal>
+
+      <LifestyleMontage
+        title={locale === 'es' ? 'Energía para tu estilo de vida' : 'Fuel Your Lifestyle'}
+      />
 
       {/* Reviews */}
       <SectionReveal>

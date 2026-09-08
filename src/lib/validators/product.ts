@@ -59,6 +59,16 @@ export const productFormSchema = z.object({
   productType: z.enum(['single', 'kit', 'bundle', 'subscription']).default('single'),
   variants: z.array(variantSchema).optional(),
   kitSizes: z.array(kitSizeSchema).optional(),
+  flavorIds: z.array(z.string().trim().min(1)).optional(),
+  addInOptions: z
+    .array(
+      z.object({
+        addInId: z.string().trim().min(1),
+        maxQuantity: z.number().int().min(1).default(1),
+        included: z.boolean().default(false),
+      })
+    )
+    .optional(),
   maxSelectableFlavors: z.number().int().min(0).optional(),
   shippingEligible: z.boolean().default(true),
   pickupEligible: z.boolean().default(true),

@@ -10,15 +10,18 @@ import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { CartSummary } from '@/components/cart/CartSummary';
+import { VenmoPaymentStep } from '@/components/checkout/VenmoPaymentStep';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useCart } from '@/context/CartContext';
 import { toast } from '@/components/ui/Toast';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 
 export default function CheckoutPage() {
   const t = useTranslations('checkout');
-  const { items } = useCart();
+  const router = useRouter();
+  const { items, totals } = useCart();
   const [loading, setLoading] = useState(false);
+  const [venmoConfirmed, setVenmoConfirmed] = useState(false);
   const {
     register,
     handleSubmit,
@@ -39,20 +42,40 @@ export default function CheckoutPage() {
       toast.error('Your cart is empty');
       return;
     }
+    if (!venmoConfirmed) {
+      toast.error(t('venmoRequired'));
+      return;
+    }
+    if (!totals) {
+      toast.error('Unable to calculate order total');
+      return;
+    }
+
     setLoading(true);
+    const locale = window.location.pathname.split('/')[1] ?? 'en';
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data, locale: window.location.pathname.split('/')[1] ?? 'en' }),
+      body: JSON.stringify({
+        ...data,
+        locale,
+        venmoPaymentConfirmed: true,
+      }),
     });
     const json = await res.json();
     setLoading(false);
+
     if (!res.ok) {
       const message =
         typeof json.error === 'string'
           ? json.error
           : json.error?.formErrors?.[0] ?? 'Checkout failed';
       toast.error(message);
+      return;
+    }
+
+    if (json.redirectPath) {
+      router.push(json.redirectPath);
       return;
     }
     if (json.url) window.location.href = json.url;
@@ -84,61 +107,76 @@ export default function CheckoutPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="mt-8 grid min-w-0 gap-10 lg:grid-cols-[minmax(0,1fr)_min(100%,340px)]"
       >
-        <div className="space-y-4">
-          <Input label={t('email')} type="email" {...register('email')} error={errors.email?.message} />
-          <Select
-            label={t('fulfillment')}
-            options={[
-              { value: 'pickup', label: t('pickupLocation') },
-              { value: 'shipping', label: t('shippingMethod') },
-            ]}
-            {...register('fulfillmentMethod')}
-          />
-          {method === 'pickup' && (
-            <Input
-              label={t('pickupLocation')}
-              {...register('pickupLocationName')}
-              error={errors.pickupLocationName?.message}
+        <div className="space-y-6">
+          <div className="space-y-4 rounded-2xl border border-grey/15 bg-white p-6">
+            <h2 className="font-display text-xl">{t('contactInfo')}</h2>
+            <Input label={t('email')} type="email" {...register('email')} error={errors.email?.message} />
+            <Select
+              label={t('fulfillment')}
+              options={[
+                { value: 'pickup', label: t('pickupLocation') },
+                { value: 'shipping', label: t('shippingMethod') },
+              ]}
+              {...register('fulfillmentMethod')}
             />
-          )}
-          {method === 'shipping' && (
-            <>
+            {method === 'pickup' && (
               <Input
-                label="Name"
-                {...register('shippingAddress.name')}
-                error={errors.shippingAddress?.name?.message}
+                label={t('pickupLocation')}
+                {...register('pickupLocationName')}
+                error={errors.pickupLocationName?.message}
               />
-              <Input
-                label="Street"
-                {...register('shippingAddress.street')}
-                error={errors.shippingAddress?.street?.message}
-              />
-              <div className="grid gap-4 sm:grid-cols-2">
+            )}
+            {method === 'shipping' && (
+              <>
                 <Input
-                  label="City"
-                  {...register('shippingAddress.city')}
-                  error={errors.shippingAddress?.city?.message}
+                  label="Name"
+                  {...register('shippingAddress.name')}
+                  error={errors.shippingAddress?.name?.message}
                 />
                 <Input
-                  label="State"
-                  {...register('shippingAddress.state')}
-                  error={errors.shippingAddress?.state?.message}
+                  label="Street"
+                  {...register('shippingAddress.street')}
+                  error={errors.shippingAddress?.street?.message}
                 />
-              </div>
-              <Input
-                label="ZIP"
-                {...register('shippingAddress.zip')}
-                error={errors.shippingAddress?.zip?.message}
-              />
-            </>
-          )}
-          <Textarea label={t('notes')} {...register('customerNotes')} />
-          <p className="text-sm text-grey">{t('securePayment')}</p>
-          <Button type="submit" loading={loading}>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Input
+                    label="City"
+                    {...register('shippingAddress.city')}
+                    error={errors.shippingAddress?.city?.message}
+                  />
+                  <Input
+                    label="State"
+                    {...register('shippingAddress.state')}
+                    error={errors.shippingAddress?.state?.message}
+                  />
+                </div>
+                <Input
+                  label="ZIP"
+                  {...register('shippingAddress.zip')}
+                  error={errors.shippingAddress?.zip?.message}
+                />
+              </>
+            )}
+            <Textarea label={t('notes')} {...register('customerNotes')} />
+          </div>
+
+          {totals ? (
+            <VenmoPaymentStep
+              totals={totals}
+              confirmed={venmoConfirmed}
+              onConfirmedChange={setVenmoConfirmed}
+            />
+          ) : null}
+
+          <Button type="submit" loading={loading} disabled={!venmoConfirmed || loading} className="w-full sm:w-auto">
             {t('placeOrder')}
           </Button>
+          {!venmoConfirmed ? (
+            <p className="text-sm text-grey">{t('venmoButtonHint')}</p>
+          ) : null}
         </div>
-        <aside className="rounded-2xl border border-grey/15 bg-cream p-6">
+
+        <aside className="h-fit rounded-2xl border border-grey/15 bg-cream p-6 lg:sticky lg:top-28">
           <h2 className="font-display text-xl">{t('orderSummary')}</h2>
           <div className="mt-4">
             <CartSummary />

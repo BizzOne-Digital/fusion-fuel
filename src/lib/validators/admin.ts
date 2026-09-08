@@ -43,6 +43,7 @@ export const flavorFormSchema = z.object({
   category: z.string().trim().max(64).optional(),
   color: z.string().trim().max(32).optional(),
   description: localizedStringSchema.optional(),
+  image: imageSchema.optional(),
   displayOrder: z.number().int().min(0).default(0),
   status: z.enum(['draft', 'published', 'archived']).default('draft'),
 });
@@ -303,23 +304,38 @@ export const pricingFormSchema = z.object({
   currency: z.string().trim().length(3).default('USD'),
 });
 
+const relaxedLocalizedStringSchema = z.object({
+  en: z.string().trim(),
+  es: z.string().trim(),
+});
+
+const footerLinkSchema = z.object({
+  label: relaxedLocalizedStringSchema,
+  href: z.string().trim().min(1),
+});
+
+const footerColumnSchema = z.object({
+  title: relaxedLocalizedStringSchema,
+  links: z.array(footerLinkSchema).default([]),
+});
+
 export const settingsFormSchema = z.object({
   businessName: z.string().trim().min(2).max(120),
-  tagline: localizedStringSchema,
+  tagline: relaxedLocalizedStringSchema,
   contactEmail: z.string().trim().regex(EMAIL_REGEX),
   contactPhone: z.string().trim().max(30),
   address: z.object({
-    street: z.string().trim().min(1),
-    city: z.string().trim().min(1),
-    state: z.string().trim().min(1),
-    zip: z.string().trim().min(1),
+    street: z.string().trim().default(''),
+    city: z.string().trim().default(''),
+    state: z.string().trim().default(''),
+    zip: z.string().trim().default(''),
     country: z.string().trim().min(2).default('US'),
   }),
   timezone: z.string().trim().min(1),
   seo: seoSchema.optional(),
   announcement: z.object({
     enabled: z.boolean(),
-    message: localizedStringSchema,
+    message: relaxedLocalizedStringSchema,
     link: z.string().trim().optional(),
     backgroundColor: z.string().trim().optional(),
     textColor: z.string().trim().optional(),
@@ -343,6 +359,20 @@ export const settingsFormSchema = z.object({
       })
     )
     .default([]),
+  footer: z
+    .object({
+      tagline: relaxedLocalizedStringSchema.optional(),
+      columns: z.array(footerColumnSchema).optional(),
+    })
+    .optional(),
+  legalLinks: z
+    .array(
+      z.object({
+        label: relaxedLocalizedStringSchema,
+        href: z.string().trim().min(1),
+      })
+    )
+    .optional(),
 });
 
 export const integrationTestSchema = z.object({

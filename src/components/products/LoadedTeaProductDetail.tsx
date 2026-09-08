@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
+import { getPrimaryProductImage, getVariantPriceCents } from '@/lib/product-display';
+import { getAddInUnitPrice } from '@/lib/product-add-ins';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
@@ -36,20 +38,22 @@ export function LoadedTeaProductDetail({ product, addIns, locale }: LoadedTeaPro
   const name = getLocalized(product.name, locale);
 
   const selectedItem = LOADED_TEAS_MENU.items.find((item) => item.slug === flavorSlug);
-  const displayImage = selectedItem
-    ? loadedTeaItemImage(selectedItem)
-    : LOADED_TEAS_MENU.heroImage;
+  const productImage = getPrimaryProductImage(product);
+  const menuImage = selectedItem ? loadedTeaItemImage(selectedItem) : LOADED_TEAS_MENU.heroImage;
+  const displayImage = productImage ?? menuImage;
 
   const variantSku = flavorSlug ? loadedTeaVariantSku(sizeSlug, flavorSlug) : '';
-  const unitPrice = flavorSlug ? loadedTeaSizePriceCents(sizeSlug, flavorSlug) : 0;
+  const unitPrice =
+    (variantSku ? getVariantPriceCents(product, variantSku) : null) ??
+    (flavorSlug ? loadedTeaSizePriceCents(sizeSlug, flavorSlug) : 0);
 
   const addInTotal = useMemo(
     () =>
       Object.entries(selectedAddIns).reduce((sum, [id, qty]) => {
         const addIn = addIns.find((entry) => String(entry._id) === id);
-        return sum + (addIn?.price ?? 0) * qty;
+        return sum + (addIn ? getAddInUnitPrice(product, addIn) : 0) * qty;
       }, 0),
-    [selectedAddIns, addIns]
+    [selectedAddIns, addIns, product]
   );
 
   const linePrice = unitPrice + addInTotal;

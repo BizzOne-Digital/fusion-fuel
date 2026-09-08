@@ -2,7 +2,6 @@ import { setRequestLocale } from 'next-intl/server';
 import { getPublishedTestimonials } from '@/lib/data';
 import { generatePageMetadata } from '@/lib/seo';
 import { AboutPageSections } from '@/components/sections/AboutPageSections';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import type { Metadata } from 'next';
 import type { Locale } from '@/types';
 
@@ -23,9 +22,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
   return (
     <div className="min-w-0 overflow-x-hidden">
-      <div className="mx-auto max-w-7xl px-4 pt-8 lg:px-6">
-        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'About' }]} />
-      </div>
       <AboutPageSections locale={typedLocale} testimonials={testimonials} />
     </div>
   );

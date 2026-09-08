@@ -6,7 +6,8 @@ export default function AdminFlavorsPage() {
       title="Flavors"
       description="Manage the flavor catalogue."
       apiBase="/api/admin/flavors"
-      fields={['description', 'category', 'color']}
+      fields={['description', 'category', 'color', 'image']}
+      imageDirectory="products"
       columns={[
         { key: 'name', header: 'Name', renderKey: 'name' },
         { key: 'slug', header: 'Slug' },

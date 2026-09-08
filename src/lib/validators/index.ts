@@ -4,6 +4,9 @@ export type { LoginInput, RegisterInput, ForgotPasswordInput, ResetPasswordInput
 export { contactSchema } from './contact';
 export type { ContactInput } from './contact';
 
+export { reviewSubmitSchema } from './testimonial';
+export type { ReviewSubmitInput } from './testimonial';
+
 export {
   bookingSchema,
   bookingStepContactSchema,
@@ -16,7 +19,7 @@ export {
 } from './booking';
 export type { BookingInput } from './booking';
 
-export { cartItemInputSchema, cartUpdateSchema, checkoutSchema } from './checkout';
+export { cartItemInputSchema, cartUpdateSchema, checkoutSchema, checkoutSubmitSchema } from './checkout';
 export type { CartItemInput, CartUpdateInput, CheckoutInput } from './checkout';
 
 export { productFormSchema } from './product';

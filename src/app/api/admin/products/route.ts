@@ -4,36 +4,10 @@ import { writeAuditLog } from '@/lib/admin/audit';
 import { serializeDoc } from '@/lib/admin/serialize';
 import { jsonOk, handleApiError } from '@/lib/admin/response';
 import { parsePagination, parseJsonBody, toObjectId } from '@/lib/admin/utils';
+import { mapProductInput } from '@/lib/admin/map-product-input';
 import { productFormSchema } from '@/lib/validators/product';
 import Product from '@/models/Product';
-import type { ContentStatus, DietaryTag } from '@/types';
-
-function mapProductInput(data: ReturnType<typeof productFormSchema.parse>) {
-  return {
-    name: data.name,
-    slug: data.slug,
-    sku: data.sku.toUpperCase(),
-    shortDescription: data.shortDescription,
-    description: data.fullDescription,
-    productType: data.productType,
-    categoryId: data.categoryId ? toObjectId(data.categoryId) : undefined,
-    images: data.images,
-    basePrice: data.price ?? 0,
-    compareAtPrice: data.compareAtPrice,
-    variants: data.variants ?? [],
-    kitSizes: data.kitSizes ?? [],
-    inventory: {
-      trackInventory: data.trackInventory,
-      quantity: data.inventory ?? 0,
-      lowStockThreshold: data.lowStockThreshold ?? 5,
-      allowBackorder: false,
-    },
-    dietaryTags: (data.dietaryTags ?? []) as DietaryTag[],
-    status: data.status,
-    featured: data.featured,
-    order: data.displayOrder,
-  };
-}
+import type { ContentStatus } from '@/types';
 
 export async function GET(request: Request) {
   try {

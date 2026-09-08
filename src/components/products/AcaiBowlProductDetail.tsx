@@ -19,6 +19,7 @@ import {
   isAcaiBowlProduct,
 } from '@/lib/acai-bowls-menu';
 import { productUsesPlaceholderCard } from '@/lib/product-placeholder';
+import { getAddInUnitPrice } from '@/lib/product-add-ins';
 import type { IProduct } from '@/models/Product';
 import type { IAddIn } from '@/models/AddIn';
 import type { Locale } from '@/types';
@@ -64,14 +65,14 @@ export function AcaiBowlProductDetail({
     let total = 0;
     for (const fruit of extraFruits) {
       const addIn = addInBySlug.get(acaiBowlModifierSlug('extra-fruit', fruit));
-      total += addIn?.price ?? 0;
+      total += addIn ? getAddInUnitPrice(product, addIn) : 0;
     }
     for (const topping of extraToppings) {
       const addIn = addInBySlug.get(acaiBowlModifierSlug('extra-topping', topping));
-      total += addIn?.price ?? 0;
+      total += addIn ? getAddInUnitPrice(product, addIn) : 0;
     }
     return total;
-  }, [extraFruits, extraToppings, addInBySlug]);
+  }, [extraFruits, extraToppings, addInBySlug, product]);
 
   const unitPrice = product.basePrice + extraTotal;
 

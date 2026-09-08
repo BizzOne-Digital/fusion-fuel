@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { X } from 'lucide-react';
-import { getLocalized, normalizeAppHref } from '@/lib/utils';
+import { parseAppLinkHref } from '@/lib/footer-links';
+import { getLocalized } from '@/lib/utils';
 import type { AnnouncementBar } from '@/types';
 import type { Locale } from '@/types';
 
@@ -26,7 +27,7 @@ export function AnnouncementBarComponent({ announcement, locale }: AnnouncementB
   if (!message) return null;
 
   const content = announcement.link ? (
-    <Link href={normalizeAppHref(announcement.link)} className="underline underline-offset-2">
+    <Link href={parseAppLinkHref(announcement.link)} className="underline underline-offset-2">
       {message}
     </Link>
   ) : (

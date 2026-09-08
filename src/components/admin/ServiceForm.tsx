@@ -1,33 +1,52 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import AdminHeader from '@/components/admin/AdminHeader';
 import FormField, { inputClassName, selectClassName, textareaClassName } from '@/components/admin/FormField';
 import LocalizedTabs from '@/components/admin/LocalizedTabs';
 import ImageUploadField from '@/components/admin/ImageUploadField';
 import { adminFetch } from '@/lib/admin/client';
+
+type Localized = { en: string; es: string };
+
+type ServiceSection = {
+  title: Localized;
+  body: Localized;
+  order: number;
+  image?: { url: string; alt: string };
+};
+
+type ServiceFaq = {
+  question: Localized;
+  answer: Localized;
+  order: number;
+};
 
 interface ServiceFormProps {
   serviceId?: string;
   onSuccess: () => void;
 }
 
+function emptyLocalized(): Localized {
+  return { en: '', es: '' };
+}
+
 export default function ServiceForm({ serviceId, onSuccess }: ServiceFormProps) {
   const [locale, setLocale] = useState<'en' | 'es'>('en');
   const [loading, setLoading] = useState(Boolean(serviceId));
   const [saving, setSaving] = useState(false);
-  const [name, setName] = useState({ en: '', es: '' });
+  const [name, setName] = useState<Localized>(emptyLocalized());
   const [slug, setSlug] = useState('');
-  const [shortDescription, setShortDescription] = useState({ en: '', es: '' });
-  const [description, setDescription] = useState({ en: '', es: '' });
-  const [detailContent, setDetailContent] = useState({ en: '', es: '' });
-  const [startingPrice, setStartingPrice] = useState(0);
+  const [shortDescription, setShortDescription] = useState<Localized>(emptyLocalized());
+  const [description, setDescription] = useState<Localized>(emptyLocalized());
+  const [detailContent, setDetailContent] = useState<Localized>(emptyLocalized());
+  const [startingPriceDollars, setStartingPriceDollars] = useState('0.00');
   const [status, setStatus] = useState('draft');
   const [order, setOrder] = useState(0);
   const [thumbnail, setThumbnail] = useState<{ url: string; alt: string } | null>(null);
   const [heroImage, setHeroImage] = useState<{ url: string; alt: string } | null>(null);
+  const [sections, setSections] = useState<ServiceSection[]>([]);
+  const [faqs, setFaqs] = useState<ServiceFaq[]>([]);
 
   useEffect(() => {
     if (!serviceId) return;
@@ -41,16 +60,18 @@ export default function ServiceForm({ serviceId, onSuccess }: ServiceFormProps) 
         return;
       }
       const item = data!.item;
-      setName(item.name as { en: string; es: string });
+      setName(item.name as Localized);
       setSlug(item.slug as string);
-      setShortDescription(item.shortDescription as { en: string; es: string });
-      setDescription(item.description as { en: string; es: string });
-      setDetailContent(item.detailContent as { en: string; es: string });
-      setStartingPrice((item.startingPrice as number) ?? 0);
+      setShortDescription(item.shortDescription as Localized);
+      setDescription(item.description as Localized);
+      setDetailContent(item.detailContent as Localized);
+      setStartingPriceDollars(((item.startingPrice as number) ?? 0) / 100 + '');
       setStatus(item.status as string);
       setOrder(item.order as number);
       setThumbnail(item.thumbnail as { url: string; alt: string } | null);
       setHeroImage(item.heroImage as { url: string; alt: string } | null);
+      setSections((item.sections as ServiceSection[]) ?? []);
+      setFaqs((item.faqs as ServiceFaq[]) ?? []);
       setLoading(false);
     })();
   }, [serviceId]);
@@ -64,13 +85,13 @@ export default function ServiceForm({ serviceId, onSuccess }: ServiceFormProps) 
       shortDescription,
       description,
       detailContent,
-      startingPrice,
+      startingPrice: Math.round(Number.parseFloat(startingPriceDollars || '0') * 100),
       status,
       order,
       thumbnail: thumbnail ?? undefined,
       heroImage: heroImage ?? undefined,
-      sections: [],
-      faqs: [],
+      sections,
+      faqs,
     };
     const { error } = await adminFetch(
       serviceId ? `/api/admin/services/${serviceId}` : '/api/admin/services',
@@ -106,8 +127,8 @@ export default function ServiceForm({ serviceId, onSuccess }: ServiceFormProps) 
         <textarea className={`${textareaClassName()} min-h-[160px]`} value={detailContent[locale]} onChange={(e) => setDetailContent({ ...detailContent, [locale]: e.target.value })} />
       </FormField>
       <div className="grid gap-4 sm:grid-cols-3">
-        <FormField label="Starting Price (cents)">
-          <input type="number" className={inputClassName()} value={startingPrice} onChange={(e) => setStartingPrice(Number(e.target.value))} />
+        <FormField label="Starting Price (USD)">
+          <input type="number" step="0.01" min={0} className={inputClassName()} value={startingPriceDollars} onChange={(e) => setStartingPriceDollars(e.target.value)} />
         </FormField>
         <FormField label="Order">
           <input type="number" className={inputClassName()} value={order} onChange={(e) => setOrder(Number(e.target.value))} />
@@ -122,6 +143,65 @@ export default function ServiceForm({ serviceId, onSuccess }: ServiceFormProps) 
       </div>
       <ImageUploadField label="Thumbnail" directory="services" value={thumbnail} onChange={setThumbnail} />
       <ImageUploadField label="Hero Image" directory="services" value={heroImage} onChange={setHeroImage} />
+
+      <section className="space-y-4 border-t pt-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold">Content Sections</h2>
+          <button
+            type="button"
+            className="text-sm text-orange-600 hover:underline"
+            onClick={() =>
+              setSections([
+                ...sections,
+                { title: emptyLocalized(), body: emptyLocalized(), order: sections.length },
+              ])
+            }
+          >
+            + Add section
+          </button>
+        </div>
+        {sections.map((section, index) => (
+          <div key={index} className="space-y-3 rounded-lg border border-zinc-100 p-4">
+            <FormField label={`Section Title (${locale.toUpperCase()})`}>
+              <input className={inputClassName()} value={section.title[locale]} onChange={(e) => setSections(sections.map((s, i) => i === index ? { ...s, title: { ...s.title, [locale]: e.target.value } } : s))} />
+            </FormField>
+            <FormField label={`Section Body (${locale.toUpperCase()})`}>
+              <textarea className={textareaClassName()} value={section.body[locale]} onChange={(e) => setSections(sections.map((s, i) => i === index ? { ...s, body: { ...s.body, [locale]: e.target.value } } : s))} />
+            </FormField>
+            <button type="button" className="text-sm text-red-600" onClick={() => setSections(sections.filter((_, i) => i !== index))}>Remove section</button>
+          </div>
+        ))}
+      </section>
+
+      <section className="space-y-4 border-t pt-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold">Service FAQs</h2>
+          <button
+            type="button"
+            className="text-sm text-orange-600 hover:underline"
+            onClick={() =>
+              setFaqs([
+                ...faqs,
+                { question: emptyLocalized(), answer: emptyLocalized(), order: faqs.length },
+              ])
+            }
+          >
+            + Add FAQ
+          </button>
+        </div>
+        {faqs.map((faq, index) => (
+          <div key={index} className="space-y-3 rounded-lg border border-zinc-100 p-4">
+            <FormField label={`Question (${locale.toUpperCase()})`}>
+              <input className={inputClassName()} value={faq.question[locale]} onChange={(e) => setFaqs(faqs.map((f, i) => i === index ? { ...f, question: { ...f.question, [locale]: e.target.value } } : f))} />
+            </FormField>
+            <FormField label={`Answer (${locale.toUpperCase()})`}>
+              <textarea className={textareaClassName()} value={faq.answer[locale]} onChange={(e) => setFaqs(faqs.map((f, i) => i === index ? { ...f, answer: { ...f.answer, [locale]: e.target.value } } : f))} />
+            </FormField>
+            <button type="button" className="text-sm text-red-600" onClick={() => setFaqs(faqs.filter((_, i) => i !== index))}>Remove FAQ</button>
+          </div>
+        ))}
+      </section>
+
       <button type="submit" disabled={saving} className="rounded-lg bg-orange-500 px-6 py-2.5 text-sm font-medium text-white hover:bg-orange-600 disabled:opacity-50">
         {saving ? 'Saving…' : 'Save Service'}
       </button>

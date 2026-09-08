@@ -50,16 +50,27 @@ export function slugify(value: string): string {
 
 /** Strip locale prefix from internal paths so next-intl Link does not double-prefix (/en/en/...). */
 export function normalizeAppHref(href: string): string {
-  if (!href || href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+  if (
+    !href ||
+    href.startsWith('http://') ||
+    href.startsWith('https://') ||
+    href.startsWith('mailto:') ||
+    href.startsWith('tel:') ||
+    href.startsWith('#')
+  ) {
     return href;
   }
 
-  const normalized = href.startsWith('/') ? href : `/${href}`;
-  const match = normalized.match(/^\/(en|es)(?=\/|$)(.*)$/);
-  if (!match) return normalized;
+  let path = href.startsWith('/') ? href : `/${href}`;
+  const localePattern = /^\/(en|es)(?=\/|$)/;
 
-  const remainder = match[2] || '';
-  return remainder ? remainder : '/';
+  while (localePattern.test(path)) {
+    const match = path.match(/^\/(en|es)(?=\/|$)(.*)$/);
+    if (!match) break;
+    path = match[2] ? match[2] : '/';
+  }
+
+  return path || '/';
 }
 
 /** Convert Mongoose lean documents (ObjectId, Date, etc.) to plain JSON for Client Components. */

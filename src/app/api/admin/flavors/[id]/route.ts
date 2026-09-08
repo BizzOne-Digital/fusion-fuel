@@ -37,6 +37,7 @@ export async function PUT(request: Request, context: RouteContext) {
     flavor.category = data.category ?? 'general';
     flavor.color = data.color ?? flavor.color;
     flavor.description = data.description ?? { en: '', es: '' };
+    if (data.image) flavor.image = data.image;
     flavor.order = data.displayOrder;
     flavor.status = data.status;
     await flavor.save();

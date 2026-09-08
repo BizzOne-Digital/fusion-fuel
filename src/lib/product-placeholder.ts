@@ -1,4 +1,5 @@
 import type { IProduct } from '@/models/Product';
+import { isUploadedImageUrl } from '@/lib/product-display';
 import { PROTEIN_COFFEE_PRODUCT_SLUG } from '@/lib/protein-coffee-menu';
 import { LOADED_TEA_PRODUCT_SLUG } from '@/lib/loaded-teas-menu';
 import { PROTEIN_SHAKE_PRODUCT_SLUG } from '@/lib/protein-shakes-menu';
@@ -85,7 +86,9 @@ export function inferProductCategorySlug(productSlug: string): string {
 export function productUsesPlaceholderCard(product: IProduct): boolean {
   const url = product.images?.[0]?.url?.trim();
   if (!url) return true;
-  return GENERIC_PRODUCT_IMAGE_URLS.has(url) || url.startsWith('/placeholders/');
+  if (isUploadedImageUrl(url)) return false;
+  if (url.startsWith('/placeholders/')) return true;
+  return false;
 }
 
 export function getCategoryCardStyle(categorySlug: string) {

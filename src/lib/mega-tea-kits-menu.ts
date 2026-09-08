@@ -6,7 +6,7 @@ function formatUsd(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }
 
-/** @deprecated Legacy single-kit slug — archived in seed. */
+/** Make Your Own Mega Tea Kit — all collections, pick any flavor enhancer. */
 export const MEGA_TEA_KIT_PRODUCT_SLUG = 'mega-tea-kit-builder';
 
 export const MEGA_TEA_KITS_MENU = {
@@ -96,8 +96,16 @@ export function megaTeaKitProductSlug(collectionSlug: string): string {
   return `mega-tea-kit-${collectionSlug}`;
 }
 
+export function isMegaTeaKitBuilderProduct(slug: string): boolean {
+  return slug === MEGA_TEA_KIT_PRODUCT_SLUG;
+}
+
 export function isMegaTeaKitProduct(slug: string): boolean {
   return slug.startsWith('mega-tea-kit-') && slug !== MEGA_TEA_KIT_PRODUCT_SLUG;
+}
+
+export function isMegaTeaKitDetailProduct(slug: string): boolean {
+  return isMegaTeaKitProduct(slug) || isMegaTeaKitBuilderProduct(slug);
 }
 
 export function megaTeaKitCollectionFromProduct(slug: string): FlavorCollectionSlug | null {

@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const { page, limit, skip } = parsePagination(searchParams);
     const [items, total] = await Promise.all([
-      Testimonial.find().sort({ order: 1 }).skip(skip).limit(limit).lean(),
+      Testimonial.find().sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
       Testimonial.countDocuments(),
     ]);
     return jsonOk({

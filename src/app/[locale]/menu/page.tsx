@@ -8,7 +8,8 @@ import {
 import { generatePageMetadata } from '@/lib/seo';
 import { MenuCategorySidebar } from '@/components/products/MenuCategorySidebar';
 import { MenuCategoryPanel } from '@/components/menu/MenuCategoryPanel';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { MenuPageIntro } from '@/components/sections/MenuPageIntro';
+import { SectionReveal } from '@/components/motion/SectionReveal';
 import { LOADED_TEAS_MENU_VIEWS, loadedTeasMenuHref } from '@/lib/make-your-own-loaded-tea-menu';
 import type { Metadata } from 'next';
 import type { Locale } from '@/types';
@@ -45,47 +46,38 @@ export default async function MenuPage({
   ]);
 
   const kitHref = '/menu?category=mega-tea-kits';
-
-  const activeCategory = category
-    ? categories.find((cat) => cat.slug === category)
-    : undefined;
-
-  const title = typedLocale === 'es' ? 'Menú' : 'Menu';
+  const activeCategory = category ? categories.find((cat) => cat.slug === category) : undefined;
 
   return (
     <div className="min-w-0 w-full max-w-full overflow-x-hidden">
-      <div className="page-shell mx-auto max-w-7xl px-4 py-12 lg:px-6">
-        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: title }]} />
-        <h1 className="font-display text-5xl">{title}</h1>
-        <p className="mt-4 max-w-2xl text-grey">
-          {typedLocale === 'es'
-            ? 'Filtra por categoría o explora el menú completo.'
-            : 'Filter by category or browse the full menu.'}
-        </p>
+      <MenuPageIntro locale={typedLocale} />
 
-        <div className="mt-10 flex flex-col gap-10 lg:flex-row lg:items-start">
-          <div className="w-full shrink-0 lg:w-56 xl:w-64">
-            <MenuCategorySidebar
-              categories={categories}
-              locale={typedLocale}
-              activeSlug={category}
-            />
-          </div>
+      <SectionReveal>
+        <div className="page-shell mx-auto max-w-7xl px-4 py-12 lg:px-6">
+          <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
+            <div className="w-full shrink-0 lg:w-56 xl:w-64">
+              <MenuCategorySidebar
+                categories={categories}
+                locale={typedLocale}
+                activeSlug={category}
+              />
+            </div>
 
-          <div className="min-w-0 flex-1">
-            <MenuCategoryPanel
-              category={activeCategory}
-              categories={categories}
-              products={products}
-              flavors={flavors}
-              locale={typedLocale}
-              kitHref={kitHref}
-              kitCollection={kitCollection}
-              loadedTeaView={view}
-            />
+            <div className="min-w-0 flex-1">
+              <MenuCategoryPanel
+                category={activeCategory}
+                categories={categories}
+                products={products}
+                flavors={flavors}
+                locale={typedLocale}
+                kitHref={kitHref}
+                kitCollection={kitCollection}
+                loadedTeaView={view}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </SectionReveal>
     </div>
   );
 }

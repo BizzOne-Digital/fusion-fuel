@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
+import { getPrimaryProductImage, getVariantPriceCents } from '@/lib/product-display';
+import { getAddInUnitPrice } from '@/lib/product-add-ins';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
@@ -37,20 +39,24 @@ export function ProteinCoffeeProductDetail({ product, addIns, locale }: ProteinC
   const name = getLocalized(product.name, locale);
 
   const selectedFlavor = PROTEIN_COFFEE.flavors.find((flavor) => flavor.slug === flavorSlug);
-  const displayImage = selectedFlavor
+  const productImage = getPrimaryProductImage(product);
+  const menuImage = selectedFlavor
     ? proteinCoffeeFlavorImage(flavorSlug)
     : PROTEIN_COFFEE.galleryImages[0];
+  const displayImage = productImage ?? menuImage;
 
   const variantSku = flavorSlug ? proteinCoffeeVariantSku(sizeSlug) : '';
-  const unitPrice = proteinCoffeeIcedPriceCents(sizeSlug);
+  const unitPrice =
+    (variantSku ? getVariantPriceCents(product, variantSku) : null) ??
+    proteinCoffeeIcedPriceCents(sizeSlug);
 
   const addInTotal = useMemo(
     () =>
       Object.entries(selectedAddIns).reduce((sum, [id, qty]) => {
         const addIn = addIns.find((entry) => String(entry._id) === id);
-        return sum + (addIn?.price ?? 0) * qty;
+        return sum + (addIn ? getAddInUnitPrice(product, addIn) : 0) * qty;
       }, 0),
-    [selectedAddIns, addIns]
+    [selectedAddIns, addIns, product]
   );
 
   const linePrice = unitPrice + addInTotal;

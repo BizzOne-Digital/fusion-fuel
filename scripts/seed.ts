@@ -23,7 +23,7 @@ import { SITE_IMAGES, getCategoryImage, getServiceImage, getProductFallbackImage
 import { FLAVOR_IMAGE_BY_SLUG } from '../src/lib/flavor-image-manifest';
 import { CATERING_TAGLINE, CONTACT, DELIVERY, acaiBowlEventServiceHtml, ACAI_BOWL_EVENT, flavorIngredientsHtml, HOME_HERO, LOADED_TEAS, MONTHLY_TEA_CLUB, monthlyTeaClubServiceHtml } from '../src/lib/brand-content';
 import { PROTEIN_COFFEE, proteinCoffeeIcedPriceCents, proteinCoffeeOptionalAddInSlugs, proteinCoffeeProductDescriptionHtml, proteinCoffeeProductShortDescription, PROTEIN_COFFEE_PRODUCT_SLUG } from '../src/lib/protein-coffee-menu';
-import { MEGA_TEA_KIT_COLLECTIONS, MEGA_TEA_KITS_MENU, megaTeaKitDescriptionHtml, megaTeaKitOptionalAddInSlugs, megaTeaKitPriceCents, megaTeaKitProductName, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
+import { MEGA_TEA_KIT_COLLECTIONS, MEGA_TEA_KITS_MENU, MAKE_YOUR_OWN_MEGA_TEA_KIT, MEGA_TEA_KIT_PRODUCT_SLUG, megaTeaKitDescriptionHtml, megaTeaKitOptionalAddInSlugs, megaTeaKitPriceCents, megaTeaKitPricingSummary, megaTeaKitProductName, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
 import { MENU_FLAVORS } from '../src/lib/menu-flavors';
 import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaOptionalAddInSlugs, loadedTeaProductDescriptionHtml, loadedTeaProductShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
 import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents, acaiBowlShortDescription } from '../src/lib/acai-bowls-menu';
@@ -177,6 +177,7 @@ async function seedSiteSettings(): Promise<void> {
               title: loc('Shop'),
               links: [
                 { label: loc('Menu'), href: '/menu' },
+                { label: loc('Mega Tea Kits'), href: '/menu?category=mega-tea-kits' },
                 { label: loc('Monthly Tea Club'), href: '/menu?category=monthly-tea-club' },
                 { label: loc('Pricing'), href: '/pricing' },
               ],
@@ -186,8 +187,16 @@ async function seedSiteSettings(): Promise<void> {
               links: [
                 { label: loc('About'), href: '/about' },
                 { label: loc('Services'), href: '/services' },
+                { label: loc('Testimonials'), href: '/testimonials' },
                 { label: loc('Contact'), href: '/contact' },
                 { label: loc('FAQs'), href: '/faqs' },
+              ],
+            },
+            {
+              title: loc('Catering'),
+              links: [
+                { label: loc('Book Catering'), href: '/booking' },
+                { label: loc('My Account'), href: '/account' },
               ],
             },
           ],
@@ -1038,12 +1047,51 @@ async function seedMegaTeaKitProducts(
     },
   ];
 
-  await Product.updateOne(
-    { slug: 'mega-tea-kit-builder' },
-    { $set: { status: 'archived', sku: 'FFB-KIT-LEGACY' } }
+  const allKitFlavorIds = MENU_FLAVORS.map((flavor) => flavorIds[flavor.slug]).filter(Boolean);
+
+  await Product.findOneAndUpdate(
+    { slug: MEGA_TEA_KIT_PRODUCT_SLUG },
+    {
+      $set: {
+        slug: MEGA_TEA_KIT_PRODUCT_SLUG,
+        sku: 'FFB-KIT-BUILDER',
+        name: loc(MAKE_YOUR_OWN_MEGA_TEA_KIT.name),
+        shortDescription: loc(
+          `${MAKE_YOUR_OWN_MEGA_TEA_KIT.description} ${megaTeaKitPricingSummary()}`
+        ),
+        description: rich(megaTeaKitDescriptionHtml()),
+        productType: 'kit',
+        categoryId: categoryIds['mega-tea-kits'],
+        images: [img(MAKE_YOUR_OWN_MEGA_TEA_KIT.image.url, MAKE_YOUR_OWN_MEGA_TEA_KIT.image.alt)],
+        basePrice: megaTeaKitPriceCents(),
+        variants: [],
+        flavorIds: allKitFlavorIds,
+        kitSizes,
+        addInOptions,
+        inventory: {
+          trackInventory: false,
+          quantity: 0,
+          lowStockThreshold: 5,
+          allowBackorder: false,
+        },
+        allergens: [],
+        dietaryTags: [],
+        seo: {
+          title: `${MAKE_YOUR_OWN_MEGA_TEA_KIT.name} | ${BRAND.name}`,
+          description: MAKE_YOUR_OWN_MEGA_TEA_KIT.description,
+        },
+        status: 'published',
+        featured: false,
+        order: -1,
+      },
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
   );
 
-  const activeSlugs = MEGA_TEA_KIT_COLLECTIONS.map((collection) => collection.productSlug);
+  const activeSlugs = [
+    MEGA_TEA_KIT_PRODUCT_SLUG,
+    ...MEGA_TEA_KIT_COLLECTIONS.map((collection) => collection.productSlug),
+  ];
 
   for (const [index, collection] of MEGA_TEA_KIT_COLLECTIONS.entries()) {
     const collectionFlavorIds = MENU_FLAVORS.filter(
@@ -1097,13 +1145,15 @@ async function seedMegaTeaKitProducts(
   await Product.updateMany(
     {
       categoryId: categoryIds['mega-tea-kits'],
-      slug: { $nin: [...activeSlugs, 'mega-tea-kit-builder'] },
+      slug: { $nin: activeSlugs },
       status: 'published',
     },
     { $set: { status: 'archived' } }
   );
 
-  console.log(`Mega Tea Kit products upserted (${MEGA_TEA_KIT_COLLECTIONS.length} records).`);
+  console.log(
+    `Mega Tea Kit products upserted (${MEGA_TEA_KIT_COLLECTIONS.length + 1} records).`
+  );
 }
 
 async function seedProteinCoffeeProducts(

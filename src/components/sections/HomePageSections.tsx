@@ -8,9 +8,11 @@ import { HomeMenuCategoriesSection } from '@/components/sections/HomeMenuCategor
 import { AcaiBowlEventSection } from '@/components/sections/AcaiBowlEventSection';
 import { MonthlyTeaClubSection } from '@/components/sections/MonthlyTeaClubSection';
 import { MegaTeaKitFactsSection } from '@/components/sections/MegaTeaKitFactsSection';
+import { LifestyleMontage } from '@/components/sections/LifestyleMontage';
+import { SocialFollowSection } from '@/components/sections/SocialFollowSection';
 import { SITE_IMAGES } from '@/lib/site-images';
 import { Button } from '@/components/ui/Button';
-import { CATERING_TAGLINE, CONTACT, DELIVERY, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
+import { CATERING_TAGLINE, DELIVERY, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
 import type { Locale } from '@/types';
 import type { IProduct } from '@/models/Product';
 import type { IProductCategory } from '@/models/ProductCategory';
@@ -18,15 +20,6 @@ import type { IService } from '@/models/Service';
 import type { ISiteSettings } from '@/models/SiteSettings';
 
 const MEGA_TEA_KITS_MENU_HREF = '/menu?category=mega-tea-kits';
-
-const LIFESTYLE_IMAGES = [
-  { url: SITE_IMAGES.megaTea, alt: 'Loaded Tea drinks' },
-  { url: SITE_IMAGES.acaiBowl, alt: 'Açaí bowl' },
-  { url: SITE_IMAGES.proteinCoffee, alt: 'Protein coffee' },
-  { url: SITE_IMAGES.catering, alt: 'Catering spread' },
-  { url: SITE_IMAGES.waffle, alt: 'Waffles' },
-  { url: SITE_IMAGES.megaTeaKit, alt: 'Mega Tea Kit' },
-] as const;
 
 interface HomePageSectionsProps {
   locale: Locale;
@@ -50,8 +43,6 @@ export function HomePageSections({
   services,
   settings,
 }: HomePageSectionsProps) {
-  const instagram = settings.social?.find((s) => s.platform === 'instagram');
-  const facebook = settings.social?.find((s) => s.platform === 'facebook');
   const heroTitle = getLocalized(hero.title, locale);
   const { fuel: fuelLine, boost: boostLine } = splitBrandSlogan(heroTitle);
 
@@ -84,7 +75,7 @@ export function HomePageSections({
       <SectionReveal>
         <section className="section-pink py-20">
           <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 lg:grid-cols-2 lg:px-6">
-            <Image src={SITE_IMAGES.catering} alt="Catering" width={600} height={450} className="h-auto w-full rounded-2xl object-cover" />
+            <Image src={SITE_IMAGES.catering} alt="Catering" width={600} height={450} className="img-zoom h-auto w-full rounded-2xl object-cover transition duration-500 hover:scale-[1.02]" />
             <div>
               <h2 className="font-display text-4xl">Catering for Every Occasion</h2>
               <p className="mt-3 text-grey">{CATERING_TAGLINE}</p>
@@ -110,7 +101,7 @@ export function HomePageSections({
                 { step: '2', title: 'Delivered Monthly', desc: 'Receive loaded tea blends, guides, boosters, and sweet surprises.' },
                 { step: '3', title: 'Sip & Enjoy', desc: 'Make energizing teas at home — or book catering for your next event.' },
               ].map((item) => (
-                <div key={item.step} className="text-center">
+                <div key={item.step} className="card-hover text-center">
                   <span className="font-display inline-flex h-14 w-14 items-center justify-center rounded-full bg-lime text-2xl text-ink">{item.step}</span>
                   <h3 className="font-display mt-4 text-2xl">{item.title}</h3>
                   <p className="mt-2 text-grey">{item.desc}</p>
@@ -133,73 +124,9 @@ export function HomePageSections({
         </section>
       </SectionReveal>
 
-      {/* Lifestyle montage */}
-      <SectionReveal>
-        <section className="bg-white py-20">
-          <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <h2 className="font-display text-4xl text-carbon">Fuel Your Lifestyle</h2>
-            <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3">
-              {LIFESTYLE_IMAGES.map((img) => (
-                <Image key={img.url} src={img.url} alt={img.alt} width={400} height={300} className="h-48 w-full rounded-xl object-cover md:h-56" />
-              ))}
-            </div>
-          </div>
-        </section>
-      </SectionReveal>
+      <LifestyleMontage />
 
-      {/* 20. Instagram CTA */}
-      <SectionReveal>
-        <section className="gradient-boost py-16 text-white">
-          <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 text-center md:flex-row md:text-left">
-              <div className="relative h-44 w-44 shrink-0 overflow-hidden rounded-2xl bg-white/10 shadow-lg">
-                <Image
-                  src={CONTACT.instagramQrImage}
-                  alt={`Scan to follow ${CONTACT.instagramHandle} on Instagram`}
-                  fill
-                  className="object-cover"
-                  sizes="176px"
-                />
-              </div>
-              <div>
-                <h2 className="font-display text-4xl">Follow the Energy</h2>
-                <p className="mt-2 text-white/85">Scan the code or tap below to follow us on social.</p>
-                <div className="mt-4 flex flex-wrap justify-center gap-4 md:justify-start">
-                  {instagram ? (
-                    <a
-                      href={instagram.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-lg font-semibold underline"
-                    >
-                      {instagram.label ?? CONTACT.instagramHandle}
-                    </a>
-                  ) : null}
-                  {facebook ? (
-                    <a
-                      href={facebook.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-lg font-semibold underline"
-                    >
-                      {facebook.label ?? 'Facebook'}
-                    </a>
-                  ) : (
-                    <a
-                      href={CONTACT.facebookUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-lg font-semibold underline"
-                    >
-                      {CONTACT.facebookLabel}
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </SectionReveal>
+      <SocialFollowSection social={settings.social} />
 
       {/* 21. Final CTA */}
       <SectionReveal>

@@ -37,6 +37,7 @@ export async function POST(request: Request) {
       category: data.category ?? 'general',
       color: data.color ?? '#FF6B35',
       description: data.description ?? { en: '', es: '' },
+      image: data.image,
       order: data.displayOrder,
       status: data.status,
     });

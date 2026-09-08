@@ -14,19 +14,50 @@ interface ProductFormProps {
   onSuccess: () => void;
 }
 
+type Localized = { en: string; es: string };
+
+type KitSizeForm = {
+  key: string;
+  name: Localized;
+  servings: number;
+  price: number;
+};
+
+type VariantForm = {
+  sku: string;
+  name: Localized;
+  priceDollars: string;
+};
+
+type AddInOptionForm = {
+  addInId: string;
+  maxQuantity: number;
+  included: boolean;
+};
+
+function centsToDollars(cents: number): string {
+  return (cents / 100).toFixed(2);
+}
+
+function dollarsToCents(value: string): number {
+  const parsed = Number.parseFloat(value);
+  if (Number.isNaN(parsed)) return 0;
+  return Math.round(parsed * 100);
+}
+
 export default function ProductForm({ productId, categories, onSuccess }: ProductFormProps) {
   const [locale, setLocale] = useState<'en' | 'es'>('en');
   const [loading, setLoading] = useState(Boolean(productId));
   const [saving, setSaving] = useState(false);
-  const [name, setName] = useState({ en: '', es: '' });
+  const [name, setName] = useState<Localized>({ en: '', es: '' });
   const [slug, setSlug] = useState('');
   const [sku, setSku] = useState('');
-  const [shortDescription, setShortDescription] = useState({ en: '', es: '' });
-  const [fullDescription, setFullDescription] = useState({ en: '', es: '' });
+  const [shortDescription, setShortDescription] = useState<Localized>({ en: '', es: '' });
+  const [fullDescription, setFullDescription] = useState<Localized>({ en: '', es: '' });
   const [categoryId, setCategoryId] = useState('');
-  const [price, setPrice] = useState(0);
-  const [compareAtPrice, setCompareAtPrice] = useState<number | undefined>();
-  const [trackInventory, setTrackInventory] = useState(true);
+  const [priceDollars, setPriceDollars] = useState('0.00');
+  const [compareAtDollars, setCompareAtDollars] = useState('');
+  const [trackInventory, setTrackInventory] = useState(false);
   const [inventory, setInventory] = useState(0);
   const [lowStockThreshold, setLowStockThreshold] = useState(5);
   const [featured, setFeatured] = useState(false);
@@ -34,6 +65,38 @@ export default function ProductForm({ productId, categories, onSuccess }: Produc
   const [status, setStatus] = useState('draft');
   const [displayOrder, setDisplayOrder] = useState(0);
   const [images, setImages] = useState<Array<{ url: string; alt: string }>>([]);
+  const [kitSizes, setKitSizes] = useState<KitSizeForm[]>([]);
+  const [variants, setVariants] = useState<VariantForm[]>([]);
+  const [flavorIds, setFlavorIds] = useState<string[]>([]);
+  const [addInOptions, setAddInOptions] = useState<AddInOptionForm[]>([]);
+  const [allFlavors, setAllFlavors] = useState<Array<{ id: string; name: { en: string }; slug: string }>>([]);
+  const [allAddIns, setAllAddIns] = useState<Array<{ id: string; name: { en: string } }>>([]);
+
+  useEffect(() => {
+    void (async () => {
+      const [flavorsRes, addInsRes] = await Promise.all([
+        adminFetch<{ items: Array<Record<string, unknown>> }>('/api/admin/flavors?limit=300'),
+        adminFetch<{ items: Array<Record<string, unknown>> }>('/api/admin/add-ins?limit=300'),
+      ]);
+      if (flavorsRes.data?.items) {
+        setAllFlavors(
+          flavorsRes.data.items.map((item) => ({
+            id: String(item.id ?? item._id),
+            name: item.name as { en: string },
+            slug: item.slug as string,
+          }))
+        );
+      }
+      if (addInsRes.data?.items) {
+        setAllAddIns(
+          addInsRes.data.items.map((item) => ({
+            id: String(item.id ?? item._id),
+            name: item.name as { en: string },
+          }))
+        );
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (!productId) return;
@@ -47,14 +110,16 @@ export default function ProductForm({ productId, categories, onSuccess }: Produc
         return;
       }
       const item = data!.item;
-      setName(item.name as { en: string; es: string });
+      setName(item.name as Localized);
       setSlug(item.slug as string);
       setSku(item.sku as string);
-      setShortDescription(item.shortDescription as { en: string; es: string });
-      setFullDescription(item.description as { en: string; es: string });
+      setShortDescription(item.shortDescription as Localized);
+      setFullDescription(item.description as Localized);
       setCategoryId(String((item.categoryId as { _id?: string })?._id ?? item.categoryId ?? ''));
-      setPrice(item.basePrice as number);
-      setCompareAtPrice(item.compareAtPrice as number | undefined);
+      setPriceDollars(centsToDollars(item.basePrice as number));
+      setCompareAtDollars(
+        item.compareAtPrice ? centsToDollars(item.compareAtPrice as number) : ''
+      );
       const inv = item.inventory as { trackInventory: boolean; quantity: number; lowStockThreshold: number };
       setTrackInventory(inv.trackInventory);
       setInventory(inv.quantity);
@@ -64,9 +129,45 @@ export default function ProductForm({ productId, categories, onSuccess }: Produc
       setStatus(item.status as string);
       setDisplayOrder(item.order as number);
       setImages(item.images as Array<{ url: string; alt: string }>);
+      setKitSizes((item.kitSizes as KitSizeForm[]) ?? []);
+      setVariants(
+        ((item.variants as Array<{ sku: string; name: Localized; price: number }>) ?? []).map(
+          (variant) => ({
+            sku: variant.sku,
+            name: variant.name,
+            priceDollars: centsToDollars(variant.price),
+          })
+        )
+      );
+      setFlavorIds(
+        ((item.flavorIds as Array<string | { _id?: string }>) ?? []).map((id) =>
+          String((id as { _id?: string })._id ?? id)
+        )
+      );
+      setAddInOptions(
+        ((item.addInOptions as Array<Record<string, unknown>>) ?? []).map((option) => ({
+          addInId: String((option.addInId as { _id?: string })?._id ?? option.addInId),
+          maxQuantity: (option.maxQuantity as number) ?? 1,
+          included: Boolean(option.included),
+        }))
+      );
       setLoading(false);
     })();
   }, [productId]);
+
+  function toggleFlavor(flavorId: string) {
+    setFlavorIds((prev) =>
+      prev.includes(flavorId) ? prev.filter((id) => id !== flavorId) : [...prev, flavorId]
+    );
+  }
+
+  function toggleAddIn(addInId: string) {
+    setAddInOptions((prev) => {
+      const exists = prev.find((option) => option.addInId === addInId);
+      if (exists) return prev.filter((option) => option.addInId !== addInId);
+      return [...prev, { addInId, maxQuantity: 1, included: false }];
+    });
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -83,8 +184,8 @@ export default function ProductForm({ productId, categories, onSuccess }: Produc
       fullDescription,
       categoryId,
       images,
-      price,
-      compareAtPrice,
+      price: dollarsToCents(priceDollars),
+      compareAtPrice: compareAtDollars ? dollarsToCents(compareAtDollars) : undefined,
       trackInventory,
       inventory,
       lowStockThreshold,
@@ -92,6 +193,14 @@ export default function ProductForm({ productId, categories, onSuccess }: Produc
       productType,
       status,
       displayOrder,
+      kitSizes,
+      flavorIds,
+      addInOptions,
+      variants: variants.map((variant) => ({
+        sku: variant.sku,
+        name: variant.name,
+        price: dollarsToCents(variant.priceDollars),
+      })),
     };
     const { error } = await adminFetch(
       productId ? `/api/admin/products/${productId}` : '/api/admin/products',
@@ -144,11 +253,11 @@ export default function ProductForm({ productId, categories, onSuccess }: Produc
       <div className="rounded-xl border border-zinc-200 bg-white p-6 space-y-4">
         <h2 className="font-semibold">Pricing & Inventory</h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField label="Price (cents)" required>
-            <input type="number" className={inputClassName()} value={price} onChange={(e) => setPrice(Number(e.target.value))} min={0} />
+          <FormField label="Price (USD)" required>
+            <input type="number" step="0.01" min={0} className={inputClassName()} value={priceDollars} onChange={(e) => setPriceDollars(e.target.value)} />
           </FormField>
-          <FormField label="Compare At (cents)">
-            <input type="number" className={inputClassName()} value={compareAtPrice ?? ''} onChange={(e) => setCompareAtPrice(e.target.value ? Number(e.target.value) : undefined)} min={0} />
+          <FormField label="Compare At (USD)">
+            <input type="number" step="0.01" min={0} className={inputClassName()} value={compareAtDollars} onChange={(e) => setCompareAtDollars(e.target.value)} />
           </FormField>
         </div>
         <label className="flex items-center gap-2 text-sm">
@@ -168,19 +277,211 @@ export default function ProductForm({ productId, categories, onSuccess }: Produc
       </div>
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold">Size / Variants ({variants.length})</h2>
+          <button
+            type="button"
+            className="text-sm text-orange-600 hover:underline"
+            onClick={() =>
+              setVariants([
+                ...variants,
+                {
+                  sku: `${sku || 'VAR'}-${variants.length + 1}`,
+                  name: { en: '', es: '' },
+                  priceDollars: priceDollars || '0.00',
+                },
+              ])
+            }
+          >
+            + Add variant
+          </button>
+        </div>
+        <p className="text-xs text-zinc-500">
+          Used for size options (24oz, 32oz, etc.). Prices set here appear on the product page and in cart.
+        </p>
+        {variants.map((variant, index) => (
+          <div key={index} className="grid gap-3 rounded-lg border border-zinc-100 p-4 sm:grid-cols-2">
+            <FormField label="Variant SKU">
+              <input
+                className={inputClassName()}
+                value={variant.sku}
+                onChange={(e) =>
+                  setVariants(
+                    variants.map((entry, i) =>
+                      i === index ? { ...entry, sku: e.target.value.toUpperCase() } : entry
+                    )
+                  )
+                }
+              />
+            </FormField>
+            <FormField label={`Name (${locale.toUpperCase()})`}>
+              <input
+                className={inputClassName()}
+                value={variant.name[locale]}
+                onChange={(e) =>
+                  setVariants(
+                    variants.map((entry, i) =>
+                      i === index
+                        ? { ...entry, name: { ...entry.name, [locale]: e.target.value } }
+                        : entry
+                    )
+                  )
+                }
+              />
+            </FormField>
+            <FormField label="Price (USD)">
+              <input
+                type="number"
+                step="0.01"
+                min={0}
+                className={inputClassName()}
+                value={variant.priceDollars}
+                onChange={(e) =>
+                  setVariants(
+                    variants.map((entry, i) =>
+                      i === index ? { ...entry, priceDollars: e.target.value } : entry
+                    )
+                  )
+                }
+              />
+            </FormField>
+            <button
+              type="button"
+              className="text-sm text-red-600 sm:col-span-2"
+              onClick={() => setVariants(variants.filter((_, i) => i !== index))}
+            >
+              Remove variant
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {(productType === 'kit' || kitSizes.length > 0) && (
+        <div className="rounded-xl border border-zinc-200 bg-white p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold">Kit Sizes</h2>
+            <button
+              type="button"
+              className="text-sm text-orange-600 hover:underline"
+              onClick={() =>
+                setKitSizes([
+                  ...kitSizes,
+                  { key: `size-${kitSizes.length + 1}`, name: { en: '', es: '' }, servings: 1, price: dollarsToCents(priceDollars) },
+                ])
+              }
+            >
+              + Add size
+            </button>
+          </div>
+          {kitSizes.map((kitSize, index) => (
+            <div key={index} className="grid gap-3 rounded-lg border border-zinc-100 p-4 sm:grid-cols-2">
+              <FormField label="Key">
+                <input className={inputClassName()} value={kitSize.key} onChange={(e) => setKitSizes(kitSizes.map((ks, i) => i === index ? { ...ks, key: e.target.value } : ks))} />
+              </FormField>
+              <FormField label={`Name (${locale.toUpperCase()})`}>
+                <input className={inputClassName()} value={kitSize.name[locale]} onChange={(e) => setKitSizes(kitSizes.map((ks, i) => i === index ? { ...ks, name: { ...ks.name, [locale]: e.target.value } } : ks))} />
+              </FormField>
+              <FormField label="Servings">
+                <input type="number" className={inputClassName()} value={kitSize.servings} onChange={(e) => setKitSizes(kitSizes.map((ks, i) => i === index ? { ...ks, servings: Number(e.target.value) } : ks))} min={1} />
+              </FormField>
+              <FormField label="Price (USD)">
+                <input
+                  type="number"
+                  step="0.01"
+                  min={0}
+                  className={inputClassName()}
+                  value={centsToDollars(kitSize.price)}
+                  onChange={(e) =>
+                    setKitSizes(
+                      kitSizes.map((ks, i) =>
+                        i === index ? { ...ks, price: dollarsToCents(e.target.value) } : ks
+                      )
+                    )
+                  }
+                />
+              </FormField>
+              <button type="button" className="text-sm text-red-600 sm:col-span-2" onClick={() => setKitSizes(kitSizes.filter((_, i) => i !== index))}>Remove size</button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 space-y-4">
+        <h2 className="font-semibold">Flavors ({flavorIds.length} selected)</h2>
+        <div className="max-h-56 space-y-2 overflow-y-auto rounded-lg border border-zinc-100 p-3">
+          {allFlavors.map((flavor) => (
+            <label key={flavor.id} className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={flavorIds.includes(flavor.id)} onChange={() => toggleFlavor(flavor.id)} />
+              {flavor.name.en} <span className="text-zinc-400">({flavor.slug})</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 space-y-4">
+        <h2 className="font-semibold">Add-ins</h2>
+        <div className="max-h-56 space-y-2 overflow-y-auto rounded-lg border border-zinc-100 p-3">
+          {allAddIns.map((addIn) => {
+            const selected = addInOptions.find((option) => option.addInId === addIn.id);
+            return (
+              <div key={addIn.id} className="flex flex-wrap items-center gap-3 text-sm">
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" checked={Boolean(selected)} onChange={() => toggleAddIn(addIn.id)} />
+                  {addIn.name.en}
+                </label>
+                {selected ? (
+                  <>
+                    <label className="flex items-center gap-1">
+                      Max
+                      <input
+                        type="number"
+                        min={1}
+                        className="w-16 rounded border px-2 py-1"
+                        value={selected.maxQuantity}
+                        onChange={(e) =>
+                          setAddInOptions((prev) =>
+                            prev.map((option) =>
+                              option.addInId === addIn.id
+                                ? { ...option, maxQuantity: Number(e.target.value) }
+                                : option
+                            )
+                          )
+                        }
+                      />
+                    </label>
+                    <label className="flex items-center gap-1">
+                      <input
+                        type="checkbox"
+                        checked={selected.included}
+                        onChange={(e) =>
+                          setAddInOptions((prev) =>
+                            prev.map((option) =>
+                              option.addInId === addIn.id
+                                ? { ...option, included: e.target.checked }
+                                : option
+                            )
+                          )
+                        }
+                      />
+                      Included
+                    </label>
+                  </>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-zinc-200 bg-white p-6 space-y-4">
         <h2 className="font-semibold">Images</h2>
-        <ImageUploadField
-          label="Add Product Image"
-          directory="products"
-          value={null}
-          onChange={(img) => img && setImages([...images, img])}
-        />
+        <ImageUploadField label="Add Product Image" directory="products" value={null} onChange={(img) => img && setImages([...images, img])} />
         {images.length > 0 && (
           <ul className="space-y-2">
-            {images.map((img, i) => (
+            {images.map((img) => (
               <li key={img.url} className="flex items-center justify-between rounded border px-3 py-2 text-sm">
                 <span>{img.alt} — {img.url}</span>
-                <button type="button" className="text-red-600" onClick={() => setImages(images.filter((_, idx) => idx !== i))}>Remove</button>
+                <button type="button" className="text-red-600" onClick={() => setImages(images.filter((entry) => entry.url !== img.url))}>Remove</button>
               </li>
             ))}
           </ul>

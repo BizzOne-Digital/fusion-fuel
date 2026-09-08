@@ -43,6 +43,14 @@ export const checkoutSchema = z
     }
   });
 
+export const checkoutSubmitSchema = checkoutSchema.and(
+  z.object({
+    venmoPaymentConfirmed: z.literal(true, {
+      errorMap: () => ({ message: 'Venmo payment confirmation is required' }),
+    }),
+  })
+);
+
 export const cartItemInputSchema = z.object({
   productId: z.string().trim().min(1),
   quantity: z.coerce.number().int().min(1).max(99),
@@ -66,5 +74,6 @@ export const cartUpdateSchema = z.object({
 });
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
+export type CheckoutSubmitInput = z.infer<typeof checkoutSubmitSchema>;
 export type CartItemInput = z.infer<typeof cartItemInputSchema>;
 export type CartUpdateInput = z.infer<typeof cartUpdateSchema>;

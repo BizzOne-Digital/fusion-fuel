@@ -17,7 +17,7 @@ import { LoadedTeaProductDetail } from '@/components/products/LoadedTeaProductDe
 import { ProteinShakeProductDetail } from '@/components/products/ProteinShakeProductDetail';
 import { AcaiBowlProductDetail } from '@/components/products/AcaiBowlProductDetail';
 import { WaffleProductDetail } from '@/components/products/WaffleProductDetail';
-import { isMegaTeaKitProduct } from '@/lib/mega-tea-kits-menu';
+import { isMegaTeaKitDetailProduct } from '@/lib/mega-tea-kits-menu';
 import { isLoadedTeaProduct } from '@/lib/loaded-teas-menu';
 import { isProteinShakeProduct } from '@/lib/protein-shakes-menu';
 import { isAcaiBowlProduct } from '@/lib/acai-bowls-menu';
@@ -31,6 +31,7 @@ import { MakeYourOwnLoadedTeaProductDetail } from '@/components/products/MakeYou
 import { isMakeYourOwnLoadedTeaProduct } from '@/lib/make-your-own-loaded-tea-menu';
 import { ProductAddToCart } from '@/components/products/ProductAddToCart';
 import { resolveProductAddIns } from '@/lib/product-add-ins';
+import { filterProductFlavors } from '@/lib/product-display';
 import { ProductJsonLd } from '@/components/seo/ProductJsonLd';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/Button';
@@ -79,12 +80,13 @@ export default async function ProductDetailPage({
   const shortDescription = getLocalized(product.shortDescription, typedLocale);
   const categorySlug = inferProductCategorySlug(product.slug);
   const productAddIns = resolveProductAddIns(product, addIns);
+  const productFlavors = filterProductFlavors(flavors, product.flavorIds);
   const galleryImages = product.images.filter((image) => image.url?.trim());
   const usePlaceholder = productUsesPlaceholderCard(product);
   const pricedVariants = product.variants.filter((variant) => variant.price > 0);
   const showListedPrice = hasPrice(product.basePrice) && pricedVariants.length <= 1;
 
-  const isMegaTeaKit = isMegaTeaKitProduct(slug);
+  const isMegaTeaKit = isMegaTeaKitDetailProduct(slug);
   const isLoadedTea = isLoadedTeaProduct(slug);
   const isProteinShake = isProteinShakeProduct(slug);
   const isAcaiBowl = isAcaiBowlProduct(slug);
@@ -160,7 +162,7 @@ export default async function ProductDetailPage({
               <p className="mt-4 rounded-xl bg-cream p-4 text-sm">Contains caffeine (~{product.caffeineMg}mg). Not recommended for all audiences.</p>
             )}
             {product.productType === 'kit' && !isMegaTeaKit ? (
-              <div className="mt-8"><KitBuilder product={product} flavors={flavors} addIns={addIns} /></div>
+              <div className="mt-8"><KitBuilder product={product} flavors={productFlavors} addIns={productAddIns} /></div>
             ) : product.productType !== 'kit' && hasPrice(product.basePrice) ? (
               <div className="mt-8 space-y-4">
                 <ProductAddToCart product={product} addIns={productAddIns} locale={typedLocale} />

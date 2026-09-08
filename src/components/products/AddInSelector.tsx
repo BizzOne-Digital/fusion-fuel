@@ -4,7 +4,7 @@ import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
 import type { IAddIn } from '@/models/AddIn';
 import type { IProduct } from '@/models/Product';
 import type { Locale } from '@/types';
-import { getAddInMaxQuantity } from '@/lib/product-add-ins';
+import { getAddInMaxQuantity, getAddInUnitPrice, isAddInIncluded } from '@/lib/product-add-ins';
 
 interface AddInSelectorProps {
   product: IProduct;
@@ -28,13 +28,21 @@ export function AddInSelector({ product, addIns, locale, selected, onChange, tit
         {addIns.map((addIn) => {
           const id = String(addIn._id);
           const max = getAddInMaxQuantity(product, id);
+          const included = isAddInIncluded(product, id);
+          const unitPrice = getAddInUnitPrice(product, addIn);
 
           return (
             <label key={id} className="flex items-center justify-between rounded-xl bg-white p-3">
               <span>
                 {getLocalized(addIn.name, locale)}
                 <span className="ml-2 text-sm text-grey">
-                  {hasPrice(addIn.price) ? formatPrice(addIn.price, 'USD', locale) : formatPrice(null, 'USD', locale)}
+                  {included
+                    ? locale === 'es'
+                      ? 'Incluido'
+                      : 'Included'
+                    : hasPrice(unitPrice)
+                      ? formatPrice(unitPrice, 'USD', locale)
+                      : formatPrice(null, 'USD', locale)}
                 </span>
               </span>
               <input

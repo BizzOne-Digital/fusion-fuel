@@ -6,6 +6,7 @@ import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { productExcludesOptionalAddOns } from '@/lib/protein-treats-menu';
 import { AddInSelector } from '@/components/products/AddInSelector';
+import { getAddInUnitPrice } from '@/lib/product-add-ins';
 import type { IProduct } from '@/models/Product';
 import type { IAddIn } from '@/models/AddIn';
 import type { Locale } from '@/types';
@@ -30,9 +31,9 @@ export function ProductAddToCart({ product, addIns, locale }: ProductAddToCartPr
     () =>
       Object.entries(selectedAddIns).reduce((sum, [id, qty]) => {
         const addIn = addIns.find((entry) => String(entry._id) === id);
-        return sum + (addIn?.price ?? 0) * qty;
+        return sum + (addIn ? getAddInUnitPrice(product, addIn) : 0) * qty;
       }, 0),
-    [selectedAddIns, addIns]
+    [selectedAddIns, addIns, product]
   );
 
   const showAddOns = !productExcludesOptionalAddOns(product.slug);

@@ -77,7 +77,7 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-[60] w-full border-b border-grey/15 bg-white text-carbon shadow-sm">
+      <header className="sticky top-0 z-[60] w-full border-b border-grey/15 bg-white/95 text-carbon shadow-sm backdrop-blur-md transition-shadow duration-300">
         <div className="relative mx-auto w-full max-w-[100rem] px-4 sm:px-6 lg:px-8">
           {/* Desktop */}
           <div className="relative hidden h-[5.25rem] items-center xl:h-[6.25rem] lg:flex">

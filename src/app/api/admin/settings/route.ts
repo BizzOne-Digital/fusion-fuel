@@ -40,9 +40,14 @@ export async function PUT(request: Request) {
     settings.address = data.address;
     settings.timezone = data.timezone;
     if (data.seo) settings.seo = data.seo;
-    settings.announcement = data.announcement;
+    settings.announcement = {
+      ...JSON.parse(JSON.stringify(settings.announcement ?? {})),
+      ...data.announcement,
+    };
     settings.social = data.social;
     settings.hours = data.hours;
+    if (data.footer) settings.footer = data.footer;
+    if (data.legalLinks) settings.legalLinks = data.legalLinks;
     await settings.save();
 
     await writeAuditLog({

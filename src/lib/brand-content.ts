@@ -13,6 +13,15 @@ export const CONTACT = {
   tiktokHandle: '@fusionfuelandboostco',
   tiktokUrl: 'https://www.tiktok.com/@fusionfuelandboostco',
   instagramQrImage: '/brand/instagram-qr.png',
+  venmoQrImage: '/brand/venmo-qr.png',
+  venmoHandle: '@FusionFuelBoostCo',
+} as const;
+
+export const VENMO_CHECKOUT = {
+  qrImage: CONTACT.venmoQrImage,
+  handle: CONTACT.venmoHandle,
+  instructions:
+    'Scan the QR code with the Venmo app and pay the exact order total shown below. After payment, check the box to submit your order.',
 } as const;
 
 export const MONTHLY_TEA_CLUB = {

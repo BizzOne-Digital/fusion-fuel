@@ -84,11 +84,15 @@ async function buildCartItem(input: ReturnType<typeof cartItemInputSchema.parse>
     for (const a of input.addIns) {
       const addIn = await AddIn.findById(a.addInId);
       if (addIn) {
+        const option = product.addInOptions?.find(
+          (entry) => String(entry.addInId) === String(addIn._id)
+        );
+        const unitPrice = option?.included ? 0 : addIn.price;
         addIns.push({
           addInId: addIn._id as Types.ObjectId,
           name: addIn.name,
           quantity: a.quantity,
-          unitPrice: addIn.price,
+          unitPrice,
         });
       }
     }
@@ -169,8 +173,16 @@ export async function getCartWithTotals(sessionId: string, customerId?: string) 
     fulfillmentMethod: 'pickup',
     shippingFlatRate: settings.shipping?.flatRate ?? 0,
     freeShippingThreshold: settings.shipping?.freeShippingThreshold,
+    taxRateBps: settings.taxRateBps ?? 0,
     currency: settings.currency ?? 'USD',
   });
 
   return { cart, totals: pricing.totals };
+}
+
+export async function clearCart(sessionId: string, customerId?: string): Promise<void> {
+  await connectDB();
+  const cart = await getOrCreateCart(sessionId, customerId);
+  cart.items.splice(0, cart.items.length);
+  await cart.save();
 }

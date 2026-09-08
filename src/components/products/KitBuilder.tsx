@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
+import { getAddInUnitPrice, getAddInMaxQuantity, isAddInIncluded } from '@/lib/product-add-ins';
 import { useCart } from '@/context/CartContext';
 import { MEGA_TEA_KITS_MENU } from '@/lib/mega-tea-kits-menu';
 import { Button } from '@/components/ui/Button';
@@ -40,9 +41,9 @@ export function KitBuilder({ product, flavors, addIns }: KitBuilderProps) {
     () =>
       Object.entries(selectedAddIns).reduce((sum, [id, qty]) => {
         const addIn = addIns.find((a) => String(a._id) === id);
-        return sum + (addIn?.price ?? 0) * qty;
+        return sum + (addIn ? getAddInUnitPrice(product, addIn) : 0) * qty;
       }, 0),
-    [selectedAddIns, addIns]
+    [selectedAddIns, addIns, product]
   );
 
   const unitPrice = (kitSize?.price ?? 0) + addInTotal;
@@ -102,29 +103,38 @@ export function KitBuilder({ product, flavors, addIns }: KitBuilderProps) {
         <div>
           <h3 className="font-display text-2xl">{locale === 'es' ? 'Complementos' : 'Add-ins'}</h3>
           <div className="mt-4 space-y-3">
-            {addIns.map((addIn) => (
-              <label key={String(addIn._id)} className="flex items-center justify-between rounded-xl bg-white p-3">
+            {addIns.map((addIn) => {
+              const id = String(addIn._id);
+              const included = isAddInIncluded(product, id);
+              const unitPrice = getAddInUnitPrice(product, addIn);
+              return (
+              <label key={id} className="flex items-center justify-between rounded-xl bg-white p-3">
                 <span>
                   {getLocalized(addIn.name, locale)}
                   <span className="ml-2 text-sm text-grey">
-                    {hasPrice(addIn.price) ? formatPrice(addIn.price, 'USD', locale) : formatPrice(null, 'USD', locale)}
+                    {included
+                      ? locale === 'es' ? 'Incluido' : 'Included'
+                      : hasPrice(unitPrice)
+                        ? formatPrice(unitPrice, 'USD', locale)
+                        : formatPrice(null, 'USD', locale)}
                   </span>
                 </span>
                 <input
                   type="number"
                   min={0}
-                  max={5}
-                  value={selectedAddIns[String(addIn._id)] ?? 0}
+                  max={getAddInMaxQuantity(product, id)}
+                  value={selectedAddIns[id] ?? 0}
                   onChange={(e) =>
                     setSelectedAddIns((prev) => ({
                       ...prev,
-                      [String(addIn._id)]: Number(e.target.value),
+                      [id]: Number(e.target.value),
                     }))
                   }
                   className="w-16 rounded-lg border border-grey/30 px-2 py-1"
                 />
               </label>
-            ))}
+            );
+            })}
           </div>
         </div>
       )}

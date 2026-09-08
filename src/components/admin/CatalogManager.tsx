@@ -8,12 +8,14 @@ import StatusBadge from '@/components/admin/StatusBadge';
 import SimpleCatalogForm from '@/components/admin/SimpleCatalogForm';
 import ConfirmDialog from '@/components/admin/ConfirmDialog';
 import { adminFetch, formatCents } from '@/lib/admin/client';
+import type { UploadDirectory } from '@/lib/upload';
 
 interface CatalogManagerProps {
   title: string;
   description: string;
   apiBase: string;
-  fields: ('description' | 'price' | 'category' | 'color')[];
+  fields: ('description' | 'price' | 'category' | 'color' | 'image')[];
+  imageDirectory?: UploadDirectory;
   columns: Array<{ key: string; header: string; renderKey?: string }>;
 }
 
@@ -23,6 +25,7 @@ export default function CatalogManager({
   apiBase,
   fields,
   columns,
+  imageDirectory,
 }: CatalogManagerProps) {
   const [items, setItems] = useState<Array<Record<string, unknown>>>([]);
   const [loading, setLoading] = useState(true);
@@ -88,10 +91,12 @@ export default function CatalogManager({
                     price: editing.price as number | undefined,
                     category: editing.category as string | undefined,
                     color: editing.color as string | undefined,
+                    image: editing.image as { url: string; alt: string } | undefined,
                   }
                 : undefined
             }
             fields={fields}
+            imageDirectory={imageDirectory}
             onSuccess={() => {
               setShowForm(false);
               setEditing(null);
