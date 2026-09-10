@@ -12,7 +12,6 @@ import {
   Sparkles,
   Star,
   Stethoscope,
-  Target,
   Trophy,
   Users,
 } from 'lucide-react';
@@ -27,8 +26,8 @@ import {
   ABOUT_HIGHLIGHTS,
   ABOUT_MISSION,
   ABOUT_REVIEWS,
-  ABOUT_SERVICE_CARDS,
   ABOUT_STORY,
+  ABOUT_SERVICE_CARDS,
   ABOUT_TAGLINE,
   ABOUT_VALUE_PILLARS,
   ABOUT_VALUES,
@@ -243,41 +242,23 @@ export function AboutPageSections({ locale, testimonials }: AboutPageSectionsPro
             </div>
 
             <div>
-              <SectionLabel>{getLocalized(ABOUT_STORY.title, locale)}</SectionLabel>
+              <SectionLabel>{getLocalized(ABOUT_MISSION.title, locale)}</SectionLabel>
               <h2 className="font-display mt-3 text-4xl md:text-5xl">
-                {locale === 'es' ? 'Nuestra historia familiar' : 'A Family Story'}
+                {getLocalized(ABOUT_MISSION.title, locale)}
               </h2>
-              <p className="mt-6 text-lg font-medium leading-relaxed text-carbon">
-                {getLocalized(ABOUT_STORY.paragraphs[0], locale)}
-              </p>
               <div className="mt-6 space-y-4 text-grey">
-                {ABOUT_STORY.paragraphs.slice(1).map((paragraph, index) => (
-                  <p key={index} className="leading-relaxed">{getLocalized(paragraph, locale)}</p>
+                {ABOUT_MISSION.paragraphs.map((paragraph, index) => (
+                  <p key={index} className="text-lg leading-relaxed">{getLocalized(paragraph, locale)}</p>
                 ))}
               </div>
               <TaglineBanner className="mt-8" />
-            </div>
-          </div>
-        </section>
-      </SectionReveal>
-
-      {/* Mission */}
-      <SectionReveal>
-        <section className="section-pink py-20">
-          <div className="mx-auto max-w-7xl px-4 lg:px-6">
-            <div className="grid items-center gap-10 lg:grid-cols-[auto_1fr] lg:gap-14">
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white shadow-lg">
-                <Target className="h-10 w-10 text-pink" aria-hidden />
-              </div>
-              <div>
-                <SectionLabel>{getLocalized(ABOUT_MISSION.title, locale)}</SectionLabel>
-                <h2 className="font-display mt-2 text-4xl md:text-5xl">{getLocalized(ABOUT_MISSION.title, locale)}</h2>
-                <div className="mt-6 space-y-4 text-grey">
-                  {ABOUT_MISSION.paragraphs.map((paragraph, index) => (
-                    <p key={index} className="text-lg leading-relaxed">{getLocalized(paragraph, locale)}</p>
-                  ))}
-                </div>
-                <TaglineBanner className="mt-8" />
+              <h3 className="font-display mt-10 text-3xl md:text-4xl">
+                {getLocalized(ABOUT_VALUES.title, locale)}
+              </h3>
+              <div className="mt-6 space-y-4 text-grey">
+                {ABOUT_VALUES.paragraphs.map((paragraph, index) => (
+                  <p key={index} className="leading-relaxed">{getLocalized(paragraph, locale)}</p>
+                ))}
               </div>
             </div>
           </div>
@@ -292,8 +273,9 @@ export function AboutPageSections({ locale, testimonials }: AboutPageSectionsPro
               <SectionLabel>
                 <span className="text-lime">{getLocalized(ABOUT_VALUES.title, locale)}</span>
               </SectionLabel>
-              <h2 className="font-display mt-2 text-4xl md:text-5xl">{getLocalized(ABOUT_VALUES.title, locale)}</h2>
-              <p className="mt-4 text-lg text-white/75">{getLocalized(ABOUT_VALUES.paragraphs[0], locale)}</p>
+              <h2 className="font-display mt-2 text-4xl md:text-5xl">
+                {locale === 'es' ? 'Nuestros valores' : 'Our Values'}
+              </h2>
             </div>
 
             <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -317,11 +299,6 @@ export function AboutPageSections({ locale, testimonials }: AboutPageSectionsPro
               })}
             </div>
 
-            <div className="mt-10 max-w-3xl space-y-4 text-white/75">
-              {ABOUT_VALUES.paragraphs.slice(1).map((paragraph, index) => (
-                <p key={index} className="leading-relaxed">{getLocalized(paragraph, locale)}</p>
-              ))}
-            </div>
           </div>
         </section>
       </SectionReveal>

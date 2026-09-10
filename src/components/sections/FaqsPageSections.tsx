@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { HelpCircle, MessageCircle } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { SectionReveal } from '@/components/motion/SectionReveal';
@@ -57,18 +56,13 @@ export function FaqsPageSections({ locale, faqs }: FaqsPageSectionsProps) {
       <SectionReveal>
         <section className="bg-white py-20">
           <div className="mx-auto max-w-4xl px-4 lg:px-6">
-            <div className="mb-12 grid items-center gap-8 md:grid-cols-[1fr_auto]">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-[0.2em] text-pink">
-                  {isEs ? 'Respuestas rápidas' : 'Quick Answers'}
-                </p>
-                <h2 className="font-display mt-2 text-3xl md:text-4xl">
-                  {isEs ? '¿En qué podemos ayudarte?' : 'What Can We Help With?'}
-                </h2>
-              </div>
-              <div className="relative hidden h-24 w-24 overflow-hidden rounded-2xl shadow-lg md:block">
-                <Image src={SITE_IMAGES.megaTeaKit} alt="" fill className="object-cover" sizes="96px" />
-              </div>
+            <div className="mb-12">
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-pink">
+                {isEs ? 'Respuestas rápidas' : 'Quick Answers'}
+              </p>
+              <h2 className="font-display mt-2 text-3xl md:text-4xl">
+                {isEs ? '¿En qué podemos ayudarte?' : 'What Can We Help With?'}
+              </h2>
             </div>
 
             {faqs.length === 0 ? (

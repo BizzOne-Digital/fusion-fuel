@@ -50,8 +50,8 @@ export function ReviewForm({ onSuccess }: ReviewFormProps) {
 
     toast.success(
       isEs
-        ? '¡Gracias! Tu reseña será revisada antes de publicarse.'
-        : 'Thank you! Your review will be reviewed before it appears on the site.'
+        ? '¡Gracias! Tu reseña ya está publicada en la página de testimonios.'
+        : 'Thank you! Your review is now live on the testimonials page.'
     );
     reset({ rating: 0 });
     onSuccess?.();

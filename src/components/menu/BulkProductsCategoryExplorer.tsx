@@ -33,7 +33,7 @@ export function BulkProductsCategoryExplorer({ locale }: BulkProductsCategoryExp
           </p>
           <a href={BULK_PRODUCTS_MENU.shopUrl} target="_blank" rel="noopener noreferrer">
             <Button size="lg">
-              {locale === 'es' ? 'Comprar productos al por mayor' : 'Shop bulk products'}
+              {locale === 'es' ? 'Comprar productos de bienestar' : 'Shop bulk wellness products'}
             </Button>
           </a>
         </div>

@@ -24,7 +24,7 @@ export async function getPublishedTestimonials(limit = 6): Promise<ITestimonial[
     await connectDB();
     return serializeForClient(
       await Testimonial.find({ status: 'published' })
-        .sort({ order: 1 })
+        .sort({ createdAt: -1, order: 1 })
         .limit(limit)
         .lean<ITestimonial[]>()
     );

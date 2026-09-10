@@ -98,7 +98,7 @@ export const ABOUT_MISSION = {
 } as const;
 
 export const ABOUT_VALUES = {
-  title: loc('What We Stand For', 'Lo que representamos'),
+  title: loc('We Stand For', 'Lo que representamos'),
   paragraphs: [
     loc(
       'At Fusion Fuel & Boost Co., we stand for family, community, quality and genuine care. We believe nutrition should be flavorful, convenient and enjoyable.',

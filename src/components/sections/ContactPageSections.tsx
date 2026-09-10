@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { ContactForm } from '@/components/forms/ContactForm';
@@ -124,16 +123,7 @@ export function ContactPageSections({ locale, settings }: ContactPageSectionsPro
               </dl>
             </div>
 
-            <div className="relative">
-              <div className="absolute -left-4 -top-4 hidden h-32 w-32 overflow-hidden rounded-2xl border-4 border-white shadow-lg lg:block">
-                <Image
-                  src={SITE_IMAGES.heroDrinks}
-                  alt=""
-                  width={128}
-                  height={128}
-                  className="h-full w-full object-cover"
-                />
-              </div>
+            <div>
               <div className="card-hover rounded-3xl border border-grey/10 bg-white p-6 shadow-lg sm:p-8">
                 <h3 className="font-display text-2xl">{isEs ? 'Envíanos un mensaje' : 'Send a Message'}</h3>
                 <p className="mt-2 text-sm text-grey">

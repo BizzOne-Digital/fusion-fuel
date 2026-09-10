@@ -1,4 +1,6 @@
 import { SITE_IMAGES } from './site-images';
+import { BULK_PRODUCTS_MENU } from './bulk-products-menu';
+import { LOADED_TEA_PRODUCT_SLUG } from './loaded-teas-menu';
 
 export const LIFESTYLE_IMAGES = [
   { url: SITE_IMAGES.megaTea, alt: 'Loaded Tea drinks' },
@@ -10,33 +12,32 @@ export const LIFESTYLE_IMAGES = [
 
 export const BRAND_POSTERS = [
   {
-    url: SITE_IMAGES.introPoster,
-    alt: 'Fusion Fuel & Boost Co. brand poster',
-    title: 'Fusion Fuel',
-    href: '/about',
+    url: '/images/menu-highlights/loaded-teas.png',
+    alt: 'Colorful layered Fusion Fuel loaded tea with ice',
+    title: 'Loaded Teas',
+    titleEs: 'Loaded Teas',
+    href: `/products/${LOADED_TEA_PRODUCT_SLUG}`,
   },
   {
     url: SITE_IMAGES.monthlyTeaClubPoster,
     alt: 'Monthly Mega Tea Club poster',
     title: 'Monthly Tea Club',
+    titleEs: 'Club de Té Mensual',
     href: '/menu?category=monthly-tea-club',
   },
   {
-    url: SITE_IMAGES.loadedTeasMenu,
-    alt: 'Loaded teas menu poster',
-    title: 'Loaded Teas',
-    href: '/menu?category=make-your-own-loaded-tea',
+    url: '/images/menu-highlights/mega-tea-kits.jpg',
+    alt: 'Mega Tea Kit with colorful flavor pouches and an iced loaded tea',
+    title: 'Mega Tea Kits',
+    titleEs: 'Mega Tea Kits',
+    href: '/menu?category=mega-tea-kits',
   },
   {
-    url: SITE_IMAGES.proteinCoffeeMenu,
-    alt: 'Protein coffee menu poster',
-    title: 'Protein Coffee',
-    href: '/menu?category=protein-coffee',
-  },
-  {
-    url: SITE_IMAGES.proteinShake,
-    alt: 'Protein shakes menu poster',
-    title: 'Protein Shakes',
-    href: '/menu?category=protein-shakes',
+    url: '/images/menu-highlights/bulk-wellness-product.png',
+    alt: 'Herbalife bulk wellness product kits',
+    title: 'Bulk Wellness Product',
+    titleEs: 'Producto de Bienestar al por Mayor',
+    href: BULK_PRODUCTS_MENU.shopUrl,
+    external: true,
   },
 ] as const;

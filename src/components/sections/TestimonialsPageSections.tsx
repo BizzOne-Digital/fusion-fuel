@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from '@/i18n/navigation';
 import { Quote, Star } from 'lucide-react';
 import { SectionReveal } from '@/components/motion/SectionReveal';
 import { PageHero } from '@/components/sections/PageHero';
@@ -106,6 +107,7 @@ export function TestimonialsPageSections({
   initialTab = 'reviews',
 }: TestimonialsPageSectionsProps) {
   const isEs = locale === 'es';
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabId>(initialTab);
 
   const tabs: Array<{ id: TabId; label: string }> = [
@@ -183,11 +185,16 @@ export function TestimonialsPageSections({
                   </h2>
                   <p className="mt-2 text-grey">
                     {isEs
-                      ? 'Tu reseña será revisada por nuestro equipo antes de publicarse.'
-                      : 'Your review will be reviewed by our team before it goes live.'}
+                      ? 'Tu reseña aparecerá en la página de testimonios en cuanto la envíes.'
+                      : 'Your review will appear on the testimonials page as soon as you submit it.'}
                   </p>
                 </div>
-                <ReviewForm onSuccess={() => setActiveTab('reviews')} />
+                <ReviewForm
+                  onSuccess={() => {
+                    router.refresh();
+                    setActiveTab('reviews');
+                  }}
+                />
               </div>
             )}
           </div>

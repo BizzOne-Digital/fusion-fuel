@@ -25,9 +25,9 @@ export async function POST(request: NextRequest) {
       role: roleText ? { en: roleText, es: roleText } : undefined,
       quote: { en: quote, es: quote },
       rating,
-      verified: false,
-      status: 'draft',
-      order: 999,
+      verified: true,
+      status: 'published',
+      order: 0,
     });
 
     return NextResponse.json({ success: true });

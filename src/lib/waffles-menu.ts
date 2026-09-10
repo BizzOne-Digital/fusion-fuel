@@ -51,14 +51,14 @@ export const WAFFLES_MENU = {
     {
       slug: 'birthday-cake',
       name: 'Birthday Cake',
-      description: '',
+      description: 'Rainbow sprinkles, condensed milk & whipped cream.',
       image: '/images/waffle-birthday-cake.png',
     },
     {
       slug: 'crunchy-monkey',
       name: 'Crunchy Monkey',
-      description: '',
-      image: '/images/waffles/crunchy-monkey.png',
+      description: 'Bananas, walnuts, coconut flakes, caramel drizzle & condensed milk.',
+      image: '/images/waffle-crunchy-monkey.png',
     },
     {
       slug: 'build-your-own',
@@ -126,8 +126,11 @@ export function waffleOrderNotes(input: {
   return parts.join(' · ');
 }
 
-export function waffleShortDescription(_item: WaffleMenuItem): string {
-  return '';
+export function waffleShortDescription(item: WaffleMenuItem): string {
+  if (item.slug === 'build-your-own' || !item.description) {
+    return '';
+  }
+  return item.description;
 }
 
 export function waffleDescriptionHtml(_item: WaffleMenuItem): string {

@@ -524,7 +524,7 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
     { slug: 'protein-shakes', name: 'Protein Shakes', order: 5 },
     { slug: 'waffles', name: 'Waffles', order: 6 },
     { slug: 'protein-treats', name: 'Protein Treats', order: 7 },
-    { slug: 'bulk-products', name: 'Bulk Products', order: 8 },
+    { slug: 'bulk-products', name: 'Bulk Wellness Product', order: 8 },
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
@@ -535,7 +535,7 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
       category.slug === 'mega-teas'
           ? `<p>${LOADED_TEAS_MENU.headline} and ${MAKE_YOUR_OWN_LOADED_TEA_MENU.headline}.</p>`
           : category.slug === 'bulk-products'
-            ? `<p>${BULK_PRODUCTS_MENU.description}</p><p><a href="${BULK_PRODUCTS_MENU.shopUrl}" target="_blank" rel="noopener noreferrer">Shop bulk products online</a></p>`
+            ? `<p>${BULK_PRODUCTS_MENU.description}</p><p><a href="${BULK_PRODUCTS_MENU.shopUrl}" target="_blank" rel="noopener noreferrer">Shop bulk wellness products online</a></p>`
             : category.slug === 'monthly-tea-club'
               ? `<p><strong>${MONTHLY_TEA_CLUB.intro}</strong></p><p>${MONTHLY_TEA_CLUB.taglines.primary}</p><p>${MONTHLY_TEA_CLUB.surpriseNote}</p><p>${MONTHLY_TEA_CLUB.ctaDetail}</p>`
               : `<p>Explore our ${category.name} selection. Ingredient and nutrition details are added when confirmed by the business.</p>`;

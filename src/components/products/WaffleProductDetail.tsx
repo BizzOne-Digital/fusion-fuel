@@ -109,6 +109,10 @@ export function WaffleProductDetail({
               locale={locale}
             />
           </div>
+        ) : !isBuildYourOwn && menuItem.image ? (
+          <div className="relative aspect-square overflow-hidden rounded-2xl bg-cream">
+            <Image src={menuItem.image} alt={name} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" priority />
+          </div>
         ) : galleryImages.length > 0 ? (
           <ProductImageGallery images={galleryImages} name={name} />
         ) : menuItem.image ? (
@@ -120,6 +124,9 @@ export function WaffleProductDetail({
 
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
+        {!isBuildYourOwn && menuItem.description ? (
+          <p className="mt-2 text-grey">{menuItem.description}</p>
+        ) : null}
         {hasPrice(unitPrice) && (
           <p className="mt-4 font-display text-3xl text-pink">
             {formatPrice(unitPrice, 'USD', locale)}

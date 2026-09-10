@@ -1,11 +1,11 @@
-/** Bulk Products — shop Herbalife nutrition products online. */
+/** Bulk Wellness Product — shop Herbalife nutrition products online. */
 
 export const BULK_PRODUCTS_MENU = {
   slug: 'bulk-products',
-  headline: 'Bulk Products',
+  headline: 'Bulk Wellness Product',
   description:
-    'Order Herbalife nutrition products in bulk through Katerine’s official online store.',
-  shopUrl: 'https://katerinepereira.herbalife.com/en-us/u',
+    'Order Herbalife wellness products in bulk through our official online store.',
+  shopUrl: 'https://fuelurdayboosturlife.herbalife.com/en-us/u',
   image: {
     url: '/images/mega-tea-kit.png',
     alt: 'Herbalife nutrition products available for bulk order',
