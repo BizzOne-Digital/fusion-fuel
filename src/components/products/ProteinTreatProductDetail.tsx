@@ -6,6 +6,7 @@ import { Link } from '@/i18n/navigation';
 import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
 import {
   PROTEIN_TREATS_MENU,
   isProteinTreatProduct,
@@ -13,6 +14,9 @@ import {
   proteinTreatItemImage,
   proteinTreatPackLabel,
   proteinTreatMenuItem,
+  proteinMiniDonutFlavorNote,
+  proteinTrufflePackPriceCents,
+  proteinTruffleVariantSku,
 } from '@/lib/protein-treats-menu';
 import type { IProduct } from '@/models/Product';
 import type { Locale } from '@/types';
@@ -33,22 +37,44 @@ function resolveSellableVariant(product: IProduct) {
 export function ProteinTreatProductDetail({ product, locale }: ProteinTreatProductDetailProps) {
   const { addItem } = useCart();
   const [loading, setLoading] = useState(false);
+  const [packSlug, setPackSlug] = useState<string>(PROTEIN_TREATS_MENU.proteinTruffles.packs[0].slug);
+  const [flavorSlug, setFlavorSlug] = useState('');
 
   const menuItem = proteinTreatMenuItem(product.slug);
+  const isTruffles = menuItem?.kind === 'protein-truffles';
+  const isMiniDonuts = menuItem?.kind === 'protein-mini-donuts';
+  const selectedFlavor = isMiniDonuts
+    ? PROTEIN_TREATS_MENU.proteinMiniDonuts.flavors.find((flavor) => flavor.slug === flavorSlug)
+    : undefined;
   const name = getLocalized(product.name, locale);
   const image = menuItem ? proteinTreatItemImage(menuItem) : null;
-  const packLabel = menuItem ? proteinTreatPackLabel(menuItem) : '';
-  const { variant, unitPrice } = useMemo(() => resolveSellableVariant(product), [product]);
+  const packLabel = menuItem && !isTruffles ? proteinTreatPackLabel(menuItem) : '';
+  const { variant: defaultVariant, unitPrice: defaultUnitPrice } = useMemo(
+    () => resolveSellableVariant(product),
+    [product]
+  );
+
+  const unitPrice = isTruffles ? proteinTrufflePackPriceCents(packSlug) : defaultUnitPrice;
+  const variantSku = isTruffles
+    ? proteinTruffleVariantSku(packSlug, product.sku)
+    : defaultVariant?.sku;
   const productId = String(product._id ?? '');
-  const canAdd = Boolean(menuItem) && Boolean(productId) && hasPrice(unitPrice);
+  const canAdd =
+    Boolean(menuItem) &&
+    Boolean(productId) &&
+    hasPrice(unitPrice) &&
+    (!isMiniDonuts || Boolean(selectedFlavor));
 
   const handleAdd = async () => {
-    if (!canAdd) return;
+    if (!canAdd || (isMiniDonuts && !selectedFlavor)) return;
     setLoading(true);
     await addItem({
       productId,
       quantity: 1,
-      ...(variant?.sku ? { variantSku: variant.sku } : {}),
+      ...(variantSku ? { variantSku } : {}),
+      ...(isMiniDonuts && selectedFlavor
+        ? { notes: proteinMiniDonutFlavorNote(selectedFlavor.name) }
+        : {}),
     });
     setLoading(false);
   };
@@ -82,17 +108,93 @@ export function ProteinTreatProductDetail({ product, locale }: ProteinTreatProdu
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
         <p className="mt-4 text-lg text-grey">{tagline}</p>
-        <p className="mt-4 font-display text-4xl text-pink md:text-5xl">{packLabel}</p>
+        {!isTruffles && packLabel && (!isMiniDonuts || selectedFlavor) ? (
+          <p className="mt-4 font-display text-4xl text-pink md:text-5xl">{packLabel}</p>
+        ) : null}
+        {isTruffles && hasPrice(unitPrice) ? (
+          <p className="mt-4 font-display text-3xl text-pink">
+            {formatPrice(unitPrice, 'USD', locale)}
+          </p>
+        ) : null}
 
-        <div className="mt-8 rounded-2xl border border-grey/15 bg-cream p-6">
-          <Button type="button" onClick={handleAdd} loading={loading} disabled={!canAdd} size="lg">
-            {locale === 'es' ? 'Agregar al carrito' : 'Add to cart'}
-          </Button>
-          {!canAdd ? (
-            <p className="mt-3 text-sm text-grey">
+        <div className="mt-8 space-y-6 rounded-2xl border border-grey/15 bg-cream p-6">
+          {isTruffles ? (
+            <div>
+              <h3 className="font-display text-2xl">{locale === 'es' ? 'Cantidad' : 'Quantity'}</h3>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {PROTEIN_TREATS_MENU.proteinTruffles.packs.map((pack) => (
+                  <button
+                    key={pack.slug}
+                    type="button"
+                    onClick={() => setPackSlug(pack.slug)}
+                    className={`rounded-xl border-2 px-4 py-3 text-left transition ${
+                      packSlug === pack.slug ? 'border-lime bg-white' : 'border-grey/20 bg-white/50'
+                    }`}
+                  >
+                    <p className="font-semibold">{pack.label}</p>
+                    <p className="mt-1 text-sm text-grey">
+                      {formatPrice(proteinTrufflePackPriceCents(pack.slug), 'USD', locale)}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {isMiniDonuts ? (
+            <div>
+              <h3 className="font-display text-2xl">{locale === 'es' ? 'Sabor' : 'Flavor'}</h3>
+              <div className="mt-4">
+                <Select
+                  name="protein-mini-donut-flavor"
+                  value={flavorSlug}
+                  onChange={(event) => setFlavorSlug(event.target.value)}
+                  options={[
+                    {
+                      value: '',
+                      label: locale === 'es' ? 'Selecciona un sabor' : 'Select a flavor',
+                    },
+                    ...PROTEIN_TREATS_MENU.proteinMiniDonuts.flavors.map((flavor) => ({
+                      value: flavor.slug,
+                      label: flavor.name,
+                    })),
+                  ]}
+                />
+              </div>
+            </div>
+          ) : null}
+
+          <div
+            className={`flex flex-wrap items-center justify-between gap-4 ${
+              isTruffles || isMiniDonuts ? 'border-t border-grey/15 pt-6' : ''
+            }`}
+          >
+            {isTruffles || (isMiniDonuts && selectedFlavor) ? (
+              <p className="font-display text-2xl">
+                {hasPrice(unitPrice) ? formatPrice(unitPrice, 'USD', locale) : formatPrice(null, 'USD', locale)}
+              </p>
+            ) : null}
+            <Button type="button" onClick={handleAdd} loading={loading} disabled={!canAdd} size="lg">
+              {isMiniDonuts && !canAdd && hasPrice(unitPrice)
+                ? locale === 'es'
+                  ? 'Elige un sabor'
+                  : 'Choose flavor'
+                : locale === 'es'
+                  ? 'Agregar al carrito'
+                  : 'Add to cart'}
+            </Button>
+          </div>
+
+          {!canAdd && !isMiniDonuts ? (
+            <p className="text-sm text-grey">
               {locale === 'es'
                 ? 'Precio no disponible en este momento.'
                 : 'Pricing is not available right now.'}
+            </p>
+          ) : null}
+          {isMiniDonuts && !selectedFlavor && hasPrice(unitPrice) ? (
+            <p className="text-sm text-grey">
+              {locale === 'es' ? 'Elige un sabor para continuar.' : 'Select a flavor to continue.'}
             </p>
           ) : null}
         </div>

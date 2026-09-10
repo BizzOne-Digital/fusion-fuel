@@ -98,18 +98,7 @@ export function AcaiBowlModifierGroups({
         ) : null}
       </div>
 
-      <div className="space-y-6 border-t border-grey/15 pt-8">
-        <div>
-          <h3 className="font-display text-2xl text-carbon">
-            {locale === 'es' ? 'Complementos de pago' : 'Paid add-ons'}
-          </h3>
-          <p className="mt-1 text-sm text-grey">
-            {locale === 'es'
-              ? '¿Quieres más de lo incluido? Agrégalo aquí.'
-              : 'Want more than your included amount? Add it here.'}
-          </p>
-        </div>
-
+      <div className="border-t border-grey/15 pt-8">
         <ModifierChipGroup
           title={locale === 'es' ? 'Toppings extra' : 'Extra Toppings'}
           subtitle={

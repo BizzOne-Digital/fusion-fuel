@@ -28,7 +28,6 @@ import { MENU_FLAVORS } from '../src/lib/menu-flavors';
 import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaOptionalAddInSlugs, loadedTeaProductDescriptionHtml, loadedTeaProductShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
 import { ACAI_BOWLS_MENU, ACAI_BOWL_EXTRA_TOPPINGS, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents, acaiBowlShortDescription } from '../src/lib/acai-bowls-menu';
 import { WAFFLES_MENU, waffleDescriptionHtml, waffleExtraAddInSlugs, waffleExtraModifierSlug, wafflePriceCents, waffleShortDescription } from '../src/lib/waffles-menu';
-import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
 import { MAKE_YOUR_OWN_LOADED_TEA_MENU, MYOLT_DRINKS, MYOLT_OPTIONAL_ADDONS, myoltAddonPriceCents, myoltPriceCents, myoltProductDescriptionHtml, myoltProductShortDescription, myoltProductSlug, type MyoltOptionalAddonKey } from '../src/lib/make-your-own-loaded-tea-menu';
 import { BULK_PRODUCTS_MENU } from '../src/lib/bulk-products-menu';
 import {
@@ -525,8 +524,7 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
     { slug: 'protein-shakes', name: 'Protein Shakes', order: 5 },
     { slug: 'waffles', name: 'Waffles', order: 6 },
     { slug: 'protein-treats', name: 'Protein Treats', order: 7 },
-    { slug: 'donut-of-the-day', name: 'Donut of the Day', order: 8 },
-    { slug: 'bulk-products', name: 'Bulk Products', order: 9 },
+    { slug: 'bulk-products', name: 'Bulk Products', order: 8 },
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
@@ -534,9 +532,7 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
 
   for (const category of categories) {
     const descriptionHtml =
-      category.slug === 'donut-of-the-day'
-        ? `<p>${DONUT_OF_THE_DAY_MENU.description}</p><p><strong>${donutOfTheDayPricingSummary()}</strong></p><p><em>${DONUT_OF_THE_DAY_MENU.footnote}</em></p>`
-        : category.slug === 'mega-teas'
+      category.slug === 'mega-teas'
           ? `<p>${LOADED_TEAS_MENU.headline} and ${MAKE_YOUR_OWN_LOADED_TEA_MENU.headline}.</p>`
           : category.slug === 'bulk-products'
             ? `<p>${BULK_PRODUCTS_MENU.description}</p><p><a href="${BULK_PRODUCTS_MENU.shopUrl}" target="_blank" rel="noopener noreferrer">Shop bulk products online</a></p>`
@@ -630,13 +626,22 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
       price: 100,
     }));
 
-  const proteinCoffeeAddIns = PROTEIN_COFFEE.optionalAddOns.map((addOn) => ({
+  const proteinCoffeeAddIns = [
+    ...PROTEIN_COFFEE.optionalAddOns.map((addOn) => ({
       slug: addOn.slug,
       name: addOn.name,
       category: 'protein-coffee',
       description: `${addOn.name} optional add-on for protein coffee.`,
       price: Math.round(addOn.price * 100),
-    }));
+    })),
+    ...PROTEIN_COFFEE.formula1Flavors.map((flavor) => ({
+      slug: flavor.slug,
+      name: flavor.name,
+      category: 'protein-coffee',
+      description: `Formula 1 flavor for protein coffee.`,
+      price: Math.round(flavor.price * 100),
+    })),
+  ];
 
   const proteinShakeAddIns = PROTEIN_SHAKES_MENU.optionalAddOns.map((addOn) => ({
     slug: addOn.slug,
@@ -1446,7 +1451,7 @@ async function seedWaffleProducts(
           dietaryTags: [],
           seo: {
             title: `${item.name} | ${BRAND.name}`,
-            description: `${item.name} protein waffle. ${WAFFLES_MENU.websiteDescription}`,
+            description: `${item.name} protein waffle.`,
           },
           status: 'published',
           featured: index === 0,

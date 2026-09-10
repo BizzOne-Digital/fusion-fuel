@@ -4,15 +4,11 @@ function formatUsd(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }
 
-const WAFFLE_WEBSITE_DESCRIPTION =
-  'Build your perfect protein waffle! Choose up to 5 toppings from our fresh fruits, spreads, syrups, nuts and sweet extras. Additional toppings are $1 each.';
-
 export const WAFFLES_MENU = {
   headline: 'Protein Waffles',
   price: 12.99,
   extraToppingPrice: 1,
   includedToppingMax: 5,
-  websiteDescription: WAFFLE_WEBSITE_DESCRIPTION,
   toppingGroups: [
     {
       label: 'Fruit',
@@ -55,19 +51,19 @@ export const WAFFLES_MENU = {
     {
       slug: 'birthday-cake',
       name: 'Birthday Cake',
-      description: 'Rainbow sprinkles, condensed milk & whipped cream.',
+      description: '',
       image: '/images/waffle-birthday-cake.png',
     },
     {
       slug: 'crunchy-monkey',
       name: 'Crunchy Monkey',
-      description: 'Bananas, walnuts, coconut flakes, caramel drizzle & condensed milk.',
+      description: '',
       image: '/images/waffles/crunchy-monkey.png',
     },
     {
       slug: 'build-your-own',
       name: 'Create Your Own Waffle',
-      description: WAFFLE_WEBSITE_DESCRIPTION,
+      description: '',
       image: '/images/waffles/berry-nutella.png',
     },
   ],
@@ -130,11 +126,8 @@ export function waffleOrderNotes(input: {
   return parts.join(' · ');
 }
 
-export function waffleShortDescription(item: WaffleMenuItem): string {
-  if (item.slug === 'build-your-own') {
-    return `Pick up to 5 toppings included. ${formatUsd(WAFFLES_MENU.price)}.`;
-  }
-  return `${item.description} ${formatUsd(WAFFLES_MENU.price)}.`;
+export function waffleShortDescription(_item: WaffleMenuItem): string {
+  return '';
 }
 
 export function waffleDescriptionHtml(_item: WaffleMenuItem): string {

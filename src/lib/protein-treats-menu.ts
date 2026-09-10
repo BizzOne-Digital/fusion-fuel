@@ -14,17 +14,27 @@ export const PROTEIN_TREATS_MENU = {
       url: '/images/protein-treats/protein-truffles.png',
       alt: 'Protein truffles in paper cups on a white plate',
     },
-    pack: { count: 2, price: 3 },
+    packs: [
+      { slug: '2pk', count: 2, name: '2 pack', label: '2 for $3', price: 3, variantSuffix: '2PK' },
+      { slug: '4pk', count: 4, name: 'Box of 4', label: 'Box of 4', price: 6, variantSuffix: '4PK' },
+      { slug: '10pk', count: 10, name: 'Box of 10', label: 'Box of 10', price: 15, variantSuffix: '10PK' },
+    ] as const,
   },
   proteinMiniDonuts: {
     slug: 'protein-mini-donuts',
     name: 'Protein Mini Donuts',
-    description: 'Soft protein mini donuts.',
+    description: 'Soft protein mini donuts — pick your flavor.',
     image: {
       url: '/images/donut.png',
       alt: 'Protein mini donuts with glaze',
     },
     pack: { count: 4, price: 5 },
+    flavors: [
+      { slug: 'birthday-cake', name: 'Birthday Cake' },
+      { slug: 'oreo', name: 'Oreo' },
+      { slug: 'nutella', name: 'Nutella' },
+      { slug: 'cookies', name: 'Cookies' },
+    ] as const,
   },
   pieInACup: {
     slug: 'pie-in-a-cup',
@@ -67,7 +77,7 @@ export const PROTEIN_TREATS_MENU = {
       kind: 'protein-mini-donuts' as const,
       slug: 'protein-mini-donuts',
       name: 'Protein Mini Donuts',
-      description: 'Soft protein mini donuts.',
+      description: 'Soft protein mini donuts — pick your flavor.',
     },
     {
       kind: 'pie-in-a-cup' as const,
@@ -80,6 +90,7 @@ export const PROTEIN_TREATS_MENU = {
 
 export type ProteinTreatMenuItem = (typeof PROTEIN_TREATS_MENU.items)[number];
 export type PieInACupFlavor = (typeof PROTEIN_TREATS_MENU.pieInACup.flavors)[number];
+export type ProteinMiniDonutFlavor = (typeof PROTEIN_TREATS_MENU.proteinMiniDonuts.flavors)[number];
 
 export function isProteinTreatProduct(slug: string): boolean {
   return PROTEIN_TREATS_MENU.items.some((item) => item.slug === slug);
@@ -102,6 +113,10 @@ export function pieInACupFlavorNote(flavorName: string): string {
   return `Flavor: ${flavorName}`;
 }
 
+export function proteinMiniDonutFlavorNote(flavorName: string): string {
+  return `Flavor: ${flavorName}`;
+}
+
 export function pieInACupFlavorImage(flavor: PieInACupFlavor): { url: string; alt: string } {
   if ('image' in flavor && flavor.image) {
     return { url: flavor.image, alt: flavor.name };
@@ -120,10 +135,17 @@ export function pieInACupVariantSku(sizeSlug: string, productSku: string): strin
 }
 
 function treatPackConfig(item: ProteinTreatMenuItem) {
-  if (item.kind === 'protein-truffles') {
-    return PROTEIN_TREATS_MENU.proteinTruffles.pack;
-  }
   return PROTEIN_TREATS_MENU.proteinMiniDonuts.pack;
+}
+
+export function proteinTrufflePackPriceCents(packSlug: string): number {
+  const pack = PROTEIN_TREATS_MENU.proteinTruffles.packs.find((entry) => entry.slug === packSlug);
+  return pack ? Math.round(pack.price * 100) : 0;
+}
+
+export function proteinTruffleVariantSku(packSlug: string, productSku: string): string {
+  const pack = PROTEIN_TREATS_MENU.proteinTruffles.packs.find((entry) => entry.slug === packSlug);
+  return pack ? `${productSku}-${pack.variantSuffix}` : '';
 }
 
 function treatImageConfig(item: ProteinTreatMenuItem) {
@@ -144,6 +166,13 @@ export function proteinTreatPackLabel(item: ProteinTreatMenuItem): string {
   if (item.kind === 'pie-in-a-cup') {
     return '';
   }
+  if (item.kind === 'protein-truffles') {
+    return PROTEIN_TREATS_MENU.proteinTruffles.packs
+      .map((pack) =>
+        pack.count === 2 ? `2 for ${formatUsd(pack.price)}` : `${pack.name} ${formatUsd(pack.price)}`
+      )
+      .join(' · ');
+  }
   const pack = treatPackConfig(item);
   return `${pack.count} for ${formatUsd(pack.price)}`;
 }
@@ -155,6 +184,9 @@ export function proteinTreatMenuItem(slug: string): ProteinTreatMenuItem | null 
 export function proteinTreatItemPriceCents(item: ProteinTreatMenuItem): number {
   if (item.kind === 'pie-in-a-cup') {
     return pieInACupSizePriceCents('9oz');
+  }
+  if (item.kind === 'protein-truffles') {
+    return proteinTrufflePackPriceCents(PROTEIN_TREATS_MENU.proteinTruffles.packs[0].slug);
   }
   return Math.round(treatPackConfig(item).price * 100);
 }
@@ -168,6 +200,15 @@ export function proteinTreatItemVariants(
       sku: `${sku}-${size.variantSuffix}`,
       name: { en: size.name, es: size.name },
       price: pieInACupSizePriceCents(size.slug),
+      inventory: 0,
+    }));
+  }
+
+  if (item.kind === 'protein-truffles') {
+    return PROTEIN_TREATS_MENU.proteinTruffles.packs.map((pack) => ({
+      sku: `${sku}-${pack.variantSuffix}`,
+      name: { en: `${pack.label} (${formatUsd(pack.price)})`, es: `${pack.label} (${formatUsd(pack.price)})` },
+      price: Math.round(pack.price * 100),
       inventory: 0,
     }));
   }
@@ -196,7 +237,7 @@ export function proteinTreatPricingSummary(): string {
     .join(' · ');
 
   return [
-    `${proteinTruffles.name}: ${proteinTruffles.pack.count} for ${formatUsd(proteinTruffles.pack.price)}`,
+    `${proteinTruffles.name}: ${proteinTruffles.packs.map((pack) => (pack.count === 2 ? `2 for ${formatUsd(pack.price)}` : `${pack.name} ${formatUsd(pack.price)}`)).join(' · ')}`,
     `${proteinMiniDonuts.name}: ${proteinMiniDonuts.pack.count} for ${formatUsd(proteinMiniDonuts.pack.price)}`,
     `${pieInACup.name}: ${pieLine}`,
   ].join(' · ');

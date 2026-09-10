@@ -120,9 +120,6 @@ export function WaffleProductDetail({
 
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
-        <p className="mt-2 text-grey">
-          {isBuildYourOwn ? WAFFLES_MENU.websiteDescription : shortDescription}
-        </p>
         {hasPrice(unitPrice) && (
           <p className="mt-4 font-display text-3xl text-pink">
             {formatPrice(unitPrice, 'USD', locale)}

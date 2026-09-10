@@ -48,6 +48,19 @@ export function ProteinCoffeeProductDetail({ product, addIns, locale }: ProteinC
     (variantSku ? getVariantPriceCents(product, variantSku) : null) ??
     proteinCoffeeIcedPriceCents(sizeSlug);
 
+  const formula1SlugSet = useMemo(
+    () => new Set<string>(PROTEIN_COFFEE.formula1Flavors.map((flavor) => flavor.slug)),
+    []
+  );
+  const optionalAddIns = useMemo(
+    () => addIns.filter((addIn) => !formula1SlugSet.has(addIn.slug)),
+    [addIns, formula1SlugSet]
+  );
+  const formula1AddIns = useMemo(
+    () => addIns.filter((addIn) => formula1SlugSet.has(addIn.slug)),
+    [addIns, formula1SlugSet]
+  );
+
   const addInTotal = useMemo(
     () =>
       Object.entries(selectedAddIns).reduce((sum, [id, qty]) => {
@@ -144,11 +157,20 @@ export function ProteinCoffeeProductDetail({ product, addIns, locale }: ProteinC
 
           <AddInSelector
             product={product}
-            addIns={addIns}
+            addIns={optionalAddIns}
             locale={locale}
             selected={selectedAddIns}
             onChange={setSelectedAddIns}
             title={locale === 'es' ? 'Complementos opcionales' : 'Optional Add-Ons'}
+          />
+
+          <AddInSelector
+            product={product}
+            addIns={formula1AddIns}
+            locale={locale}
+            selected={selectedAddIns}
+            onChange={setSelectedAddIns}
+            title={locale === 'es' ? 'Sabores Formula 1' : 'Formula 1 Flavors'}
           />
 
           <div className="flex flex-wrap items-center justify-between gap-4 border-t border-grey/15 pt-6">

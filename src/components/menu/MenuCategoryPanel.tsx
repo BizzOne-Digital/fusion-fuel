@@ -1,10 +1,8 @@
-import Image from 'next/image';
 import { getLocalized } from '@/lib/utils';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import { MegaTeaKitsCategoryExplorer } from '@/components/menu/MegaTeaKitsCategoryExplorer';
 import { LoadedTeasCategoryExplorer } from '@/components/menu/LoadedTeasCategoryExplorer';
 import { ProteinShakesCategoryExplorer } from '@/components/menu/ProteinShakesCategoryExplorer';
-import { DONUT_OF_THE_DAY_MENU } from '@/lib/donut-of-the-day-menu';
 import { BULK_PRODUCTS_MENU } from '@/lib/bulk-products-menu';
 import { MONTHLY_TEA_CLUB_MENU } from '@/lib/monthly-tea-club-menu';
 import { BulkProductsCategoryExplorer } from '@/components/menu/BulkProductsCategoryExplorer';
@@ -36,27 +34,8 @@ function productsForCategory(
   return allProducts.filter((p) => String(p.categoryId) === String(cat._id));
 }
 
-function DonutOfTheDaySpotlight({ locale }: { locale: Locale }) {
-  return (
-    <div className="relative mt-6 aspect-[16/10] max-w-[45.6rem] overflow-hidden rounded-2xl bg-cream shadow-sm">
-      <Image
-        src={DONUT_OF_THE_DAY_MENU.image}
-        alt={
-          locale === 'es'
-            ? 'Mini donas del día con glaseado y toppings variados'
-            : 'Donut of the Day mini donuts with assorted glazes and toppings'
-        }
-        fill
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, 730px"
-      />
-    </div>
-  );
-}
-
 function isMenuSpotlightCategory(slug: string): boolean {
   return (
-    slug === 'donut-of-the-day' ||
     slug === 'mega-teas' ||
     slug === BULK_PRODUCTS_MENU.slug ||
     slug === MONTHLY_TEA_CLUB_MENU.slug
@@ -91,8 +70,6 @@ export function MenuCategoryPanel({
           <LoadedTeasCategoryExplorer locale={locale} view={loadedTeaView} />
         ) : category.slug === 'protein-shakes' ? (
           <ProteinShakesCategoryExplorer locale={locale} />
-        ) : category.slug === 'donut-of-the-day' ? (
-          <DonutOfTheDaySpotlight locale={locale} />
         ) : category.slug === BULK_PRODUCTS_MENU.slug ? (
           <BulkProductsCategoryExplorer locale={locale} />
         ) : category.slug === 'protein-coffee' || category.slug === 'acai-bowls' || category.slug === 'waffles' ? (
@@ -145,8 +122,6 @@ export function MenuCategoryPanel({
               <LoadedTeasCategoryExplorer locale={locale} view={loadedTeaView} />
             ) : cat.slug === 'protein-shakes' ? (
               <ProteinShakesCategoryExplorer locale={locale} />
-            ) : cat.slug === 'donut-of-the-day' ? (
-              <DonutOfTheDaySpotlight locale={locale} />
             ) : isBulkProducts ? (
               <BulkProductsCategoryExplorer locale={locale} />
             ) : cat.slug === 'protein-coffee' || cat.slug === 'acai-bowls' || cat.slug === 'waffles' ? (

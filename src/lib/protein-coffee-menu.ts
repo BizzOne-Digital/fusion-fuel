@@ -35,6 +35,15 @@ export const PROTEIN_COFFEE = {
     { slug: 'pcof-foam', name: 'Foam', price: 1.0 },
     { slug: 'pcof-caramel-drizzle', name: 'Caramel Drizzle', price: 0.5 },
     { slug: 'pcof-chocolate-drizzle', name: 'Chocolate Drizzle', price: 0.5 },
+    { slug: 'pcof-vanilla', name: 'Vanilla', price: 3.0 },
+    { slug: 'pcof-chocolate', name: 'Chocolate', price: 3.0 },
+    { slug: 'pcof-peanuts', name: 'Peanuts', price: 3.0 },
+  ] as const,
+  formula1Flavors: [
+    { slug: 'pcof-f1-vanilla', name: 'Vanilla', price: 2.0 },
+    { slug: 'pcof-f1-cookies-cream', name: 'Cookies & Cream', price: 2.0 },
+    { slug: 'pcof-f1-chocolate', name: 'Chocolate', price: 2.0 },
+    { slug: 'pcof-f1-dulce-de-leche', name: 'Dulce de Leche', price: 2.0 },
   ] as const,
   footerNotes: [
     'Optional collagen, fiber, probiotics, creatine, and more',
@@ -67,7 +76,14 @@ export function proteinCoffeePricingSummary(): string {
 }
 
 export function proteinCoffeeOptionalAddInSlugs(): string[] {
-  return PROTEIN_COFFEE.optionalAddOns.map((addOn) => addOn.slug);
+  return [
+    ...PROTEIN_COFFEE.optionalAddOns.map((addOn) => addOn.slug),
+    ...PROTEIN_COFFEE.formula1Flavors.map((flavor) => flavor.slug),
+  ];
+}
+
+export function proteinCoffeeFormula1AddInSlugs(): string[] {
+  return PROTEIN_COFFEE.formula1Flavors.map((flavor) => flavor.slug);
 }
 
 export function proteinCoffeeOptionalAddOnsSummary(): string {
