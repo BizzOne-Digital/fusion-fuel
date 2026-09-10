@@ -35,9 +35,9 @@ export const PROTEIN_COFFEE = {
     { slug: 'pcof-foam', name: 'Foam', price: 1.0 },
     { slug: 'pcof-caramel-drizzle', name: 'Caramel Drizzle', price: 0.5 },
     { slug: 'pcof-chocolate-drizzle', name: 'Chocolate Drizzle', price: 0.5 },
-    { slug: 'pcof-vanilla', name: 'Vanilla', price: 3.0 },
-    { slug: 'pcof-chocolate', name: 'Chocolate', price: 3.0 },
-    { slug: 'pcof-peanuts', name: 'Peanuts', price: 3.0 },
+    { slug: 'pcof-vanilla', name: 'Vanilla Protein', price: 3.0 },
+    { slug: 'pcof-chocolate', name: 'Chocolate Protein', price: 3.0 },
+    { slug: 'pcof-peanuts', name: 'Peanuts Protein', price: 3.0 },
   ] as const,
   formula1Flavors: [
     { slug: 'pcof-f1-vanilla', name: 'Vanilla', price: 2.0 },
