@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { Header } from '@/components/layout/Header';
 import { AnnouncementBarComponent } from '@/components/layout/AnnouncementBar';
 import { CartDrawer } from '@/components/cart/CartDrawer';
+import { FloatingReviewButton } from '@/components/layout/FloatingReviewButton';
 import type { AnnouncementBar } from '@/types';
 import type { Locale } from '@/types';
 
@@ -29,6 +30,7 @@ export function SiteChrome({ children, footer, locale, announcement }: SiteChrom
         {footer}
       </div>
       <CartDrawer />
+      <FloatingReviewButton locale={locale} />
     </>
   );
 }

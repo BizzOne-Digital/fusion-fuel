@@ -14,14 +14,25 @@ export async function generateMetadata({
   return generatePageMetadata('testimonials', locale as Locale, '/testimonials');
 }
 
-export default async function TestimonialsPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function TestimonialsPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ tab?: string }>;
+}) {
   const { locale } = await params;
+  const { tab } = await searchParams;
   setRequestLocale(locale);
   const testimonials = await getPublishedTestimonials(50);
 
   return (
     <div className="min-w-0 overflow-x-hidden">
-      <TestimonialsPageSections locale={locale as Locale} testimonials={testimonials} />
+      <TestimonialsPageSections
+        locale={locale as Locale}
+        testimonials={testimonials}
+        initialTab={tab === 'write' ? 'write' : 'reviews'}
+      />
     </div>
   );
 }

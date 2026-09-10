@@ -15,6 +15,7 @@ import type { Locale } from '@/types';
 interface TestimonialsPageSectionsProps {
   locale: Locale;
   testimonials: ITestimonial[];
+  initialTab?: TabId;
 }
 
 type TabId = 'reviews' | 'write';
@@ -99,9 +100,13 @@ function TestimonialsGrid({
   );
 }
 
-export function TestimonialsPageSections({ locale, testimonials }: TestimonialsPageSectionsProps) {
+export function TestimonialsPageSections({
+  locale,
+  testimonials,
+  initialTab = 'reviews',
+}: TestimonialsPageSectionsProps) {
   const isEs = locale === 'es';
-  const [activeTab, setActiveTab] = useState<TabId>('reviews');
+  const [activeTab, setActiveTab] = useState<TabId>(initialTab);
 
   const tabs: Array<{ id: TabId; label: string }> = [
     { id: 'reviews', label: isEs ? 'Reseñas' : 'Reviews' },
