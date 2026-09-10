@@ -29,7 +29,7 @@ import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaOptionalAddInSlugs,
 import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents, acaiBowlShortDescription } from '../src/lib/acai-bowls-menu';
 import { WAFFLES_MENU, waffleDescriptionHtml, waffleExtraAddInSlugs, waffleExtraModifierSlug, wafflePriceCents, waffleShortDescription } from '../src/lib/waffles-menu';
 import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
-import { MAKE_YOUR_OWN_LOADED_TEA_MENU, MYOLT_DRINKS, myoltOptionalAddInSlugs, myoltPaidAddonPriceCents, myoltPriceCents, myoltProductDescriptionHtml, myoltProductShortDescription, myoltProductSlug } from '../src/lib/make-your-own-loaded-tea-menu';
+import { MAKE_YOUR_OWN_LOADED_TEA_MENU, MYOLT_DRINKS, MYOLT_OPTIONAL_ADDONS, myoltAddonPriceCents, myoltPriceCents, myoltProductDescriptionHtml, myoltProductShortDescription, myoltProductSlug, type MyoltOptionalAddonKey } from '../src/lib/make-your-own-loaded-tea-menu';
 import { BULK_PRODUCTS_MENU } from '../src/lib/bulk-products-menu';
 import {
   PROTEIN_TREATS_MENU,
@@ -671,18 +671,12 @@ async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
     price: Math.round(addOn.price * 100),
   }));
 
-  const myoltPaidPrice = myoltPaidAddonPriceCents();
-  const myoltAddIns = myoltOptionalAddInSlugs().map((slug) => ({
-    slug,
-    name:
-      slug === 'myolt-additional-flavor'
-        ? 'Additional Flavor — Make Your Own Loaded Tea'
-        : slug === 'myolt-hydration-support'
-          ? 'Hydration Support — Make Your Own Loaded Tea'
-          : `MYO Loaded Tea — ${slug.replace('myolt-', '').replace(/-/g, ' ')}`,
+  const myoltAddIns = Object.entries(MYOLT_OPTIONAL_ADDONS).map(([key, addon]) => ({
+    slug: addon.addInSlug,
+    name: `${addon.label} — Make Your Own Loaded Tea`,
     category: 'make-your-own-loaded-tea',
-    description: 'Optional $1 add-on for Make Your Own Loaded Tea.',
-    price: myoltPaidPrice,
+    description: `Optional add-on for Make Your Own Loaded Tea (+$${addon.price}).`,
+    price: myoltAddonPriceCents(key as MyoltOptionalAddonKey),
   }));
 
   const addIns = [
@@ -1667,15 +1661,15 @@ async function seedMakeYourOwnLoadedTeaProducts(
     LOADED_TEA_PRODUCT_SLUG,
     ...MYOLT_DRINKS.map((drink) => myoltProductSlug(drink.slug)),
   ];
-  const addInOptions = myoltOptionalAddInSlugs()
-    .filter((slug) => addInIds[slug])
-    .map((slug) => ({
-      addInId: addInIds[slug],
-      maxQuantity: slug === 'myolt-additional-flavor' ? 10 : 1,
-      included: false,
-    }));
-
   for (const [index, drink] of MYOLT_DRINKS.entries()) {
+    const addInOptions = drink.optionalAddons
+      .map((key) => MYOLT_OPTIONAL_ADDONS[key].addInSlug)
+      .filter((slug) => addInIds[slug])
+      .map((slug) => ({
+        addInId: addInIds[slug],
+        maxQuantity: 10,
+        included: false,
+      }));
     const sku = `FFB-MYOLT-${String(index + 1).padStart(3, '0')}`;
     const slug = myoltProductSlug(drink.slug);
 

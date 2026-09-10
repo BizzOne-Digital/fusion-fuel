@@ -10,25 +10,46 @@ import { ModifierChipGroup } from '@/components/products/ModifierChipGroup';
 import {
   LOADED_TEAS_MENU_VIEWS,
   MAKE_YOUR_OWN_LOADED_TEA_MENU,
+  MYOLT_EXTRA_SELECTION_PRICE,
+  type MyoltRequiredGroup,
   MYOLT_OPTIONAL_ADDONS,
-  MYOLT_PAID_ADDON_PRICE,
   isMakeYourOwnLoadedTeaProduct,
   loadedTeasMenuHref,
+  myoltAddonFlavorOptions,
+  myoltAddonHasFlavorOptions,
+  myoltAddonPriceCents,
+  myoltAddonSelectionComplete,
   myoltDrinkFromProductSlug,
   myoltLinePriceCents,
   myoltOrderNotes,
-  myoltPaidAddonPriceCents,
   myoltRequiredComplete,
+  type MyoltOptionalAddonFlavors,
   type MyoltOptionalAddonKey,
+  type MyoltOptionalAddonQuantities,
 } from '@/lib/make-your-own-loaded-tea-menu';
 import type { IProduct } from '@/models/Product';
 import type { IAddIn } from '@/models/AddIn';
 import type { Locale } from '@/types';
 
+const MYOLT_ADDON_MAX_QUANTITY = 10;
+
 interface MakeYourOwnLoadedTeaProductDetailProps {
   product: IProduct;
   addIns: IAddIn[];
   locale: Locale;
+}
+
+function groupSubtitle(group: MyoltRequiredGroup, locale: Locale): string | undefined {
+  if (group.includedCount != null && group.includedCount > 0) {
+    const extraPrice = group.extraSelectionPrice ?? MYOLT_EXTRA_SELECTION_PRICE;
+    return locale === 'es'
+      ? `Primera selección incluida · +$${extraPrice} cada adicional`
+      : `First selection included · +$${extraPrice} each additional`;
+  }
+  if (group.multiSelect) {
+    return locale === 'es' ? 'Elige uno o más' : 'Pick one or more';
+  }
+  return locale === 'es' ? 'Requerido' : 'Required';
 }
 
 export function MakeYourOwnLoadedTeaProductDetail({
@@ -38,7 +59,8 @@ export function MakeYourOwnLoadedTeaProductDetail({
 }: MakeYourOwnLoadedTeaProductDetailProps) {
   const { addItem } = useCart();
   const [required, setRequired] = useState<Record<string, string[]>>({});
-  const [optionalAddons, setOptionalAddons] = useState<MyoltOptionalAddonKey[]>([]);
+  const [optionalAddons, setOptionalAddons] = useState<MyoltOptionalAddonQuantities>({});
+  const [addonFlavors, setAddonFlavors] = useState<MyoltOptionalAddonFlavors>({});
   const [loading, setLoading] = useState(false);
 
   const drink = myoltDrinkFromProductSlug(product.slug);
@@ -57,18 +79,46 @@ export function MakeYourOwnLoadedTeaProductDetail({
         drink,
         required,
         optionalAddons,
+        addonFlavors,
       }
     : null;
 
   const unitPrice = orderInput ? myoltLinePriceCents(orderInput) : 0;
   const canAdd = Boolean(
-    orderInput && myoltRequiredComplete(orderInput.drink, orderInput.required) && hasPrice(unitPrice)
+    orderInput &&
+      myoltRequiredComplete(orderInput.drink, orderInput.required) &&
+      myoltAddonSelectionComplete(orderInput.drink, orderInput.optionalAddons, orderInput.addonFlavors) &&
+      hasPrice(unitPrice)
   );
 
-  const toggleOptionalAddon = (key: MyoltOptionalAddonKey) => {
-    setOptionalAddons((current) =>
-      current.includes(key) ? current.filter((entry) => entry !== key) : [...current, key]
-    );
+  const setAddonQuantity = (key: MyoltOptionalAddonKey, quantity: number) => {
+    const nextQty = Math.max(0, Math.min(MYOLT_ADDON_MAX_QUANTITY, quantity));
+    setOptionalAddons((current) => {
+      const next = { ...current };
+      if (nextQty === 0) delete next[key];
+      else next[key] = nextQty;
+      return next;
+    });
+
+    if (!myoltAddonHasFlavorOptions(key)) return;
+
+    setAddonFlavors((current) => {
+      const next = { ...current };
+      const flavors = [...(current[key] ?? [])];
+      while (flavors.length < nextQty) flavors.push('');
+      while (flavors.length > nextQty) flavors.pop();
+      if (flavors.length === 0) delete next[key];
+      else next[key] = flavors;
+      return next;
+    });
+  };
+
+  const setAddonFlavorAt = (key: MyoltOptionalAddonKey, index: number, flavor: string) => {
+    setAddonFlavors((current) => {
+      const flavors = [...(current[key] ?? [])];
+      flavors[index] = flavor;
+      return { ...current, [key]: flavors };
+    });
   };
 
   const handleAdd = async () => {
@@ -76,9 +126,11 @@ export function MakeYourOwnLoadedTeaProductDetail({
 
     const cartAddIns: { addInId: string; quantity: number }[] = [];
 
-    for (const key of optionalAddons) {
+    for (const key of drink!.optionalAddons) {
+      const qty = optionalAddons[key] ?? 0;
+      if (qty === 0) continue;
       const addIn = addInBySlug.get(MYOLT_OPTIONAL_ADDONS[key].addInSlug);
-      if (addIn) cartAddIns.push({ addInId: String(addIn._id), quantity: 1 });
+      if (addIn) cartAddIns.push({ addInId: String(addIn._id), quantity: qty });
     }
 
     setLoading(true);
@@ -136,19 +188,11 @@ export function MakeYourOwnLoadedTeaProductDetail({
             <ModifierChipGroup
               key={group.id}
               title={group.title}
-              subtitle={
-                group.multiSelect
-                  ? locale === 'es'
-                    ? 'Elige uno o más'
-                    : 'Pick one or more'
-                  : locale === 'es'
-                    ? 'Requerido'
-                    : 'Required'
-              }
+              subtitle={groupSubtitle(group, locale)}
               options={group.options}
               selected={required[group.id] ?? []}
-              max={group.multiSelect ? undefined : 1}
-              showSelectionCount={!group.multiSelect}
+              max={group.includedCount != null ? undefined : group.multiSelect ? undefined : 1}
+              showSelectionCount={group.includedCount == null && !group.multiSelect}
               locale={locale}
               onChange={(next) => setRequired((current) => ({ ...current, [group.id]: next }))}
             />
@@ -157,29 +201,66 @@ export function MakeYourOwnLoadedTeaProductDetail({
           {drink.optionalAddons.length > 0 ? (
             <div className="border-t border-grey/15 pt-8">
               <h3 className="font-display text-2xl">{locale === 'es' ? 'Complementos' : 'Add-ons'}</h3>
-              <p className="mt-1 text-sm text-grey">
-                {locale === 'es'
-                  ? `Cada complemento cuesta $${MYOLT_PAID_ADDON_PRICE}.`
-                  : `Each add-on is $${MYOLT_PAID_ADDON_PRICE}.`}
-              </p>
-              <div className="mt-6 flex flex-wrap gap-2">
+              <div className="mt-6 space-y-4">
                 {drink.optionalAddons.map((key) => {
                   const addon = MYOLT_OPTIONAL_ADDONS[key];
-                  const isSelected = optionalAddons.includes(key);
+                  const qty = optionalAddons[key] ?? 0;
+                  const flavorOptions = myoltAddonFlavorOptions(key);
+                  const flavors = addonFlavors[key] ?? [];
+
                   return (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => toggleOptionalAddon(key)}
-                      aria-pressed={isSelected}
-                      className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                        isSelected
-                          ? 'border-lime bg-lime/20 text-carbon'
-                          : 'border-grey/25 bg-white text-carbon hover:border-pink/40'
-                      }`}
-                    >
-                      {addon.label} (+{formatPrice(myoltPaidAddonPriceCents(), 'USD', locale)})
-                    </button>
+                    <div key={key} className="rounded-xl bg-white p-4">
+                      <div className="flex items-center justify-between gap-4">
+                        <div>
+                          <p className="font-medium text-carbon">{addon.label}</p>
+                          <p className="text-sm text-grey">
+                            {formatPrice(myoltAddonPriceCents(key), 'USD', locale)}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            aria-label={locale === 'es' ? 'Reducir cantidad' : 'Decrease quantity'}
+                            onClick={() => setAddonQuantity(key, qty - 1)}
+                            disabled={qty === 0}
+                            className="flex h-8 w-8 items-center justify-center rounded-full border border-grey/25 text-carbon disabled:opacity-40"
+                          >
+                            −
+                          </button>
+                          <span className="w-6 text-center font-medium">{qty}</span>
+                          <button
+                            type="button"
+                            aria-label={locale === 'es' ? 'Aumentar cantidad' : 'Increase quantity'}
+                            onClick={() => setAddonQuantity(key, qty + 1)}
+                            disabled={qty >= MYOLT_ADDON_MAX_QUANTITY}
+                            className="flex h-8 w-8 items-center justify-center rounded-full border border-grey/25 text-carbon disabled:opacity-40"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      {qty > 0 && flavorOptions.length > 0 ? (
+                        <div className="mt-4 space-y-4 border-t border-grey/10 pt-4">
+                          {Array.from({ length: qty }, (_, index) => (
+                            <ModifierChipGroup
+                              key={`${key}-${index}`}
+                              title={
+                                locale === 'es'
+                                  ? `${addon.label} — sabor ${index + 1}`
+                                  : `${addon.label} — flavor ${index + 1}`
+                              }
+                              options={flavorOptions}
+                              selected={flavors[index] ? [flavors[index]] : []}
+                              max={1}
+                              showSelectionCount={false}
+                              locale={locale}
+                              onChange={(next) => setAddonFlavorAt(key, index, next[0] ?? '')}
+                            />
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
                   );
                 })}
               </div>
