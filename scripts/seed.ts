@@ -26,7 +26,7 @@ import { PROTEIN_COFFEE, proteinCoffeeIcedPriceCents, proteinCoffeeOptionalAddIn
 import { MEGA_TEA_KIT_COLLECTIONS, MEGA_TEA_KITS_MENU, MAKE_YOUR_OWN_MEGA_TEA_KIT, MEGA_TEA_KIT_PRODUCT_SLUG, megaTeaKitDescriptionHtml, megaTeaKitOptionalAddInSlugs, megaTeaKitPriceCents, megaTeaKitPricingSummary, megaTeaKitProductName, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
 import { MENU_FLAVORS } from '../src/lib/menu-flavors';
 import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaOptionalAddInSlugs, loadedTeaProductDescriptionHtml, loadedTeaProductShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
-import { ACAI_BOWLS_MENU, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents, acaiBowlShortDescription } from '../src/lib/acai-bowls-menu';
+import { ACAI_BOWLS_MENU, ACAI_BOWL_EXTRA_TOPPINGS, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents, acaiBowlShortDescription } from '../src/lib/acai-bowls-menu';
 import { WAFFLES_MENU, waffleDescriptionHtml, waffleExtraAddInSlugs, waffleExtraModifierSlug, wafflePriceCents, waffleShortDescription } from '../src/lib/waffles-menu';
 import { DONUT_OF_THE_DAY_MENU, donutOfTheDayPricingSummary } from '../src/lib/donut-of-the-day-menu';
 import { MAKE_YOUR_OWN_LOADED_TEA_MENU, MYOLT_DRINKS, MYOLT_OPTIONAL_ADDONS, myoltAddonPriceCents, myoltPriceCents, myoltProductDescriptionHtml, myoltProductShortDescription, myoltProductSlug, type MyoltOptionalAddonKey } from '../src/lib/make-your-own-loaded-tea-menu';
@@ -612,22 +612,13 @@ async function seedFlavors(): Promise<Record<string, Types.ObjectId>> {
 }
 
 async function seedAddIns(): Promise<Record<string, Types.ObjectId>> {
-  const acaiExtraAddIns = [
-    ...ACAI_BOWLS_MENU.extraFruits.map((name) => ({
-      slug: acaiBowlModifierSlug('extra-fruit', name),
-      name: `Extra Fruit — ${name}`,
-      category: 'acai-extra-fruit',
-      description: `Extra ${name} for açaí bowls.`,
-      price: 100,
-    })),
-    ...ACAI_BOWLS_MENU.extraToppings.map((name) => ({
-      slug: acaiBowlModifierSlug('extra-topping', name),
-      name: `Extra Topping — ${name}`,
-      category: 'acai-extra-topping',
-      description: `Extra ${name} for açaí bowls.`,
-      price: 100,
-    })),
-  ];
+  const acaiExtraAddIns = ACAI_BOWL_EXTRA_TOPPINGS.map((topping) => ({
+    slug: acaiBowlModifierSlug('extra-topping', topping.name),
+    name: `Extra Topping — ${topping.name}`,
+    category: 'acai-extra-topping',
+    description: `Extra ${topping.name} for açaí bowls.`,
+    price: Math.round(topping.price * 100),
+  }));
 
   const waffleExtraAddIns = WAFFLES_MENU.toppingGroups
     .flatMap((group) => group.items)

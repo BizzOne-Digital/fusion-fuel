@@ -11,6 +11,8 @@ import { ProductPlaceholderVisual } from '@/components/products/ProductPlacehold
 import { AcaiBowlModifierGroups } from '@/components/products/AcaiBowlModifierGroups';
 import {
   ACAI_BOWLS_MENU,
+  acaiBowlExtraToppingNames,
+  acaiBowlExtraToppingPriceCents,
   acaiBowlMenuItem,
   acaiBowlModifierConfig,
   acaiBowlModifierSlug,
@@ -40,7 +42,6 @@ export function AcaiBowlProductDetail({
   const { addItem } = useCart();
   const [includedFruits, setIncludedFruits] = useState<string[]>([]);
   const [includedToppings, setIncludedToppings] = useState<string[]>([]);
-  const [extraFruits, setExtraFruits] = useState<string[]>([]);
   const [extraToppings, setExtraToppings] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -63,16 +64,14 @@ export function AcaiBowlProductDetail({
 
   const extraTotal = useMemo(() => {
     let total = 0;
-    for (const fruit of extraFruits) {
-      const addIn = addInBySlug.get(acaiBowlModifierSlug('extra-fruit', fruit));
-      total += addIn ? getAddInUnitPrice(product, addIn) : 0;
-    }
     for (const topping of extraToppings) {
       const addIn = addInBySlug.get(acaiBowlModifierSlug('extra-topping', topping));
-      total += addIn ? getAddInUnitPrice(product, addIn) : 0;
+      total += addIn
+        ? getAddInUnitPrice(product, addIn)
+        : acaiBowlExtraToppingPriceCents(topping);
     }
     return total;
-  }, [extraFruits, extraToppings, addInBySlug, product]);
+  }, [extraToppings, addInBySlug, product]);
 
   const unitPrice = product.basePrice + extraTotal;
 
@@ -86,10 +85,6 @@ export function AcaiBowlProductDetail({
 
     const cartAddIns: { addInId: string; quantity: number }[] = [];
 
-    for (const fruit of extraFruits) {
-      const addIn = addInBySlug.get(acaiBowlModifierSlug('extra-fruit', fruit));
-      if (addIn) cartAddIns.push({ addInId: String(addIn._id), quantity: 1 });
-    }
     for (const topping of extraToppings) {
       const addIn = addInBySlug.get(acaiBowlModifierSlug('extra-topping', topping));
       if (addIn) cartAddIns.push({ addInId: String(addIn._id), quantity: 1 });
@@ -103,7 +98,6 @@ export function AcaiBowlProductDetail({
       notes: acaiBowlOrderNotes({
         includedFruits,
         includedToppings,
-        extraFruits,
         extraToppings,
         fixedIncludes: modifierConfig.fixedIncludes,
       }),
@@ -137,7 +131,7 @@ export function AcaiBowlProductDetail({
 
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
-        <p className="mt-2 text-grey">{shortDescription}</p>
+        {shortDescription ? <p className="mt-2 text-grey">{shortDescription}</p> : null}
         {showListedPrice && (
           <p className="mt-4 font-display text-3xl text-pink">
             {formatPrice(product.basePrice, 'USD', locale)}
@@ -153,17 +147,12 @@ export function AcaiBowlProductDetail({
             fixedIncludes={modifierConfig.fixedIncludes}
             includedFruits={includedFruits}
             includedToppings={includedToppings}
-            extraFruits={extraFruits}
             extraToppings={extraToppings}
             includedFruitOptions={ACAI_BOWLS_MENU.includedFruits}
             includedToppingOptions={ACAI_BOWLS_MENU.includedToppings}
-            extraFruitOptions={ACAI_BOWLS_MENU.extraFruits}
-            extraToppingOptions={ACAI_BOWLS_MENU.extraToppings}
-            extraFruitPriceCents={Math.round(ACAI_BOWLS_MENU.extraFruitPrice * 100)}
-            extraToppingPriceCents={Math.round(ACAI_BOWLS_MENU.extraToppingPrice * 100)}
+            extraToppingOptions={acaiBowlExtraToppingNames()}
             onIncludedFruitsChange={setIncludedFruits}
             onIncludedToppingsChange={setIncludedToppings}
-            onExtraFruitsChange={setExtraFruits}
             onExtraToppingsChange={setExtraToppings}
           />
 

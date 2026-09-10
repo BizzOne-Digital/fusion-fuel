@@ -7,8 +7,6 @@ function formatUsd(amount: number): string {
 export const ACAI_BOWLS_MENU = {
   headline: 'Açaí & Protein Bowls',
   footnote: 'Gluten free Granola & Protein available for additional fee.',
-  extraFruitPrice: 1,
-  extraToppingPrice: 1,
   defaultSize: '12 oz',
   includedFruits: ['Strawberry', 'Banana', 'Blueberry', 'Kiwi'] as const,
   includedToppings: [
@@ -27,28 +25,12 @@ export const ACAI_BOWLS_MENU = {
     'Chocolate Chips',
     'Dulce de Leche',
   ] as const,
-  extraFruits: ['Strawberry', 'Banana', 'Blueberry', 'Kiwi'] as const,
-  extraToppings: [
-    'Strawberries',
-    'Banana',
-    'Kiwi',
-    'Blueberries',
-    'Granola',
-    'Peanut Butter',
-    'Nutella',
-    'Chocolate Chips',
-    'Sliced Almonds',
-    'Coconut Flakes',
-    'Condensed Milk',
-    'Caramel Drizzle',
-  ] as const,
   items: [
     {
       slug: 'dubai-acai-bowl',
       name: 'Dubai Açaí Bowl',
       kind: 'acai' as const,
-      description:
-        'Pick 2 fruits — includes pistachio sauce & Nutella, then pick 1 more topping.',
+      description: '',
       picks: { fruits: 2, toppings: 1 },
       includes: ['Pistachio sauce', 'Nutella'],
       image: '/images/acai-dubai-bowl.png',
@@ -59,7 +41,7 @@ export const ACAI_BOWLS_MENU = {
       slug: 'regular-acai-bowl',
       name: 'Regular Açaí Bowl',
       kind: 'acai' as const,
-      description: 'Choose up to 3 fruits and 2 toppings.',
+      description: '',
       picks: { fruits: 3, toppings: 2 },
       image: '/images/acai-regular-bowl.png',
       size: '12 oz',
@@ -69,7 +51,7 @@ export const ACAI_BOWLS_MENU = {
       slug: 'protein-bowl-crunchy-monkey',
       name: 'Protein Bowl — Crunchy Monkey',
       kind: 'protein' as const,
-      description: 'Crunchy Monkey protein bowl — pick 2 fruits and 2 toppings.',
+      description: '',
       picks: { fruits: 2, toppings: 2 },
       placeholder: true,
       size: '12 oz',
@@ -79,7 +61,7 @@ export const ACAI_BOWLS_MENU = {
       slug: 'tropical-acai-bowl',
       name: 'Tropical Açaí Bowl',
       kind: 'acai' as const,
-      description: 'Choose up to 3 fruits and 2 toppings.',
+      description: '',
       picks: { fruits: 3, toppings: 2 },
       image: '/images/acai-tropical-bowl.png',
       size: '12 oz',
@@ -89,7 +71,7 @@ export const ACAI_BOWLS_MENU = {
       slug: 'protein-bowl-berry',
       name: 'Protein Bowl — Berry',
       kind: 'protein' as const,
-      description: 'Berry protein bowl — pick 2 fruits and 2 toppings.',
+      description: '',
       picks: { fruits: 2, toppings: 2 },
       placeholder: true,
       size: '12 oz',
@@ -97,6 +79,25 @@ export const ACAI_BOWLS_MENU = {
     },
   ],
 } as const;
+
+export const ACAI_BOWL_EXTRA_TOPPINGS = [
+  { name: 'Granola', price: 1 },
+  { name: 'Nutella', price: 1 },
+  { name: 'Honey', price: 1 },
+  { name: 'Peanut Butter', price: 1 },
+  { name: 'Coconut Flakes', price: 1 },
+  { name: 'Chia Seeds', price: 1 },
+  { name: 'Almond Butter', price: 1 },
+  { name: 'Pecans', price: 1 },
+  { name: 'Condensed Milk', price: 1 },
+  { name: 'Chocolate Drizzle', price: 1 },
+  { name: 'Walnuts', price: 1 },
+  { name: 'Sliced Almonds', price: 1 },
+  { name: 'Chocolate Chips', price: 1 },
+  { name: 'Dulce de Leche', price: 1 },
+  { name: 'Gluten Free Granola', price: 3 },
+  { name: 'Protein', price: 3 },
+] as const;
 
 export type AcaiBowlMenuItem = (typeof ACAI_BOWLS_MENU.items)[number];
 
@@ -156,11 +157,19 @@ export function acaiBowlModifierSlug(kind: 'extra-fruit' | 'extra-topping', name
   return `acai-${kind}-${base}`;
 }
 
+export function acaiBowlExtraToppingNames(): string[] {
+  return ACAI_BOWL_EXTRA_TOPPINGS.map((topping) => topping.name);
+}
+
+export function acaiBowlExtraToppingPriceCents(name: string): number {
+  const topping = ACAI_BOWL_EXTRA_TOPPINGS.find((entry) => entry.name === name);
+  return topping ? Math.round(topping.price * 100) : 0;
+}
+
 export function acaiBowlExtraAddInSlugs(): string[] {
-  return [
-    ...ACAI_BOWLS_MENU.extraFruits.map((name) => acaiBowlModifierSlug('extra-fruit', name)),
-    ...ACAI_BOWLS_MENU.extraToppings.map((name) => acaiBowlModifierSlug('extra-topping', name)),
-  ];
+  return ACAI_BOWL_EXTRA_TOPPINGS.map((topping) =>
+    acaiBowlModifierSlug('extra-topping', topping.name)
+  );
 }
 
 export function acaiBowlPriceCents(item: AcaiBowlMenuItem): number {
@@ -168,13 +177,12 @@ export function acaiBowlPriceCents(item: AcaiBowlMenuItem): number {
 }
 
 export function acaiBowlPricingSummary(): string {
-  return `Açaí & tropical bowls ${ACAI_BOWLS_MENU.defaultSize} ${formatUsd(11.99)} · Dubai ${formatUsd(14.99)} · Extra fruits & toppings ${formatUsd(ACAI_BOWLS_MENU.extraToppingPrice)} each`;
+  return `Açaí & tropical bowls ${ACAI_BOWLS_MENU.defaultSize} ${formatUsd(11.99)} · Dubai ${formatUsd(14.99)} · Extra toppings from ${formatUsd(1)}`;
 }
 
 export function acaiBowlOrderNotes(input: {
   includedFruits: string[];
   includedToppings: string[];
-  extraFruits: string[];
   extraToppings: string[];
   fixedIncludes?: string[];
 }): string {
@@ -188,9 +196,6 @@ export function acaiBowlOrderNotes(input: {
   }
   if (input.includedToppings.length) {
     parts.push(`Toppings: ${input.includedToppings.join(', ')}`);
-  }
-  if (input.extraFruits.length) {
-    parts.push(`Extra fruits: ${input.extraFruits.join(', ')}`);
   }
   if (input.extraToppings.length) {
     parts.push(`Extra toppings: ${input.extraToppings.join(', ')}`);
@@ -207,7 +212,7 @@ export function acaiBowlDescriptionHtml(item: AcaiBowlMenuItem): string {
 
   return [
     `<p><strong>${item.name}</strong> — ${ACAI_BOWLS_MENU.headline}.</p>`,
-    `<p>${item.description}</p>`,
+    item.description ? `<p>${item.description}</p>` : '',
     sizeLine,
     `<p><em>${ACAI_BOWLS_MENU.footnote}</em></p>`,
   ]
@@ -216,6 +221,7 @@ export function acaiBowlDescriptionHtml(item: AcaiBowlMenuItem): string {
 }
 
 export function acaiBowlShortDescription(item: AcaiBowlMenuItem): string {
+  if (!item.description.trim()) return '';
   const sizePart = 'size' in item && item.size ? `${item.size} — ` : '';
   const pricePart = 'price' in item && item.price != null ? formatUsd(item.price) : '';
   return `${item.description} ${sizePart}${pricePart}`.trim();

@@ -1,6 +1,8 @@
 'use client';
 
+import { useMemo } from 'react';
 import { ModifierChipGroup } from '@/components/products/ModifierChipGroup';
+import { ACAI_BOWL_EXTRA_TOPPINGS } from '@/lib/acai-bowls-menu';
 import type { Locale } from '@/types';
 
 interface AcaiBowlModifierGroupsProps {
@@ -10,17 +12,12 @@ interface AcaiBowlModifierGroupsProps {
   fixedIncludes: string[];
   includedFruits: string[];
   includedToppings: string[];
-  extraFruits: string[];
   extraToppings: string[];
   includedFruitOptions: readonly string[];
   includedToppingOptions: readonly string[];
-  extraFruitOptions: readonly string[];
   extraToppingOptions: readonly string[];
-  extraFruitPriceCents: number;
-  extraToppingPriceCents: number;
   onIncludedFruitsChange: (next: string[]) => void;
   onIncludedToppingsChange: (next: string[]) => void;
-  onExtraFruitsChange: (next: string[]) => void;
   onExtraToppingsChange: (next: string[]) => void;
 }
 
@@ -31,19 +28,22 @@ export function AcaiBowlModifierGroups({
   fixedIncludes,
   includedFruits,
   includedToppings,
-  extraFruits,
   extraToppings,
   includedFruitOptions,
   includedToppingOptions,
-  extraFruitOptions,
   extraToppingOptions,
-  extraFruitPriceCents,
-  extraToppingPriceCents,
   onIncludedFruitsChange,
   onIncludedToppingsChange,
-  onExtraFruitsChange,
   onExtraToppingsChange,
 }: AcaiBowlModifierGroupsProps) {
+  const extraToppingPriceCents = useMemo(() => {
+    const prices: Record<string, number> = {};
+    for (const topping of ACAI_BOWL_EXTRA_TOPPINGS) {
+      prices[topping.name] = Math.round(topping.price * 100);
+    }
+    return prices;
+  }, []);
+
   return (
     <div className="space-y-8">
       <div className="space-y-6">
@@ -105,35 +105,21 @@ export function AcaiBowlModifierGroups({
           </h3>
           <p className="mt-1 text-sm text-grey">
             {locale === 'es'
-              ? '¿Quieres más de lo incluido? Agrégalo aquí. Cada selección cuesta $1.'
-              : 'Want more than your included amount? Add it here. Each selection is $1.'}
+              ? '¿Quieres más de lo incluido? Agrégalo aquí.'
+              : 'Want more than your included amount? Add it here.'}
           </p>
         </div>
-
-        <ModifierChipGroup
-          title={locale === 'es' ? 'Frutas extra' : 'Extra Fruits'}
-          subtitle={
-            locale === 'es'
-              ? 'Mismas frutas que arriba, $1 cada una'
-              : 'Same fruits as above, $1 each'
-          }
-          options={extraFruitOptions}
-          selected={extraFruits}
-          priceCents={extraFruitPriceCents}
-          locale={locale}
-          onChange={onExtraFruitsChange}
-        />
 
         <ModifierChipGroup
           title={locale === 'es' ? 'Toppings extra' : 'Extra Toppings'}
           subtitle={
             locale === 'es'
-              ? 'Cada topping adicional cuesta $1'
-              : 'Each additional topping is $1'
+              ? 'La mayoría cuesta $1; granola sin gluten y proteína cuestan $3'
+              : 'Most toppings are $1; gluten free granola and protein are $3'
           }
           options={extraToppingOptions}
           selected={extraToppings}
-          priceCents={extraToppingPriceCents}
+          optionPriceCents={extraToppingPriceCents}
           locale={locale}
           onChange={onExtraToppingsChange}
         />

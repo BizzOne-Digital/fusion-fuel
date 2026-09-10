@@ -11,6 +11,7 @@ export interface ModifierChipGroupProps {
   max?: number;
   showSelectionCount?: boolean;
   priceCents?: number;
+  optionPriceCents?: Readonly<Record<string, number>>;
   locale: Locale;
   onChange: (next: string[]) => void;
 }
@@ -23,6 +24,7 @@ export function ModifierChipGroup({
   max,
   showSelectionCount = true,
   priceCents = 0,
+  optionPriceCents,
   locale,
   onChange,
 }: ModifierChipGroupProps) {
@@ -45,7 +47,7 @@ export function ModifierChipGroup({
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="font-display text-2xl">{title}</h3>
-        {priceCents > 0 ? (
+        {priceCents > 0 && !optionPriceCents ? (
           <span className="text-sm font-semibold text-pink">
             {formatPrice(priceCents, 'USD', locale)} each
           </span>
@@ -73,6 +75,11 @@ export function ModifierChipGroup({
               )}
             >
               {option}
+              {optionPriceCents?.[option] != null ? (
+                <span className="ml-1 text-grey">
+                  (+{formatPrice(optionPriceCents[option], 'USD', locale)})
+                </span>
+              ) : null}
             </button>
           );
         })}
