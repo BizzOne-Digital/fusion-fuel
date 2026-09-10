@@ -22,24 +22,30 @@ export function LifestyleMontage({
             Loaded teas, protein coffee, açaí bowls, catering, and more — made to energize your day.
           </p>
           <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-3">
-            {LIFESTYLE_IMAGES.map((img, index) => (
-              <div
-                key={img.url}
-                className={`img-zoom group overflow-hidden rounded-2xl shadow-md ${
-                  index === 0 ? 'md:col-span-2 md:row-span-1' : ''
-                }`}
-              >
-                <Image
-                  src={img.url}
-                  alt={img.alt}
-                  width={600}
-                  height={400}
-                  className={`h-44 w-full object-cover transition duration-500 group-hover:scale-105 md:h-56 ${
-                    index === 0 ? 'md:h-72' : ''
-                  }`}
-                />
-              </div>
-            ))}
+            {LIFESTYLE_IMAGES.map((img, index) => {
+              const isHero = index === 0;
+              const isAcai = index === 1;
+              const tallCell = isHero || isAcai;
+
+              return (
+                <div
+                  key={img.url}
+                  className={`img-zoom group overflow-hidden rounded-2xl shadow-md ${
+                    isHero ? 'md:col-span-2' : ''
+                  } ${tallCell ? 'h-44 md:h-72' : 'h-44 md:h-56'}`}
+                >
+                  <Image
+                    src={img.url}
+                    alt={img.alt}
+                    width={600}
+                    height={400}
+                    className={`h-full w-full object-cover transition duration-500 group-hover:scale-105 ${
+                      isAcai ? 'object-center' : ''
+                    }`}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

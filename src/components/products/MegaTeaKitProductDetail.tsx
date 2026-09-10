@@ -76,11 +76,10 @@ export function MegaTeaKitProductDetail({ product, flavors, addIns, locale }: Me
   const flavorImage = selectedFlavor
     ? resolveFlavorImage(selectedFlavor, selectedFlavorName)
     : null;
-  const productImage = getPrimaryProductImage(product);
-  const displayImage = productImage ??
-    (flavorImage?.url
+  const displayImage =
+    flavorImage?.url
       ? { url: flavorImage.url, alt: flavorImage.alt || selectedFlavorName }
-      : MEGA_TEA_KITS_MENU.heroImage);
+      : (getPrimaryProductImage(product) ?? MEGA_TEA_KITS_MENU.heroImage);
   const pricingSummary =
     formatKitPriceSummary(product, locale) || megaTeaKitPricingSummary();
 

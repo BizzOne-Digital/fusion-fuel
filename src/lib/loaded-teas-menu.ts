@@ -5,15 +5,15 @@ function formatUsd(amount: number): string {
 }
 
 export const LOADED_TEA_STANDARD_PRICES = {
-  '24oz': 12,
-  '32oz': 14,
+  '24oz': 6.9,
+  '32oz': 8.9,
 } as const;
 
 export const LOADED_TEA_PREMIUM_SLUGS = ['mango-breeze', 'yellowstone'] as const;
 
 export const LOADED_TEA_PREMIUM_PRICES = {
-  '24oz': 12,
-  '32oz': 14,
+  '24oz': 6.9,
+  '32oz': 8.9,
 } as const;
 
 export const LOADED_TEAS_MENU = {
@@ -54,8 +54,8 @@ export const LOADED_TEAS_MENU = {
     },
     {
       slug: 'ltea-extra-caffeine',
-      name: 'Extra Caffeine',
-      description: '45–85 mg',
+      name: 'NRG',
+      description: '45–85 mg energy boost',
       price: 2,
     },
     {
@@ -77,9 +77,21 @@ export const LOADED_TEAS_MENU = {
       price: 3,
     },
     {
-      slug: 'ltea-tea-or-coffee-shot',
-      name: 'Tea or Coffee Shot',
-      description: '40 mg',
+      slug: 'ltea-herbal-tea',
+      name: 'Herbal Tea',
+      description: 'Herbal tea boost',
+      price: 2,
+    },
+    {
+      slug: 'ltea-coffee-shot',
+      name: 'Coffee Shot',
+      description: '40 mg coffee shot',
+      price: 2,
+    },
+    {
+      slug: 'ltea-fiber-creatine',
+      name: 'Fiber Creatine',
+      description: 'Fiber and creatine boost',
       price: 2,
     },
     {
@@ -291,6 +303,16 @@ export function loadedTeaSizePriceCents(sizeSlug: string, itemSlug?: string): nu
   return price != null ? Math.round(price * 100) : 0;
 }
 
+/** Cart/checkout price for loaded-tea variant SKUs (overrides stale DB variant prices). */
+export function loadedTeaVariantPriceCents(variantSku: string): number | null {
+  const sku = variantSku.trim().toUpperCase();
+  if (sku === 'FFB-LTEA-24') return loadedTeaSizePriceCents('24oz');
+  if (sku === 'FFB-LTEA-32') return loadedTeaSizePriceCents('32oz');
+  if (sku === 'FFB-LTEA-P24') return loadedTeaSizePriceCents('24oz', 'mango-breeze');
+  if (sku === 'FFB-LTEA-P32') return loadedTeaSizePriceCents('32oz', 'mango-breeze');
+  return null;
+}
+
 export function loadedTeaItemPricingNote(itemSlug: string): string {
   const sizes = loadedTeaIsPremium(itemSlug) ? LOADED_TEA_PREMIUM_PRICES : LOADED_TEA_STANDARD_PRICES;
   return Object.entries(sizes)
@@ -329,6 +351,11 @@ export function loadedTeaPricingNote(): string {
 
 export function loadedTeaOptionalAddInSlugs(): string[] {
   return LOADED_TEAS_MENU.optionalAddOns.map((addOn) => addOn.slug);
+}
+
+export function loadedTeaAddOnDisplayName(slug: string): string | null {
+  const addOn = LOADED_TEAS_MENU.optionalAddOns.find((item) => item.slug === slug);
+  return addOn?.name ?? null;
 }
 
 export function loadedTeaOptionalAddOnsSummary(): string {

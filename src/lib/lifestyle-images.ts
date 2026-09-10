@@ -6,7 +6,6 @@ export const LIFESTYLE_IMAGES = [
   { url: SITE_IMAGES.proteinCoffee, alt: 'Protein coffee' },
   { url: SITE_IMAGES.catering, alt: 'Catering spread' },
   { url: SITE_IMAGES.waffle, alt: 'Waffles' },
-  { url: SITE_IMAGES.megaTeaKit, alt: 'Mega Tea Kit' },
 ] as const;
 
 export const BRAND_POSTERS = [

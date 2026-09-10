@@ -39,11 +39,9 @@ export function ProteinCoffeeProductDetail({ product, addIns, locale }: ProteinC
   const name = getLocalized(product.name, locale);
 
   const selectedFlavor = PROTEIN_COFFEE.flavors.find((flavor) => flavor.slug === flavorSlug);
-  const productImage = getPrimaryProductImage(product);
-  const menuImage = selectedFlavor
+  const displayImage = selectedFlavor
     ? proteinCoffeeFlavorImage(flavorSlug)
-    : PROTEIN_COFFEE.galleryImages[0];
-  const displayImage = productImage ?? menuImage;
+    : (getPrimaryProductImage(product) ?? PROTEIN_COFFEE.galleryImages[0]);
 
   const variantSku = flavorSlug ? proteinCoffeeVariantSku(sizeSlug) : '';
   const unitPrice =

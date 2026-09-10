@@ -4,6 +4,7 @@ import Cart from '@/models/Cart';
 import Product from '@/models/Product';
 import AddIn from '@/models/AddIn';
 import Flavor from '@/models/Flavor';
+import { loadedTeaVariantPriceCents } from '@/lib/loaded-teas-menu';
 import { calculateOrderPricing } from '@/lib/pricing';
 import { getSiteSettings } from '@/lib/data/settings';
 import type { CartItem, CartItem as CartItemType } from '@/types';
@@ -52,8 +53,13 @@ async function buildCartItem(input: ReturnType<typeof cartItemInputSchema.parse>
 
   if (input.variantSku) {
     const sku = input.variantSku.toUpperCase();
+    const loadedTeaPrice = loadedTeaVariantPriceCents(sku);
     const variant = product.variants.find((v) => v.sku === sku);
-    if (variant && variant.price > 0) {
+    if (loadedTeaPrice != null && loadedTeaPrice > 0) {
+      unitPrice = loadedTeaPrice;
+      variantName = variant?.name;
+      variantSku = variant?.sku ?? sku;
+    } else if (variant && variant.price > 0) {
       unitPrice = variant.price;
       variantName = variant.name;
       variantSku = variant.sku;

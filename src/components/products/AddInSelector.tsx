@@ -5,6 +5,7 @@ import type { IAddIn } from '@/models/AddIn';
 import type { IProduct } from '@/models/Product';
 import type { Locale } from '@/types';
 import { getAddInMaxQuantity, getAddInUnitPrice, isAddInIncluded } from '@/lib/product-add-ins';
+import { isLoadedTeaProduct, loadedTeaAddOnDisplayName } from '@/lib/loaded-teas-menu';
 
 interface AddInSelectorProps {
   product: IProduct;
@@ -30,11 +31,14 @@ export function AddInSelector({ product, addIns, locale, selected, onChange, tit
           const max = getAddInMaxQuantity(product, id);
           const included = isAddInIncluded(product, id);
           const unitPrice = getAddInUnitPrice(product, addIn);
+          const label = isLoadedTeaProduct(product.slug)
+            ? (loadedTeaAddOnDisplayName(addIn.slug) ?? getLocalized(addIn.name, locale))
+            : getLocalized(addIn.name, locale);
 
           return (
             <label key={id} className="flex items-center justify-between rounded-xl bg-white p-3">
               <span>
-                {getLocalized(addIn.name, locale)}
+                {label}
                 <span className="ml-2 text-sm text-grey">
                   {included
                     ? locale === 'es'

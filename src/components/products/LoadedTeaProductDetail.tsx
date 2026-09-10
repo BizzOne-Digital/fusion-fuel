@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
-import { getPrimaryProductImage, getVariantPriceCents } from '@/lib/product-display';
+import { getPrimaryProductImage } from '@/lib/product-display';
 import { getAddInUnitPrice } from '@/lib/product-add-ins';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
@@ -38,14 +38,12 @@ export function LoadedTeaProductDetail({ product, addIns, locale }: LoadedTeaPro
   const name = getLocalized(product.name, locale);
 
   const selectedItem = LOADED_TEAS_MENU.items.find((item) => item.slug === flavorSlug);
-  const productImage = getPrimaryProductImage(product);
-  const menuImage = selectedItem ? loadedTeaItemImage(selectedItem) : LOADED_TEAS_MENU.heroImage;
-  const displayImage = productImage ?? menuImage;
+  const displayImage = selectedItem
+    ? loadedTeaItemImage(selectedItem)
+    : (getPrimaryProductImage(product) ?? LOADED_TEAS_MENU.heroImage);
 
   const variantSku = flavorSlug ? loadedTeaVariantSku(sizeSlug, flavorSlug) : '';
-  const unitPrice =
-    (variantSku ? getVariantPriceCents(product, variantSku) : null) ??
-    (flavorSlug ? loadedTeaSizePriceCents(sizeSlug, flavorSlug) : 0);
+  const unitPrice = flavorSlug ? loadedTeaSizePriceCents(sizeSlug, flavorSlug) : 0;
 
   const addInTotal = useMemo(
     () =>

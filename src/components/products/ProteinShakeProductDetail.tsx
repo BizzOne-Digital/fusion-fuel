@@ -14,6 +14,7 @@ import {
   PROTEIN_SHAKES_MENU,
   isProteinShakeProduct,
   proteinShakeFlavorNote,
+  proteinShakeItemImage,
   proteinShakePricingSummary,
   proteinShakeSizePriceCents,
   proteinShakeVariantSku,
@@ -38,8 +39,9 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
   const name = getLocalized(product.name, locale);
 
   const selectedItem = PROTEIN_SHAKES_MENU.items.find((item) => item.slug === flavorSlug);
-  const productImage = getPrimaryProductImage(product);
-  const displayImage = productImage ?? PROTEIN_SHAKES_MENU.heroImage;
+  const displayImage = selectedItem
+    ? proteinShakeItemImage(selectedItem)
+    : (getPrimaryProductImage(product) ?? PROTEIN_SHAKES_MENU.heroImage);
 
   const variantSku = flavorSlug ? proteinShakeVariantSku(sizeSlug) : '';
   const unitPrice =
