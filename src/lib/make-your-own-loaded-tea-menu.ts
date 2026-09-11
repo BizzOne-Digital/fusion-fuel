@@ -26,6 +26,9 @@ export const MYOLT_PRODUCT_SLUG_PREFIX = 'myolt-';
 
 export const MYOLT_EXTRA_SELECTION_PRICE = 1;
 
+/** Additional LiftOff flavor beyond the first included selection. */
+export const MYOLT_LIFTOFF_EXTRA_SELECTION_PRICE = 3;
+
 export const MYOLT_FLAVORS = [
   'Strawberry',
   'Watermelon',
@@ -205,6 +208,7 @@ export const MYOLT_DRINKS: MyoltDrink[] = [
         options: MYOLT_LIFTOFF_OPTIONS,
         multiSelect: true,
         includedCount: 1,
+        extraSelectionPrice: MYOLT_LIFTOFF_EXTRA_SELECTION_PRICE,
       },
       {
         id: 'flavor',
@@ -264,6 +268,7 @@ export const MYOLT_DRINKS: MyoltDrink[] = [
         options: MYOLT_LIFTOFF_OPTIONS,
         multiSelect: true,
         includedCount: 1,
+        extraSelectionPrice: MYOLT_LIFTOFF_EXTRA_SELECTION_PRICE,
       },
       {
         id: 'flavor',
@@ -295,6 +300,7 @@ export const MYOLT_DRINKS: MyoltDrink[] = [
         options: MYOLT_LIFTOFF_OPTIONS,
         multiSelect: true,
         includedCount: 1,
+        extraSelectionPrice: MYOLT_LIFTOFF_EXTRA_SELECTION_PRICE,
       },
       {
         id: 'aloe',
@@ -334,6 +340,7 @@ export const MYOLT_DRINKS: MyoltDrink[] = [
         options: MYOLT_LIFTOFF_OPTIONS,
         multiSelect: true,
         includedCount: 1,
+        extraSelectionPrice: MYOLT_LIFTOFF_EXTRA_SELECTION_PRICE,
       },
       {
         id: 'aloe',
