@@ -4,6 +4,9 @@ function formatUsd(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }
 
+export const ACAI_BOWL_PRODUCT_DESCRIPTION =
+  'A deliciously creamy protein bowl topped with your choice of 2 fresh fruits and 2 toppings.';
+
 export const ACAI_BOWLS_MENU = {
   headline: 'Açaí & Protein Bowls',
   footnote: 'Gluten free Granola & Protein available for additional fee.',
@@ -30,7 +33,7 @@ export const ACAI_BOWLS_MENU = {
       slug: 'dubai-acai-bowl',
       name: 'Dubai Açaí Bowl',
       kind: 'acai' as const,
-      description: '',
+      description: ACAI_BOWL_PRODUCT_DESCRIPTION,
       picks: { fruits: 2, toppings: 1 },
       includes: ['Pistachio sauce', 'Nutella'],
       image: '/images/acai-dubai-bowl.png',
@@ -41,7 +44,7 @@ export const ACAI_BOWLS_MENU = {
       slug: 'regular-acai-bowl',
       name: 'Regular Açaí Bowl',
       kind: 'acai' as const,
-      description: '',
+      description: ACAI_BOWL_PRODUCT_DESCRIPTION,
       picks: { fruits: 3, toppings: 2 },
       image: '/images/acai-regular-bowl.png',
       size: '12 oz',
@@ -51,9 +54,9 @@ export const ACAI_BOWLS_MENU = {
       slug: 'protein-bowl-crunchy-monkey',
       name: 'Protein Bowl — Crunchy Monkey',
       kind: 'protein' as const,
-      description: '',
+      description: ACAI_BOWL_PRODUCT_DESCRIPTION,
       picks: { fruits: 2, toppings: 2 },
-      placeholder: true,
+      image: '/images/acai-protein-bowl-crunchy-monkey.jpg',
       size: '12 oz',
       price: 11.99,
     },
@@ -61,7 +64,7 @@ export const ACAI_BOWLS_MENU = {
       slug: 'tropical-acai-bowl',
       name: 'Tropical Açaí Bowl',
       kind: 'acai' as const,
-      description: '',
+      description: ACAI_BOWL_PRODUCT_DESCRIPTION,
       picks: { fruits: 3, toppings: 2 },
       image: '/images/acai-tropical-bowl.png',
       size: '12 oz',
@@ -71,9 +74,19 @@ export const ACAI_BOWLS_MENU = {
       slug: 'protein-bowl-berry',
       name: 'Protein Bowl — Berry',
       kind: 'protein' as const,
-      description: '',
+      description: ACAI_BOWL_PRODUCT_DESCRIPTION,
       picks: { fruits: 2, toppings: 2 },
-      placeholder: true,
+      image: '/images/acai-protein-bowl-berry.jpg',
+      size: '12 oz',
+      price: 11.99,
+    },
+    {
+      slug: 'mango-dream-bowl',
+      name: 'Mango Dream Bowl',
+      kind: 'acai' as const,
+      description: ACAI_BOWL_PRODUCT_DESCRIPTION,
+      picks: { fruits: 3, toppings: 2 },
+      image: '/images/acai-mango-dream-bowl.jpg',
       size: '12 oz',
       price: 11.99,
     },
@@ -221,8 +234,5 @@ export function acaiBowlDescriptionHtml(item: AcaiBowlMenuItem): string {
 }
 
 export function acaiBowlShortDescription(item: AcaiBowlMenuItem): string {
-  if (!item.description.trim()) return '';
-  const sizePart = 'size' in item && item.size ? `${item.size} — ` : '';
-  const pricePart = 'price' in item && item.price != null ? formatUsd(item.price) : '';
-  return `${item.description} ${sizePart}${pricePart}`.trim();
+  return item.description.trim();
 }

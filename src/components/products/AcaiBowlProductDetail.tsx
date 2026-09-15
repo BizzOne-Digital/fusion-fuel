@@ -49,9 +49,13 @@ export function AcaiBowlProductDetail({
   const modifierConfig = menuItem ? acaiBowlModifierConfig(menuItem) : null;
 
   const name = getLocalized(product.name, locale);
-  const shortDescription = getLocalized(product.shortDescription, locale);
+  const shortDescription =
+    getLocalized(product.shortDescription, locale) ||
+    (menuItem?.description?.trim() ?? '');
   const galleryImages = product.images.filter((image) => image.url?.trim());
-  const usePlaceholder = productUsesPlaceholderCard(product);
+  const menuImage =
+    menuItem && 'image' in menuItem && menuItem.image ? menuItem.image : null;
+  const usePlaceholder = !menuImage && productUsesPlaceholderCard(product);
   const showListedPrice = hasPrice(product.basePrice);
 
   const addInBySlug = useMemo(() => {
@@ -111,7 +115,18 @@ export function AcaiBowlProductDetail({
   return (
     <div className="grid gap-12 lg:grid-cols-2">
       <div>
-        {usePlaceholder ? (
+        {menuImage ? (
+          <div className="relative aspect-square overflow-hidden rounded-2xl bg-cream">
+            <Image
+              src={menuImage}
+              alt={name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              priority
+            />
+          </div>
+        ) : usePlaceholder ? (
           <div className="relative aspect-square overflow-hidden rounded-2xl bg-cream">
             <ProductPlaceholderVisual
               name={name}
@@ -122,10 +137,6 @@ export function AcaiBowlProductDetail({
           </div>
         ) : galleryImages.length > 0 ? (
           <ProductImageGallery images={galleryImages} name={name} />
-        ) : menuItem && 'image' in menuItem && menuItem.image ? (
-          <div className="relative aspect-square overflow-hidden rounded-2xl bg-cream">
-            <Image src={menuItem.image} alt={name} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
-          </div>
         ) : null}
       </div>
 

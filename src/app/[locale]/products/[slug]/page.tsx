@@ -32,6 +32,7 @@ import { isMakeYourOwnLoadedTeaProduct } from '@/lib/make-your-own-loaded-tea-me
 import { ProductAddToCart } from '@/components/products/ProductAddToCart';
 import { resolveProductAddIns } from '@/lib/product-add-ins';
 import { filterProductFlavors } from '@/lib/product-display';
+import { assertProductMenuConfig } from '@/lib/product-page-guards';
 import { ProductJsonLd } from '@/components/seo/ProductJsonLd';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/Button';
@@ -73,6 +74,7 @@ export default async function ProductDetailPage({
   setRequestLocale(locale);
   const product = await getProductBySlug(slug);
   if (!product) notFound();
+  assertProductMenuConfig(slug);
 
   const [flavors, addIns] = await Promise.all([getPublishedFlavors(), getPublishedAddIns()]);
   const typedLocale = locale as Locale;

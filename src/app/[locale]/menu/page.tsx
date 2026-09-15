@@ -48,6 +48,10 @@ export default async function MenuPage({
   const kitHref = '/menu?category=mega-tea-kits';
   const activeCategory = category ? categories.find((cat) => cat.slug === category) : undefined;
 
+  if (category && !activeCategory) {
+    redirect(`/${locale}/menu`);
+  }
+
   return (
     <div className="min-w-0 w-full max-w-full overflow-x-hidden">
       <MenuPageIntro locale={typedLocale} />

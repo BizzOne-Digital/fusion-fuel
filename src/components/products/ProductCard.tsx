@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { getLocalized } from '@/lib/utils';
+import { getMenuCatalogImageUrl } from '@/lib/product-display';
 import {
   inferProductCategorySlug,
   productUsesPlaceholderCard,
@@ -19,9 +20,10 @@ export function ProductCard({ product, locale, categorySlug }: ProductCardProps)
   const name = getLocalized(product.name, locale);
   const subtitle = getLocalized(product.shortDescription, locale);
   const resolvedCategory = categorySlug ?? inferProductCategorySlug(product.slug);
-  const usePlaceholder = productUsesPlaceholderCard(product);
+  const catalogImageUrl = getMenuCatalogImageUrl(product.slug);
+  const usePlaceholder = !catalogImageUrl && productUsesPlaceholderCard(product);
   const images = product.images?.filter((image) => image.url?.trim()) ?? [];
-  const primaryImage = images[0];
+  const primaryImage = images[0] ?? (catalogImageUrl ? { url: catalogImageUrl, alt: name } : undefined);
   const hoverImage = images[1];
 
   return (

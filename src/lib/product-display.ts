@@ -1,4 +1,6 @@
 import type { IProduct } from '@/models/Product';
+import { acaiBowlMenuItem } from '@/lib/acai-bowls-menu';
+import { waffleMenuItem } from '@/lib/waffles-menu';
 
 /** Uploaded admin images always display on the site. */
 export function isUploadedImageUrl(url: string): boolean {
@@ -7,6 +9,19 @@ export function isUploadedImageUrl(url: string): boolean {
 
 export function getProductGalleryImages(product: IProduct): Array<{ url: string; alt: string }> {
   return (product.images ?? []).filter((image) => image.url?.trim());
+}
+
+/** Static menu image when the product record has no gallery yet (e.g. after a menu-only deploy). */
+export function getMenuCatalogImageUrl(productSlug: string): string | null {
+  const acaiItem = acaiBowlMenuItem(productSlug);
+  if (acaiItem && 'image' in acaiItem && acaiItem.image) {
+    return acaiItem.image;
+  }
+  const waffleItem = waffleMenuItem(productSlug);
+  if (waffleItem?.image) {
+    return waffleItem.image;
+  }
+  return null;
 }
 
 export function getPrimaryProductImage(

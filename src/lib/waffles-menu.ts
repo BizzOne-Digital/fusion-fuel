@@ -58,7 +58,7 @@ export const WAFFLES_MENU = {
       slug: 'crunchy-monkey',
       name: 'Crunchy Monkey',
       description: 'Bananas, walnuts, coconut flakes, caramel drizzle & condensed milk.',
-      image: '/images/waffle-crunchy-monkey.png',
+      image: '/images/waffle-crunchy-monkey.jpg',
     },
     {
       slug: 'build-your-own',

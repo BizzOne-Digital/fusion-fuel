@@ -1311,6 +1311,7 @@ async function seedAcaiBowlProducts(
     'protein-bowl-crunchy-monkey': 'FFB-ACAI-CRUNCHY',
     'tropical-acai-bowl': 'FFB-ACAI-TROP',
     'protein-bowl-berry': 'FFB-ACAI-BERRY',
+    'mango-dream-bowl': 'FFB-ACAI-MANGO',
   };
 
   await Product.updateOne(
