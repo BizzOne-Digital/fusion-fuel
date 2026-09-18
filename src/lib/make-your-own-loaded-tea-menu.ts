@@ -47,13 +47,11 @@ export const MYOLT_FLAVORS = [
 ] as const;
 
 export const MYOLT_ALOE_OPTIONS = [
-  'Mango',
-  'Mandarin',
   'Cranberry',
-  'Regular',
+  'Mango',
   'Grape',
-  'Cola',
-  'Ginger',
+  'Regular',
+  'Mandarin',
 ] as const;
 
 export const MYOLT_LIFTOFF_OPTIONS = [
@@ -61,6 +59,8 @@ export const MYOLT_LIFTOFF_OPTIONS = [
   'Pomegranate-Berry',
   'Tropical Fruit',
   'Pineapple',
+  'Orange',
+  'Blackberry',
   'Cola',
   'Ginger',
 ] as const;
@@ -118,7 +118,6 @@ export const MYOLT_OPTIONAL_ADDONS = {
     flavorOptions: MYOLT_ADDON_HERBAL_TEA_FLAVORS,
   },
   'coffee-shot': { label: 'Coffee Shot', addInSlug: 'myolt-coffee-shot', price: 2 },
-  'fiber-creatine': { label: 'Fiber Creatine', addInSlug: 'myolt-fiber-creatine', price: 2 },
   fiber: {
     label: 'Fiber',
     addInSlug: 'myolt-fiber',
@@ -134,7 +133,7 @@ export const MYOLT_OPTIONAL_ADDONS = {
     addInSlug: 'myolt-immunity-essentials',
     price: 1,
   },
-  creatine: { label: 'Creatine', addInSlug: 'myolt-creatine', price: 1 },
+  creatine: { label: 'Creatine', addInSlug: 'myolt-creatine', price: 2 },
 } as const;
 
 export type MyoltOptionalAddonKey = keyof typeof MYOLT_OPTIONAL_ADDONS;
@@ -150,7 +149,8 @@ export const MYOLT_STANDARD_BOOST_ADDONS: MyoltOptionalAddonKey[] = [
   'protein-boost',
   'herbal-tea',
   'coffee-shot',
-  'fiber-creatine',
+  'fiber',
+  'creatine',
   'boba',
   'extra-b12',
   'greens',

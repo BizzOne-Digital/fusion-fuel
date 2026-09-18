@@ -89,9 +89,15 @@ export const LOADED_TEAS_MENU = {
       price: 2,
     },
     {
-      slug: 'ltea-fiber-creatine',
-      name: 'Fiber Creatine',
-      description: 'Fiber and creatine boost',
+      slug: 'ltea-fiber',
+      name: 'Fiber',
+      description: 'Fiber boost',
+      price: 2,
+    },
+    {
+      slug: 'ltea-creatine',
+      name: 'Creatine',
+      description: 'Creatine boost',
       price: 2,
     },
     {
