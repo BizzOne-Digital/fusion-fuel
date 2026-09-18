@@ -44,7 +44,7 @@ const REMOVED_PATHS = new Set(['/privacy', '/terms', '/privacy-policy', '/terms-
 export function sanitizeFooterHref(href: string): string {
   if (!href) return '/';
 
-  let path = normalizeAppHref(href.trim());
+  const path = normalizeAppHref(href.trim());
   const [pathname, search] = path.split('?');
   const mapped = LEGACY_PATH_MAP[pathname] ?? pathname;
   return search ? `${mapped}?${search}` : mapped;
