@@ -3,6 +3,7 @@ import { isUploadedImageUrl } from '@/lib/product-display';
 import { PROTEIN_COFFEE_PRODUCT_SLUG } from '@/lib/protein-coffee-menu';
 import { LOADED_TEA_PRODUCT_SLUG } from '@/lib/loaded-teas-menu';
 import { PROTEIN_SHAKE_PRODUCT_SLUG } from '@/lib/protein-shakes-menu';
+import { acaiBowlMenuItem, bowlProductCategorySlug } from '@/lib/acai-bowls-menu';
 
 /** Generic stock images — show a styled text card instead. */
 export const GENERIC_PRODUCT_IMAGE_URLS = new Set([
@@ -40,6 +41,11 @@ export const CATEGORY_CARD_STYLES: Record<
     label: 'Açaí Bowl',
     badge: 'bg-purple-600 text-white',
   },
+  'protein-bowls': {
+    gradient: 'from-lime/25 via-purple-100/50 to-white',
+    label: 'Protein Bowl',
+    badge: 'bg-lime text-ink',
+  },
   waffles: {
     gradient: 'from-amber-100 via-orange-50 to-white',
     label: 'Protein Waffle',
@@ -72,7 +78,10 @@ export function inferProductCategorySlug(productSlug: string): string {
   if (productSlug === PROTEIN_SHAKE_PRODUCT_SLUG || productSlug.startsWith('protein-shake-')) {
     return 'protein-shakes';
   }
-  if (productSlug.startsWith('acai-bowl-')) return 'acai-bowls';
+  if (productSlug.startsWith('acai-bowl-')) {
+    const item = acaiBowlMenuItem(productSlug);
+    return item ? bowlProductCategorySlug(item) : 'acai-bowls';
+  }
   if (productSlug.startsWith('waffle-')) return 'waffles';
   if (productSlug.startsWith('myolt-')) return 'mega-teas';
   if (productSlug.includes('protein-truffles')) return 'protein-treats';

@@ -26,7 +26,18 @@ import { PROTEIN_COFFEE, proteinCoffeeIcedPriceCents, proteinCoffeeOptionalAddIn
 import { MEGA_TEA_KIT_COLLECTIONS, MEGA_TEA_KITS_MENU, MAKE_YOUR_OWN_MEGA_TEA_KIT, MEGA_TEA_KIT_PRODUCT_SLUG, megaTeaKitDescriptionHtml, megaTeaKitOptionalAddInSlugs, megaTeaKitPriceCents, megaTeaKitPricingSummary, megaTeaKitProductName, megaTeaKitShortDescription } from '../src/lib/mega-tea-kits-menu';
 import { MENU_FLAVORS } from '../src/lib/menu-flavors';
 import { LOADED_TEAS_MENU, LOADED_TEA_PRODUCT_SLUG, loadedTeaOptionalAddInSlugs, loadedTeaProductDescriptionHtml, loadedTeaProductShortDescription, loadedTeaSizePriceCents } from '../src/lib/loaded-teas-menu';
-import { ACAI_BOWLS_MENU, ACAI_BOWL_EXTRA_TOPPINGS, acaiBowlDescriptionHtml, acaiBowlExtraAddInSlugs, acaiBowlModifierSlug, acaiBowlPriceCents, acaiBowlShortDescription } from '../src/lib/acai-bowls-menu';
+import {
+  ACAI_BOWLS_MENU,
+  ACAI_BOWL_EXTRA_TOPPINGS,
+  acaiBowlDescriptionHtml,
+  acaiBowlExtraAddInSlugs,
+  acaiBowlModifierSlug,
+  acaiBowlPriceCents,
+  acaiBowlShortDescription,
+  acaiBowlsCategoryDescriptionHtml,
+  bowlProductCategorySlug,
+  proteinBowlsCategoryDescriptionHtml,
+} from '../src/lib/acai-bowls-menu';
 import { WAFFLES_MENU, waffleDescriptionHtml, waffleExtraAddInSlugs, waffleExtraModifierSlug, wafflePriceCents, waffleShortDescription } from '../src/lib/waffles-menu';
 import { MAKE_YOUR_OWN_LOADED_TEA_MENU, MYOLT_DRINKS, MYOLT_OPTIONAL_ADDONS, myoltAddonPriceCents, myoltPriceCents, myoltProductDescriptionHtml, myoltProductShortDescription, myoltProductSlug, type MyoltOptionalAddonKey } from '../src/lib/make-your-own-loaded-tea-menu';
 import { BULK_PRODUCTS_MENU } from '../src/lib/bulk-products-menu';
@@ -520,11 +531,12 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
     { slug: 'monthly-tea-club', name: 'Monthly Mega Tea Club', order: 1 },
     { slug: 'mega-tea-kits', name: 'Mega Tea Kits', order: 2 },
     { slug: 'acai-bowls', name: 'Açaí Bowls', order: 3 },
-    { slug: 'protein-coffee', name: 'Protein Coffee', order: 4 },
-    { slug: 'protein-shakes', name: 'Protein Shakes', order: 5 },
-    { slug: 'waffles', name: 'Waffles', order: 6 },
-    { slug: 'protein-treats', name: 'Protein Treats', order: 7 },
-    { slug: 'bulk-products', name: 'Bulk Wellness Product', order: 8 },
+    { slug: 'protein-bowls', name: 'Protein Bowls', order: 4 },
+    { slug: 'protein-coffee', name: 'Protein Coffee', order: 5 },
+    { slug: 'protein-shakes', name: 'Protein Shakes', order: 6 },
+    { slug: 'waffles', name: 'Waffles', order: 7 },
+    { slug: 'protein-treats', name: 'Protein Treats', order: 8 },
+    { slug: 'bulk-products', name: 'Bulk Wellness Product', order: 9 },
   ];
 
   const ids: Record<string, Types.ObjectId> = {};
@@ -538,7 +550,11 @@ async function seedCategories(): Promise<Record<string, Types.ObjectId>> {
             ? `<p>${BULK_PRODUCTS_MENU.description}</p><p><a href="${BULK_PRODUCTS_MENU.shopUrl}" target="_blank" rel="noopener noreferrer">Shop bulk wellness products online</a></p>`
             : category.slug === 'monthly-tea-club'
               ? `<p><strong>${MONTHLY_TEA_CLUB.intro}</strong></p><p>${MONTHLY_TEA_CLUB.taglines.primary}</p><p>${MONTHLY_TEA_CLUB.surpriseNote}</p><p>${MONTHLY_TEA_CLUB.ctaDetail}</p>`
-              : `<p>Explore our ${category.name} selection. Ingredient and nutrition details are added when confirmed by the business.</p>`;
+              : category.slug === 'acai-bowls'
+                ? acaiBowlsCategoryDescriptionHtml()
+                : category.slug === 'protein-bowls'
+                  ? proteinBowlsCategoryDescriptionHtml()
+                  : `<p>Explore our ${category.name} selection. Ingredient and nutrition details are added when confirmed by the business.</p>`;
 
     const doc = await ProductCategory.findOneAndUpdate(
       { slug: category.slug },
@@ -1295,7 +1311,6 @@ async function seedAcaiBowlProducts(
   categoryIds: Record<string, Types.ObjectId>,
   addInIds: Record<string, Types.ObjectId>
 ): Promise<void> {
-  const activeSlugs = ACAI_BOWLS_MENU.items.map((item) => `acai-bowl-${item.slug}`);
   const acaiExtraAddInOptions = acaiBowlExtraAddInSlugs()
     .map((slug) => addInIds[slug])
     .filter(Boolean)
@@ -1327,7 +1342,16 @@ async function seedAcaiBowlProducts(
     { $set: { status: 'archived', sku: 'FFB-ACAI-TROP-PROT-ARCHIVED' } }
   );
 
+  const orderByCategory: Record<'acai-bowls' | 'protein-bowls', number> = {
+    'acai-bowls': 0,
+    'protein-bowls': 0,
+  };
+
   for (const [index, item] of ACAI_BOWLS_MENU.items.entries()) {
+    const categorySlug = bowlProductCategorySlug(item);
+    const categoryOrder = orderByCategory[categorySlug];
+    orderByCategory[categorySlug] += 1;
+
     const sku = acaiBowlSkuBySlug[item.slug] ?? `FFB-ACAI-${String(index + 1).padStart(3, '0')}`;
     const slug = `acai-bowl-${item.slug}`;
 
@@ -1341,7 +1365,7 @@ async function seedAcaiBowlProducts(
           shortDescription: loc(acaiBowlShortDescription(item)),
           description: rich(acaiBowlDescriptionHtml(item)),
           productType: 'single',
-          categoryId: categoryIds['acai-bowls'],
+          categoryId: categoryIds[categorySlug],
           images:
             'placeholder' in item && item.placeholder
               ? []
@@ -1374,25 +1398,49 @@ async function seedAcaiBowlProducts(
             description: `${item.name}. ${item.description}`,
           },
           status: 'published',
-          featured: index === 0,
-          order: index,
+          featured:
+            item.slug === 'dubai-acai-bowl' || item.slug === 'protein-bowl-crunchy-monkey',
+          order: categoryOrder,
         },
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
   }
 
-  const staleAcaiBowls = await Product.find({
-    categoryId: categoryIds['acai-bowls'],
-    slug: { $nin: [...activeSlugs, 'tropical-acai-bowl', 'acai-bowl-tropical-bowl', 'acai-bowl-protein-bowl-tropical'] },
-    status: 'published',
-  }).select('slug');
+  const acaiCategorySlugs = ACAI_BOWLS_MENU.items
+    .filter((entry) => entry.kind === 'acai')
+    .map((entry) => `acai-bowl-${entry.slug}`);
+  const proteinCategorySlugs = ACAI_BOWLS_MENU.items
+    .filter((entry) => entry.kind === 'protein')
+    .map((entry) => `acai-bowl-${entry.slug}`);
 
-  for (const stale of staleAcaiBowls) {
-    await Product.updateOne({ _id: stale._id }, { $set: { status: 'archived' } });
+  const staleByCategory: Array<{ categorySlug: 'acai-bowls' | 'protein-bowls'; allowed: string[] }> =
+    [
+      {
+        categorySlug: 'acai-bowls',
+        allowed: [
+          ...acaiCategorySlugs,
+          'tropical-acai-bowl',
+          'acai-bowl-tropical-bowl',
+          'acai-bowl-protein-bowl-tropical',
+        ],
+      },
+      { categorySlug: 'protein-bowls', allowed: proteinCategorySlugs },
+    ];
+
+  for (const { categorySlug, allowed } of staleByCategory) {
+    const stale = await Product.find({
+      categoryId: categoryIds[categorySlug],
+      slug: { $nin: allowed },
+      status: 'published',
+    }).select('slug');
+
+    for (const entry of stale) {
+      await Product.updateOne({ _id: entry._id }, { $set: { status: 'archived' } });
+    }
   }
 
-  console.log(`Açaí bowl products upserted (${ACAI_BOWLS_MENU.items.length} records).`);
+  console.log(`Bowl products upserted (${ACAI_BOWLS_MENU.items.length} records).`);
 }
 
 async function seedWaffleProducts(

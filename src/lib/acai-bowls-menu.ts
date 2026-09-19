@@ -1,14 +1,17 @@
-/** Açaí & Protein Bowls menu — pick fruits, toppings, and paid extras. */
+/** Açaí bowls and protein bowls — shared modifiers; separate menu categories. */
 
 function formatUsd(amount: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }
 
+export const ACAI_BOWLS_CATEGORY_HEADLINE = 'Açaí Bowls';
+export const PROTEIN_BOWLS_CATEGORY_HEADLINE = 'Protein Bowls';
+
 export const ACAI_BOWL_PRODUCT_DESCRIPTION =
   'A deliciously creamy protein bowl topped with your choice of 2 fresh fruits and 2 toppings.';
 
 export const ACAI_BOWLS_MENU = {
-  headline: 'Açaí & Protein Bowls',
+  headline: ACAI_BOWLS_CATEGORY_HEADLINE,
   footnote: 'Gluten free Granola & Protein available for additional fee.',
   defaultSize: '12 oz',
   includedFruits: ['Strawberry', 'Banana', 'Blueberry', 'Kiwi'] as const,
@@ -114,6 +117,18 @@ export const ACAI_BOWL_EXTRA_TOPPINGS = [
 
 export type AcaiBowlMenuItem = (typeof ACAI_BOWLS_MENU.items)[number];
 
+export function acaiBowlMenuItems(): AcaiBowlMenuItem[] {
+  return ACAI_BOWLS_MENU.items.filter((item) => item.kind === 'acai');
+}
+
+export function proteinBowlMenuItems(): AcaiBowlMenuItem[] {
+  return ACAI_BOWLS_MENU.items.filter((item) => item.kind === 'protein');
+}
+
+export function bowlProductCategorySlug(item: AcaiBowlMenuItem): 'acai-bowls' | 'protein-bowls' {
+  return item.kind === 'protein' ? 'protein-bowls' : 'acai-bowls';
+}
+
 export interface AcaiBowlModifierConfig {
   includedFruitMax: number;
   includedToppingMax: number;
@@ -189,8 +204,41 @@ export function acaiBowlPriceCents(item: AcaiBowlMenuItem): number {
   return 'price' in item && item.price != null ? Math.round(item.price * 100) : 0;
 }
 
+export function acaiBowlsPricingSummary(): string {
+  return `Açaí & tropical bowls ${ACAI_BOWLS_MENU.defaultSize} ${formatUsd(11.99)} · Dubai ${formatUsd(14.99)} · Additional toppings ${formatUsd(1)} each`;
+}
+
+export function proteinBowlsPricingSummary(): string {
+  return `Protein bowls ${ACAI_BOWLS_MENU.defaultSize} ${formatUsd(11.99)} · Pick 2 fruits and 2 toppings · Additional toppings ${formatUsd(1)} each`;
+}
+
+/** @deprecated Use acaiBowlsPricingSummary or proteinBowlsPricingSummary */
 export function acaiBowlPricingSummary(): string {
-  return `Açaí & tropical bowls ${ACAI_BOWLS_MENU.defaultSize} ${formatUsd(11.99)} · Dubai ${formatUsd(14.99)} · Extra toppings from ${formatUsd(1)}`;
+  return acaiBowlsPricingSummary();
+}
+
+export function acaiBowlsCategoryDescriptionHtml(): string {
+  const fruits = ACAI_BOWLS_MENU.includedFruits.join(', ');
+  const toppings = ACAI_BOWLS_MENU.includedToppings.join(', ');
+  return [
+    `<p>${acaiBowlsPricingSummary()}</p>`,
+    `<p><strong>Dubai Açaí Bowl</strong> — pick 2 fruits — includes pistachio sauce & Nutella, then pick 1 more topping.</p>`,
+    `<p><strong>Regular & Tropical Açaí Bowls</strong> — pick 3 fruits and 2 toppings.</p>`,
+    `<p><strong>Fruits:</strong> ${fruits}</p>`,
+    `<p><strong>Toppings:</strong> ${toppings}</p>`,
+    `<p><em>${ACAI_BOWLS_MENU.footnote}</em></p>`,
+  ].join('');
+}
+
+export function proteinBowlsCategoryDescriptionHtml(): string {
+  const fruits = ACAI_BOWLS_MENU.includedFruits.join(', ');
+  const toppings = ACAI_BOWLS_MENU.includedToppings.join(', ');
+  return [
+    `<p>${proteinBowlsPricingSummary()}</p>`,
+    `<p><strong>Fruits:</strong> ${fruits}</p>`,
+    `<p><strong>Toppings:</strong> ${toppings}</p>`,
+    `<p><em>${ACAI_BOWLS_MENU.footnote}</em></p>`,
+  ].join('');
 }
 
 export function acaiBowlOrderNotes(input: {
@@ -218,13 +266,15 @@ export function acaiBowlOrderNotes(input: {
 }
 
 export function acaiBowlDescriptionHtml(item: AcaiBowlMenuItem): string {
+  const categoryHeadline =
+    item.kind === 'protein' ? PROTEIN_BOWLS_CATEGORY_HEADLINE : ACAI_BOWLS_CATEGORY_HEADLINE;
   const sizeLine =
     'size' in item && item.size && 'price' in item && item.price != null
       ? `<p><strong>Size:</strong> ${item.size} — <strong>${formatUsd(item.price)}</strong></p>`
       : '';
 
   return [
-    `<p><strong>${item.name}</strong> — ${ACAI_BOWLS_MENU.headline}.</p>`,
+    `<p><strong>${item.name}</strong> — ${categoryHeadline}.</p>`,
     item.description ? `<p>${item.description}</p>` : '',
     sizeLine,
     `<p><em>${ACAI_BOWLS_MENU.footnote}</em></p>`,

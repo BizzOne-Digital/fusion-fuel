@@ -7,6 +7,7 @@ import { BULK_PRODUCTS_MENU } from '@/lib/bulk-products-menu';
 import { MONTHLY_TEA_CLUB_MENU } from '@/lib/monthly-tea-club-menu';
 import { BulkProductsCategoryExplorer } from '@/components/menu/BulkProductsCategoryExplorer';
 import { MonthlyTeaClubCategoryExplorer } from '@/components/menu/MonthlyTeaClubCategoryExplorer';
+import { BowlsMenuCategorySection } from '@/components/menu/BowlsMenuCategorySection';
 import type { IFlavor } from '@/models/Flavor';
 import type { IProduct } from '@/models/Product';
 import type { IProductCategory } from '@/models/ProductCategory';
@@ -32,6 +33,10 @@ function productsForCategory(
   const cat = categories.find((c) => c.slug === slug);
   if (!cat) return [];
   return allProducts.filter((p) => String(p.categoryId) === String(cat._id));
+}
+
+function isBowlsCategory(slug: string): slug is 'acai-bowls' | 'protein-bowls' {
+  return slug === 'acai-bowls' || slug === 'protein-bowls';
 }
 
 function isMenuSpotlightCategory(slug: string): boolean {
@@ -72,7 +77,13 @@ export function MenuCategoryPanel({
           <ProteinShakesCategoryExplorer locale={locale} />
         ) : category.slug === BULK_PRODUCTS_MENU.slug ? (
           <BulkProductsCategoryExplorer locale={locale} />
-        ) : category.slug === 'protein-coffee' || category.slug === 'acai-bowls' || category.slug === 'waffles' ? (
+        ) : isBowlsCategory(category.slug) ? (
+          <BowlsMenuCategorySection
+            categorySlug={category.slug}
+            products={categoryProducts}
+            locale={locale}
+          />
+        ) : category.slug === 'protein-coffee' || category.slug === 'waffles' ? (
           <ProductGrid products={categoryProducts} locale={locale} categorySlug={category.slug} />
         ) : (
           <div className="mt-6">
@@ -124,7 +135,13 @@ export function MenuCategoryPanel({
               <ProteinShakesCategoryExplorer locale={locale} />
             ) : isBulkProducts ? (
               <BulkProductsCategoryExplorer locale={locale} />
-            ) : cat.slug === 'protein-coffee' || cat.slug === 'acai-bowls' || cat.slug === 'waffles' ? (
+            ) : isBowlsCategory(cat.slug) ? (
+              <BowlsMenuCategorySection
+                categorySlug={cat.slug}
+                products={categoryProducts}
+                locale={locale}
+              />
+            ) : cat.slug === 'protein-coffee' || cat.slug === 'waffles' ? (
               <ProductGrid products={categoryProducts} locale={locale} categorySlug={cat.slug} />
             ) : (
               <div className="mt-6">
