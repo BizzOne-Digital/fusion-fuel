@@ -1,0 +1,147 @@
+import Image from 'next/image';
+import { Link } from '@/i18n/navigation';
+import { getLocalized } from '@/lib/utils';
+import { SectionReveal } from '@/components/motion/SectionReveal';
+import { splitBrandSlogan } from '@/lib/brand-slogan';
+import { HomeHeroSection } from '@/components/sections/HomeHeroSection';
+import { HomeMenuCategoriesSection } from '@/components/sections/HomeMenuCategoriesSection';
+import { AcaiBowlEventSection } from '@/components/sections/AcaiBowlEventSection';
+import { MonthlyTeaClubSection } from '@/components/sections/MonthlyTeaClubSection';
+import { MegaTeaKitFactsSection } from '@/components/sections/MegaTeaKitFactsSection';
+import { LifestyleMontage } from '@/components/sections/LifestyleMontage';
+import { SocialFollowSection } from '@/components/sections/SocialFollowSection';
+import { SITE_IMAGES } from '@/lib/site-images';
+import { Button } from '@/components/ui/Button';
+import { CATERING_TAGLINE, DELIVERY, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
+import type { Locale } from '@/types';
+import type { IProduct } from '@/models/Product';
+import type { IProductCategory } from '@/models/ProductCategory';
+import type { IService } from '@/models/Service';
+import type { ISiteSettings } from '@/models/SiteSettings';
+
+const MEGA_TEA_KITS_MENU_HREF = '/menu?category=mega-tea-kits';
+
+interface HomePageSectionsProps {
+  locale: Locale;
+  hero: {
+    title: { en: string; es: string };
+    subtitle?: { en: string; es: string };
+    backgroundImage?: { url: string; alt: string };
+    cta?: { label: { en: string; es: string }; href: string };
+  };
+  products: IProduct[];
+  categories: IProductCategory[];
+  services: IService[];
+  settings: Partial<ISiteSettings>;
+}
+
+export function HomePageSections({
+  locale,
+  hero,
+  products,
+  categories,
+  services,
+  settings,
+}: HomePageSectionsProps) {
+  const heroTitle = getLocalized(hero.title, locale);
+  const { fuel: fuelLine, boost: boostLine } = splitBrandSlogan(heroTitle);
+
+  return (
+    <div className="min-w-0 w-full max-w-full overflow-x-hidden">
+      {/* Hero */}
+      <HomeHeroSection
+        fuelLine={fuelLine}
+        boostLine={boostLine || undefined}
+        kitHref={MEGA_TEA_KITS_MENU_HREF}
+        backgroundUrl={hero.backgroundImage?.url ?? SITE_IMAGES.heroDrinks}
+      />
+
+      {/* Menu categories */}
+      <SectionReveal>
+        <HomeMenuCategoriesSection categories={categories} locale={locale} />
+      </SectionReveal>
+
+      <SectionReveal>
+        <MegaTeaKitFactsSection locale={locale} kitHref={MEGA_TEA_KITS_MENU_HREF} />
+      </SectionReveal>
+
+      {/* Açaí Bowl Event Experience */}      <AcaiBowlEventSection />
+
+      {/* Monthly Tea Club */}      <SectionReveal>
+        <MonthlyTeaClubSection />
+      </SectionReveal>
+
+      {/* 13. Catering */}
+      <SectionReveal>
+        <section className="section-pink py-20">
+          <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 lg:grid-cols-2 lg:px-6">
+            <Image src={SITE_IMAGES.catering} alt="Catering" width={600} height={450} className="img-zoom h-auto w-full rounded-2xl object-cover transition duration-500 hover:scale-[1.02]" />
+            <div>
+              <h2 className="font-display text-4xl">Catering for Every Occasion</h2>
+              <p className="mt-3 text-grey">{CATERING_TAGLINE}</p>
+              <ul className="mt-4 space-y-2 text-grey">
+                {services.slice(0, 5).map((s) => (
+                  <li key={String(s._id)}>• {getLocalized(s.name, locale)}</li>
+                ))}
+              </ul>
+              <Link href="/booking" className="mt-6 inline-block"><Button>Book Catering</Button></Link>
+            </div>
+          </div>
+        </section>
+      </SectionReveal>
+
+      {/* 14. How it works */}
+      <SectionReveal>
+        <section className="bg-white py-20">
+          <div className="mx-auto max-w-7xl px-4 lg:px-6">
+            <h2 className="font-display text-center text-4xl">How It Works</h2>
+            <div className="mt-12 grid gap-8 md:grid-cols-3">
+              {[
+                { step: '1', title: 'Choose Your Plan', desc: 'Pick a 6, 12, 20, or 30 tea kit box and select your flavors.' },
+                { step: '2', title: 'Delivered Monthly', desc: 'Receive loaded tea blends, guides, boosters, and sweet surprises.' },
+                { step: '3', title: 'Sip & Enjoy', desc: 'Make energizing teas at home — or book catering for your next event.' },
+              ].map((item) => (
+                <div key={item.step} className="card-hover text-center">
+                  <span className="font-display inline-flex h-14 w-14 items-center justify-center rounded-full bg-lime text-2xl text-ink">{item.step}</span>
+                  <h3 className="font-display mt-4 text-2xl">{item.title}</h3>
+                  <p className="mt-2 text-grey">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </SectionReveal>
+
+      {/* 15. Special offer */}
+      <SectionReveal>
+        <section className="section-yellow px-4 py-16">
+          <div className="mx-auto max-w-3xl rounded-2xl border border-pink/25 bg-white p-6 text-center shadow-sm sm:p-8">
+            <h2 className="font-display text-3xl">{MONTHLY_TEA_CLUB.cta}</h2>
+            <p className="mt-4 text-grey">{MONTHLY_TEA_CLUB.ctaDetail}</p>
+            <p className="mt-2 text-sm text-grey">{DELIVERY.local}</p>
+            <Link href="/menu?category=monthly-tea-club" className="mt-6 inline-block text-pink font-semibold hover:underline">Sign up for the club →</Link>
+          </div>
+        </section>
+      </SectionReveal>
+
+      <LifestyleMontage />
+
+      <SocialFollowSection social={settings.social} />
+
+      {/* 21. Final CTA */}
+      <SectionReveal>
+        <section className="section-pink-bold py-24">
+          <div className="mx-auto max-w-4xl px-4 text-center lg:px-6">
+            <h2 className="font-display text-5xl text-white">{MONTHLY_TEA_CLUB.taglines.secondary}</h2>
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <Link href="/menu?category=monthly-tea-club">
+                <Button size="lg">{MONTHLY_TEA_CLUB.cta}</Button>
+              </Link>
+              <Link href="/booking"><Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-ink">Book Catering</Button></Link>
+            </div>
+          </div>
+        </section>
+      </SectionReveal>
+    </div>
+  );
+}

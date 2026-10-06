@@ -1,0 +1,106 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
+import { useCart } from '@/context/CartContext';
+import { Button } from '@/components/ui/Button';
+import { productExcludesOptionalAddOns } from '@/lib/protein-treats-menu';
+import { AddInSelector } from '@/components/products/AddInSelector';
+import { getAddInUnitPrice } from '@/lib/product-add-ins';
+import type { IProduct } from '@/models/Product';
+import type { IAddIn } from '@/models/AddIn';
+import type { Locale } from '@/types';
+
+interface ProductAddToCartProps {
+  product: IProduct;
+  addIns: IAddIn[];
+  locale: Locale;
+}
+
+export function ProductAddToCart({ product, addIns, locale }: ProductAddToCartProps) {
+  const { addItem } = useCart();
+  const pricedVariants = product.variants.filter((variant) => variant.price > 0);
+  const [variantSku, setVariantSku] = useState(pricedVariants[0]?.sku ?? product.variants[0]?.sku ?? '');
+  const [selectedAddIns, setSelectedAddIns] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(false);
+
+  const selectedVariant = product.variants.find((variant) => variant.sku === variantSku);
+  const basePrice = selectedVariant?.price ?? product.basePrice;
+
+  const addInTotal = useMemo(
+    () =>
+      Object.entries(selectedAddIns).reduce((sum, [id, qty]) => {
+        const addIn = addIns.find((entry) => String(entry._id) === id);
+        return sum + (addIn ? getAddInUnitPrice(product, addIn) : 0) * qty;
+      }, 0),
+    [selectedAddIns, addIns, product]
+  );
+
+  const showAddOns = !productExcludesOptionalAddOns(product.slug);
+  const unitPrice = basePrice + addInTotal;
+  const canAdd = hasPrice(unitPrice);
+
+  const handleAdd = async () => {
+    if (!canAdd) return;
+    setLoading(true);
+    await addItem({
+      productId: String(product._id),
+      quantity: 1,
+      ...(variantSku ? { variantSku } : {}),
+      addIns: Object.entries(selectedAddIns)
+        .filter(([, quantity]) => quantity > 0)
+        .map(([addInId, quantity]) => ({ addInId, quantity })),
+    });
+    setLoading(false);
+  };
+
+  return (
+    <div className="space-y-6 rounded-2xl border border-grey/15 bg-cream p-6">
+      {product.variants.filter((variant) => variant.price > 0).length > 1 && (
+        <div>
+          <h3 className="font-display text-2xl">{locale === 'es' ? 'Tamaño' : 'Size'}</h3>
+          <div className="mt-4 flex flex-wrap gap-3">
+            {product.variants
+              .filter((variant) => variant.price > 0)
+              .map((variant) => (
+              <button
+                key={variant.sku}
+                type="button"
+                onClick={() => setVariantSku(variant.sku)}
+                className={`rounded-xl border-2 px-4 py-3 text-left transition ${
+                  variantSku === variant.sku ? 'border-lime bg-white' : 'border-grey/20 bg-white/50'
+                }`}
+              >
+                <p className="font-semibold">{getLocalized(variant.name, locale)}</p>
+                <p className="mt-1 text-sm text-grey">
+                  {hasPrice(variant.price) ? formatPrice(variant.price, 'USD', locale) : formatPrice(null, 'USD', locale)}
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {showAddOns ? (
+        <AddInSelector
+          product={product}
+          addIns={addIns}
+          locale={locale}
+          selected={selectedAddIns}
+          onChange={setSelectedAddIns}
+        />
+      ) : null}
+
+      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-grey/15 pt-6">
+        <p className="font-display text-2xl">
+          {hasPrice(unitPrice) ? formatPrice(unitPrice, 'USD', locale) : formatPrice(null, 'USD', locale)}
+        </p>
+        {hasPrice(unitPrice) ? (
+          <Button onClick={handleAdd} loading={loading} disabled={!canAdd}>
+            {locale === 'es' ? 'Agregar al carrito' : 'Add to cart'}
+          </Button>
+        ) : null}
+      </div>
+    </div>
+  );
+}

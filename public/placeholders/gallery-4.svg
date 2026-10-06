@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="Gallery placeholder 4">
+  <rect width="800" height="600" fill="#10161A"/>
+  <ellipse cx="400" cy="300" rx="200" ry="140" fill="#E8F000" opacity="0.25"/>
+  <text x="400" y="310" fill="#E8F000" font-family="Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle">Gallery 4</text>
+</svg>
