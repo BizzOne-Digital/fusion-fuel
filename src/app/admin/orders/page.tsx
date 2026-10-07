@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import AdminHeader from '@/components/admin/AdminHeader';
 import DataTable from '@/components/admin/DataTable';
 import StatusBadge from '@/components/admin/StatusBadge';
@@ -63,9 +62,7 @@ export default function AdminOrdersPage() {
               key: 'orderNumber',
               header: 'Order',
               render: (row) => (
-                <Link href={`/admin/orders/${row.id}`} className="font-medium text-orange-600 hover:underline">
-                  {row.orderNumber as string}
-                </Link>
+                <span className="font-medium text-orange-600">{row.orderNumber as string}</span>
               ),
             },
             {

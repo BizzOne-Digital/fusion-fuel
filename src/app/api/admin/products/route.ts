@@ -18,10 +18,15 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const { page, limit, skip } = parsePagination(searchParams);
     const status = searchParams.get('status');
+    const activeOnly = searchParams.get('activeOnly') === '1';
     const categoryId = searchParams.get('categoryId');
     const q = searchParams.get('q');
     const filter: Record<string, unknown> = {};
-    if (status) filter.status = status as ContentStatus;
+    if (activeOnly) {
+      filter.status = 'published';
+    } else if (status) {
+      filter.status = status as ContentStatus;
+    }
     if (categoryId) filter.categoryId = toObjectId(categoryId);
     if (q) {
       filter.$or = [

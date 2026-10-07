@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import AdminClickableRow from '@/components/admin/AdminClickableRow';
 
 export interface Column<T> {
   key: string;
@@ -64,15 +64,9 @@ export default function DataTable<T extends Record<string, unknown>>({
 
               if (href) {
                 return (
-                  <tr key={rowId} className="transition-colors hover:bg-orange-50/40">
-                    {cells.map((cell, cellIndex) => (
-                      <td key={columns[cellIndex].key} className="p-0">
-                        <Link href={href} className="block px-4 py-3 text-sm text-zinc-700">
-                          {cell.props.children}
-                        </Link>
-                      </td>
-                    ))}
-                  </tr>
+                  <AdminClickableRow key={rowId} href={href}>
+                    {cells}
+                  </AdminClickableRow>
                 );
               }
 

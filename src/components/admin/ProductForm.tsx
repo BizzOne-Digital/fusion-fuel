@@ -11,7 +11,7 @@ import ProductInlineAddOnsEditor, {
   type InlineAddOnForm,
 } from '@/components/admin/ProductInlineAddOnsEditor';
 import { adminFetch } from '@/lib/admin/client';
-import { normalizeLocalized } from '@/lib/admin/localized';
+import { localizedPlainText, normalizeLocalized, normalizeLocalizedPlain } from '@/lib/admin/localized';
 import { toast } from 'sonner';
 
 interface ProductFormProps {
@@ -90,8 +90,8 @@ export default function ProductForm({ productId, categories, defaultCategoryId, 
       setName(item.name as Localized);
       setSlug(item.slug as string);
       setSku(item.sku as string);
-      setShortDescription(item.shortDescription as Localized);
-      setFullDescription(item.description as Localized);
+      setShortDescription(localizedPlainText(item.shortDescription as Localized));
+      setFullDescription(localizedPlainText(item.description as Localized));
       setCategoryId(String((item.categoryId as { _id?: string })?._id ?? item.categoryId ?? ''));
       setPriceDollars(centsToDollars(item.basePrice as number));
       setCompareAtDollars(
@@ -120,7 +120,7 @@ export default function ProductForm({ productId, categories, defaultCategoryId, 
       const flavorRows = (data?.flavors ?? []).map((flavor) => ({
         id: String(flavor.id ?? flavor._id),
         name: flavor.name as Localized,
-        description: (flavor.description as Localized) ?? { en: '', es: '' },
+        description: localizedPlainText((flavor.description as Localized) ?? { en: '', es: '' }),
         imageUrl: (flavor.image as { url?: string })?.url ?? null,
         imageAlt: (flavor.image as { alt?: string })?.alt ?? '',
       }));
@@ -130,7 +130,7 @@ export default function ProductForm({ productId, categories, defaultCategoryId, 
       const addOnRows = (data?.addIns ?? []).map((addOn) => ({
         id: String(addOn.id ?? addOn._id),
         name: addOn.name as Localized,
-        description: (addOn.description as Localized) ?? { en: '', es: '' },
+        description: localizedPlainText((addOn.description as Localized) ?? { en: '', es: '' }),
         priceDollars: centsToDollars(Number(addOn.price ?? 0)),
       }));
       setEnableAddOns(addOnRows.length > 0);
@@ -160,8 +160,8 @@ export default function ProductForm({ productId, categories, defaultCategoryId, 
     }
 
     const normalizedName = normalizeLocalized(name);
-    const normalizedFull = normalizeLocalized(fullDescription);
-    const normalizedShort = normalizeLocalized({
+    const normalizedFull = normalizeLocalizedPlain(fullDescription);
+    const normalizedShort = normalizeLocalizedPlain({
       en: shortDescription.en.trim() || normalizedFull.en.slice(0, 160),
       es: shortDescription.es.trim() || normalizedFull.es.slice(0, 160),
     });
@@ -193,10 +193,7 @@ export default function ProductForm({ productId, categories, defaultCategoryId, 
             .map((flavor) => ({
               id: flavor.id,
               name: normalizeLocalized(flavor.name),
-              description: {
-                en: flavor.description.en,
-                es: flavor.description.es,
-              },
+              description: normalizeLocalizedPlain(flavor.description),
               image: flavor.imageUrl
                 ? {
                     url: flavor.imageUrl,
@@ -211,10 +208,7 @@ export default function ProductForm({ productId, categories, defaultCategoryId, 
             .map((addOn) => ({
               id: addOn.id,
               name: normalizeLocalized(addOn.name),
-              description: {
-                en: addOn.description.en,
-                es: addOn.description.es,
-              },
+              description: normalizeLocalizedPlain(addOn.description),
               price: dollarsToCents(addOn.priceDollars),
             }))
         : [],

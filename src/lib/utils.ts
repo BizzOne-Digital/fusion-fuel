@@ -39,6 +39,33 @@ export function sanitizeHtml(html: string): string {
     .replace(/on\w+="[^"]*"/gi, '');
 }
 
+/** Rich text / HTML from CMS fields → plain text (admin forms and lists). */
+export function richTextToPlainText(html: string): string {
+  if (!html) return '';
+
+  const withoutTags = html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<\/h[1-6]>/gi, '\n\n')
+    .replace(/<li[^>]*>/gi, '\n• ')
+    .replace(/<\/li>/gi, '')
+    .replace(/<\/ul>/gi, '\n')
+    .replace(/<\/ol>/gi, '\n')
+    .replace(/<[^>]+>/g, '');
+
+  return withoutTags
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+}
+
 export function slugify(value: string): string {
   return value
     .toLowerCase()

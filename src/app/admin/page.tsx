@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import {
   DollarSign,
   ShoppingCart,
@@ -77,9 +76,7 @@ export default async function AdminDashboardPage() {
               key: 'orderNumber',
               header: 'Order',
               render: (row) => (
-                <Link href={`/admin/orders/${String(row.id)}`} className="font-medium text-orange-600 hover:underline">
-                  {String(row.orderNumber)}
-                </Link>
+                <span className="font-medium text-orange-600">{String(row.orderNumber)}</span>
               ),
             },
             {

@@ -3,7 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { getProductBySlug, getPublishedFlavors, getPublishedAddIns } from '@/lib/data';
 import { BRAND } from '@/lib/constants';
 import { buildMetadata } from '@/lib/seo';
-import { getLocalized, sanitizeHtml } from '@/lib/utils';
+import { getLocalized, richTextToPlainText } from '@/lib/utils';
 import {
   inferProductCategorySlug,
   productUsesPlaceholderCard,
@@ -81,7 +81,7 @@ export default async function ProductDetailPage({
   const [flavors, addIns] = await Promise.all([getPublishedFlavors(), getPublishedAddIns()]);
   const typedLocale = locale as Locale;
   const name = getLocalized(product.name, typedLocale);
-  const shortDescription = getLocalized(product.shortDescription, typedLocale);
+  const shortDescription = richTextToPlainText(getLocalized(product.shortDescription, typedLocale));
   const categorySlug = inferProductCategorySlug(product.slug);
   const productAddIns = resolveProductAddIns(product, addIns);
   const productFlavors = filterProductFlavors(flavors, product.flavorIds);
@@ -161,7 +161,9 @@ export default async function ProductDetailPage({
                 {formatPrice(product.basePrice, 'USD', typedLocale)}
               </p>
             )}
-            <div className="prose-brand mt-6 text-grey" dangerouslySetInnerHTML={{ __html: sanitizeHtml(getLocalized(product.description, typedLocale)) }} />
+            <p className="mt-6 whitespace-pre-wrap text-grey">
+              {richTextToPlainText(getLocalized(product.description, typedLocale))}
+            </p>
             {product.caffeineMg != null && (
               <p className="mt-4 rounded-xl bg-cream p-4 text-sm">Contains caffeine (~{product.caffeineMg}mg). Not recommended for all audiences.</p>
             )}
