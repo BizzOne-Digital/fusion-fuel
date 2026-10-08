@@ -22,7 +22,7 @@ import {
   megaTeaKitCollectionFlavorNames,
 } from '@/lib/mega-tea-kits-menu';
 import { MONTHLY_TEA_CLUB_MENU } from '@/lib/monthly-tea-club-menu';
-import { PROTEIN_SHAKES_MENU, PROTEIN_SHAKE_PRODUCT_SLUG } from '@/lib/protein-shakes-menu';
+import { PROTEIN_SHAKES_MENU } from '@/lib/protein-shakes-menu';
 
 export type PublishedAdminProduct = {
   id: string;
@@ -64,11 +64,12 @@ function dbProductEntry(
 /** Top-level products / collections shown under a menu category (matches storefront explorers). */
 export function listAdminCategoryEntries(
   categorySlug: string,
-  publishedProducts: PublishedAdminProduct[]
+  publishedProducts: PublishedAdminProduct[],
+  browseSlug?: string
 ): AdminCatalogEntry[] {
-  const base = adminProductsCategoryHref(categorySlug);
+  const base = adminProductsCategoryHref(browseSlug ?? categorySlug);
 
-  if (categorySlug === 'mega-teas') {
+  if (categorySlug === 'mega-teas' || categorySlug === 'loaded-teas') {
     return [
       {
         key: LOADED_TEAS_MENU_VIEWS.loadedTeas,
@@ -119,12 +120,71 @@ export function listAdminCategoryEntries(
   if (categorySlug === 'protein-shakes') {
     return [
       {
-        key: PROTEIN_SHAKE_PRODUCT_SLUG,
+        key: 'manage',
         title: PROTEIN_SHAKES_MENU.headline,
-        description: `${PROTEIN_SHAKES_MENU.items.length} flavors · ${PROTEIN_SHAKES_MENU.servingNote}`,
+        description: `${PROTEIN_SHAKES_MENU.items.length} flavors · sizes & add-ons`,
         imageUrl: PROTEIN_SHAKES_MENU.heroImage.url,
-        adminHref: `${base}/${PROTEIN_SHAKE_PRODUCT_SLUG}`,
-        dbProductId: publishedProducts.find((p) => p.slug === PROTEIN_SHAKE_PRODUCT_SLUG)?.id,
+        adminHref: `${base}/manage`,
+      },
+    ];
+  }
+
+  if (categorySlug === 'acai-bowls') {
+    return [
+      {
+        key: 'manage',
+        title: 'Açaí Bowls',
+        description: 'Main image, bowl types, fruits, toppings & extra pricing',
+        imageUrl: publishedProducts.find((p) => p.slug.startsWith('acai-bowl-'))?.images?.[0]?.url,
+        adminHref: `${base}/manage`,
+      },
+    ];
+  }
+
+  if (categorySlug === 'protein-bowls') {
+    return [
+      {
+        key: 'manage',
+        title: 'Protein Bowls',
+        description: 'Main image, bowl types, fruits, toppings & extra pricing',
+        imageUrl: publishedProducts.find((p) => p.slug.includes('protein-bowl'))?.images?.[0]?.url,
+        adminHref: `${base}/manage`,
+      },
+    ];
+  }
+
+  if (categorySlug === 'protein-coffee') {
+    return [
+      {
+        key: 'manage',
+        title: 'Protein Coffee',
+        description: 'Sizes, flavors, add-ons & gallery',
+        adminHref: `${base}/manage`,
+        imageUrl: publishedProducts.find((p) => p.slug === 'protein-coffee')?.images?.[0]?.url,
+      },
+    ];
+  }
+
+  if (categorySlug === 'waffles') {
+    return [
+      {
+        key: 'manage',
+        title: 'Protein Waffles',
+        description: 'Presets & create-your-own topping groups',
+        adminHref: `${base}/manage`,
+        imageUrl: publishedProducts.find((p) => p.slug.startsWith('waffle-'))?.images?.[0]?.url,
+      },
+    ];
+  }
+
+  if (categorySlug === 'protein-treats') {
+    return [
+      {
+        key: 'manage',
+        title: 'Protein Treats',
+        description: 'Truffles, mini donuts & pie in a cup',
+        adminHref: `${base}/manage`,
+        imageUrl: publishedProducts.find((p) => p.slug.startsWith('protein-'))?.images?.[0]?.url,
       },
     ];
   }

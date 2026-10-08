@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import AdminHeader from '@/components/admin/AdminHeader';
 import DataTable from '@/components/admin/DataTable';
 import StatusBadge from '@/components/admin/StatusBadge';
-import FormField, { inputClassName, selectClassName, textareaClassName } from '@/components/admin/FormField';
+import FormField, { inputClassName, textareaClassName } from '@/components/admin/FormField';
 import LocalizedTabs from '@/components/admin/LocalizedTabs';
 import { adminFetch } from '@/lib/admin/client';
 

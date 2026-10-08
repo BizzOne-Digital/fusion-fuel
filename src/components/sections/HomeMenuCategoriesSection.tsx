@@ -1,6 +1,6 @@
 import { Link } from '@/i18n/navigation';
 import { StorefrontImage } from '@/components/ui/StorefrontImage';
-import { getLocalized } from '@/lib/utils';
+import { getCategoryDisplayName } from '@/lib/category-display-names';
 import { Button } from '@/components/ui/Button';
 import { categoryImageUrl } from '@/lib/public-image';
 import { getCategoryImage } from '@/lib/site-images';
@@ -35,14 +35,14 @@ export function HomeMenuCategoriesSection({ categories, locale }: HomeMenuCatego
               <div className="relative aspect-[4/3] overflow-hidden bg-carbon">
                 <StorefrontImage
                   src={categoryImageUrl(cat, getCategoryImage(cat.slug))}
-                  alt={cat.image?.alt?.trim() || getLocalized(cat.name, locale)}
+                  alt={cat.image?.alt?.trim() || getCategoryDisplayName(cat.slug, cat.name, locale)}
                   fill
                   className="object-cover opacity-90 transition duration-500 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                 <h3 className="absolute bottom-4 left-4 right-4 font-display text-2xl text-white">
-                  {getLocalized(cat.name, locale)}
+                  {getCategoryDisplayName(cat.slug, cat.name, locale)}
                 </h3>
               </div>
             </Link>

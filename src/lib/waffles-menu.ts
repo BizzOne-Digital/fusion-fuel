@@ -133,6 +133,7 @@ export function waffleShortDescription(item: WaffleMenuItem): string {
   return item.description;
 }
 
-export function waffleDescriptionHtml(_item: WaffleMenuItem): string {
+export function waffleDescriptionHtml(item: WaffleMenuItem): string {
+  void item;
   return '';
 }

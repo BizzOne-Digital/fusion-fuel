@@ -201,7 +201,7 @@ export function TestimonialsPageSections({
         </section>
       </SectionReveal>
 
-      <LifestyleMontage />
+      <LifestyleMontage locale={locale} />
       <PageCtaBanner
         title={isEs ? 'Únete a la comunidad Fusion Fuel' : 'Join the Fusion Fuel Community'}
         primaryHref="/menu"

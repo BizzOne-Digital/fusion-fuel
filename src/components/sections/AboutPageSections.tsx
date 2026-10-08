@@ -407,7 +407,8 @@ export function AboutPageSections({ locale, testimonials }: AboutPageSectionsPro
       </SectionReveal>
 
       <LifestyleMontage
-        title={locale === 'es' ? 'Energía para tu estilo de vida' : 'Fuel Your Lifestyle'}
+        locale={locale}
+        title={locale === 'es' ? 'Impulsa tu estilo de vida' : 'Fuel Your Lifestyle'}
       />
 
       {/* Reviews */}

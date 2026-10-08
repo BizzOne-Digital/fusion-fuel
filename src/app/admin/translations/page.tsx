@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import AdminHeader from '@/components/admin/AdminHeader';
-import FormField, { inputClassName, textareaClassName } from '@/components/admin/FormField';
+import FormField, { textareaClassName } from '@/components/admin/FormField';
 import { adminFetch } from '@/lib/admin/client';
 
 export default function AdminTranslationsPage() {

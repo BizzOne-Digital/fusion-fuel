@@ -117,7 +117,7 @@ export function ServicesPageSections({ locale, services }: ServicesPageSectionsP
         </section>
       </SectionReveal>
 
-      <LifestyleMontage />
+      <LifestyleMontage locale={locale} />
       <PageCtaBanner
         title={isEs ? '¿Listo para planificar tu evento?' : 'Ready to Plan Your Event?'}
         primaryHref="/booking"

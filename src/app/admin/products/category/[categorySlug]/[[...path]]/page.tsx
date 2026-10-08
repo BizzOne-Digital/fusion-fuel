@@ -1,8 +1,15 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import AdminCategoryCatalogView from '@/components/admin/AdminCategoryCatalogView';
 import {
-  getPublishedCategoryBySlug,
+  isLoadedTeasCategorySlug,
+  LOADED_TEAS_CATEGORY_SLUGS,
+  normalizeAdminCatalogCategorySlug,
+  resolveAdminCategorySlug,
+} from '@/lib/admin/category-slug';
+import {
+  getPublishedCategoryForAdminBrowse,
   listPublishedProductsForCategory,
+  listPublishedProductsForCategorySlugs,
 } from '@/lib/admin/load-published-products';
 
 interface PageProps {
@@ -11,16 +18,30 @@ interface PageProps {
 
 export default async function AdminCategoryCatalogPage({ params }: PageProps) {
   const { categorySlug, path = [] } = await params;
-  const category = await getPublishedCategoryBySlug(categorySlug);
+  const catalogSlug = await resolveAdminCategorySlug(categorySlug);
+
+  if (catalogSlug !== categorySlug) {
+    const suffix = path.length > 0 ? `/${path.join('/')}` : '';
+    redirect(`/admin/products/category/${catalogSlug}${suffix}`);
+  }
+
+  const category =
+    (await getPublishedCategoryForAdminBrowse(categorySlug)) ??
+    (catalogSlug !== categorySlug ? await getPublishedCategoryForAdminBrowse(catalogSlug) : null);
   if (!category) notFound();
 
-  const publishedProducts = await listPublishedProductsForCategory(category.id);
+  const catalogCategorySlug = normalizeAdminCatalogCategorySlug(category.slug);
+
+  const publishedProducts = isLoadedTeasCategorySlug(category.slug)
+    ? await listPublishedProductsForCategorySlugs([...LOADED_TEAS_CATEGORY_SLUGS])
+    : await listPublishedProductsForCategory(category.id);
 
   return (
     <AdminCategoryCatalogView
-      category={{ slug: category.slug, name: category.name }}
+      category={{ slug: catalogCategorySlug, name: category.name }}
       path={path}
       publishedProducts={publishedProducts}
+      browseSlug={category.slug}
     />
   );
 }

@@ -128,6 +128,7 @@ export function proteinCoffeeProductDescriptionHtml(): string {
   return '';
 }
 
-export function proteinCoffeeDescriptionHtml(_flavorName: string): string {
+export function proteinCoffeeDescriptionHtml(flavorName: string): string {
+  void flavorName;
   return '';
 }

@@ -19,6 +19,10 @@ import { AcaiBowlProductDetail } from '@/components/products/AcaiBowlProductDeta
 import { WaffleProductDetail } from '@/components/products/WaffleProductDetail';
 import { isMegaTeaKitDetailProduct } from '@/lib/mega-tea-kits-menu';
 import { isLoadedTeaProduct } from '@/lib/loaded-teas-menu';
+import {
+  buildLoadedTeaMenuView,
+  getLoadedTeasCatalogData,
+} from '@/lib/menu-catalog/loaded-tea-runtime';
 import { isProteinShakeProduct } from '@/lib/protein-shakes-menu';
 import { isAcaiBowlProduct } from '@/lib/acai-bowls-menu';
 import { isWaffleProduct } from '@/lib/waffles-menu';
@@ -78,7 +82,14 @@ export default async function ProductDetailPage({
   if (!product) notFound();
   assertProductMenuConfig(slug);
 
-  const [flavors, addIns] = await Promise.all([getPublishedFlavors(), getPublishedAddIns()]);
+  const isLoadedTeaSlug = isLoadedTeaProduct(slug);
+  const [flavors, addIns, loadedTeasCatalog] = await Promise.all([
+    getPublishedFlavors(),
+    getPublishedAddIns(),
+    isLoadedTeaSlug ? getLoadedTeasCatalogData() : Promise.resolve(undefined),
+  ]);
+  const loadedTeaMenu =
+    loadedTeasCatalog != null ? buildLoadedTeaMenuView(loadedTeasCatalog) : undefined;
   const typedLocale = locale as Locale;
   const name = getLocalized(product.name, typedLocale);
   const shortDescription = richTextToPlainText(getLocalized(product.shortDescription, typedLocale));
@@ -108,7 +119,13 @@ export default async function ProductDetailPage({
         {isMegaTeaKit ? (
           <MegaTeaKitProductDetail product={product} flavors={flavors} addIns={productAddIns} locale={typedLocale} />
         ) : isLoadedTea ? (
-          <LoadedTeaProductDetail product={product} addIns={productAddIns} locale={typedLocale} />
+          <LoadedTeaProductDetail
+            product={product}
+            addIns={productAddIns}
+            locale={typedLocale}
+            menu={loadedTeaMenu}
+            loadedTeasCatalog={loadedTeasCatalog}
+          />
         ) : isProteinShake ? (
           <ProteinShakeProductDetail product={product} addIns={productAddIns} locale={typedLocale} />
         ) : isAcaiBowl ? (

@@ -138,8 +138,8 @@ export function ContactPageSections({ locale, settings }: ContactPageSectionsPro
         </section>
       </SectionReveal>
 
-      <LifestyleMontage title={isEs ? 'Energía para tu estilo de vida' : 'Fuel Your Lifestyle'} />
-      <SocialFollowSection social={settings.social} />
+      <LifestyleMontage locale={locale} title={isEs ? 'Impulsa tu estilo de vida' : 'Fuel Your Lifestyle'} />
+      <SocialFollowSection locale={locale} social={settings.social} />
       <PageCtaBanner
         title={isEs ? '¿Listo para tu próximo evento?' : 'Ready for Your Next Event?'}
         primaryHref="/booking"

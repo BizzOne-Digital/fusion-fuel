@@ -4,10 +4,10 @@ import { HomePageSections } from '@/components/sections/HomePageSections';
 import { SITE_IMAGES } from '@/lib/site-images';
 import { generatePageMetadata } from '@/lib/seo';
 import type { Locale } from '@/types';
+import { mergeLocalizedString } from '@/lib/utils';
 import {
   getPageByKey,
   getHomeFallback,
-  getPublishedProducts,
   getPublishedCategories,
   getPublishedServices,
   getSiteSettings,
@@ -26,19 +26,21 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [page, products, categories, services, settings] =
-    await Promise.all([
-      getPageByKey('home'),
-      getPublishedProducts({ limit: 12 }),
-      getPublishedCategories(),
-      getPublishedServices(),
-      getSiteSettings(),
-    ]);
+  const [page, categories, services, settings] = await Promise.all([
+    getPageByKey('home'),
+    getPublishedCategories(),
+    getPublishedServices(),
+    getSiteSettings(),
+  ]);
 
   const fallback = getHomeFallback(locale as Locale);
   const rawHero = page?.hero ?? fallback.hero!;
   const hero = {
     ...rawHero,
+    title: mergeLocalizedString(rawHero.title, {
+      en: fallback.hero!.title.en,
+      es: fallback.hero!.title.es,
+    }),
     backgroundImage: {
       ...rawHero.backgroundImage,
       url:
@@ -55,7 +57,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <HomePageSections
       locale={locale as Locale}
       hero={hero}
-      products={products}
       categories={categories}
       services={services}
       settings={settings}

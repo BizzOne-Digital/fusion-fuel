@@ -19,7 +19,7 @@ import ProductCategory from '../src/models/ProductCategory';
 import Promotion from '../src/models/Promotion';
 import Service from '../src/models/Service';
 import SiteSettings from '../src/models/SiteSettings';
-import { SITE_IMAGES, getCategoryImage, getServiceImage, getProductFallbackImage, getFlavorImage } from '../src/lib/site-images';
+import { SITE_IMAGES, getCategoryImage, getServiceImage } from '../src/lib/site-images';
 import { FLAVOR_IMAGE_BY_SLUG } from '../src/lib/flavor-image-manifest';
 import { CATERING_TAGLINE, CONTACT, DELIVERY, acaiBowlEventServiceHtml, ACAI_BOWL_EVENT, flavorIngredientsHtml, HOME_HERO, LOADED_TEAS, MONTHLY_TEA_CLUB, monthlyTeaClubServiceHtml } from '../src/lib/brand-content';
 import { PROTEIN_COFFEE, proteinCoffeeIcedPriceCents, proteinCoffeeOptionalAddInSlugs, proteinCoffeeProductDescriptionHtml, proteinCoffeeProductShortDescription, PROTEIN_COFFEE_PRODUCT_SLUG } from '../src/lib/protein-coffee-menu';
@@ -46,7 +46,6 @@ import {
   proteinTreatDescriptionHtml,
   proteinTreatItemPriceCents,
   proteinTreatItemVariants,
-  proteinTreatItemImage,
   proteinTreatPieImages,
   proteinTreatShortDescription,
 } from '../src/lib/protein-treats-menu';

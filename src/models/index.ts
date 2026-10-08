@@ -69,3 +69,6 @@ export type { IEmailVerificationToken } from './EmailVerificationToken';
 
 export { default as AuditLog } from './AuditLog';
 export type { IAuditLog } from './AuditLog';
+
+export { default as MenuCatalog } from './MenuCatalog';
+export type { IMenuCatalog } from './MenuCatalog';

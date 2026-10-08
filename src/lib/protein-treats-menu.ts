@@ -135,6 +135,7 @@ export function pieInACupVariantSku(sizeSlug: string, productSku: string): strin
 }
 
 function treatPackConfig(item: ProteinTreatMenuItem) {
+  void item;
   return PROTEIN_TREATS_MENU.proteinMiniDonuts.pack;
 }
 
@@ -158,7 +159,8 @@ function treatImageConfig(item: ProteinTreatMenuItem) {
   return PROTEIN_TREATS_MENU.pieInACup.image;
 }
 
-export function proteinTreatDescriptionHtml(_item: ProteinTreatMenuItem): string {
+export function proteinTreatDescriptionHtml(item: ProteinTreatMenuItem): string {
+  void item;
   return '';
 }
 

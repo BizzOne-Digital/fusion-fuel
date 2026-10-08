@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale } from 'next-intl';
 import {
   bookingStepEventSchema,
@@ -21,14 +20,8 @@ import { Button } from '@/components/ui/Button';
 import { toast } from '@/components/ui/Toast';
 import type { IService } from '@/models/Service';
 import { getLocalized } from '@/lib/utils';
+import { getBookingWizardCopy } from '@/lib/marketing-i18n';
 import type { Locale } from '@/types';
-
-const STEPS = ['Event', 'Schedule', 'Venue', 'Contact', 'Details', 'Review', 'Done'] as const;
-
-const PRODUCT_INTEREST_LABELS: Record<string, string> = {
-  'mega-tea-kits': 'Mega Tea Kits',
-  catering: 'Catering',
-};
 
 function formatReviewDate(value: unknown, locale: Locale): string {
   if (!value) return '—';
@@ -42,13 +35,16 @@ function formatReviewDate(value: unknown, locale: Locale): string {
   });
 }
 
-function formatReviewTime(value?: string): string {
+function formatReviewTime(value?: string, locale: Locale = 'en'): string {
   if (!value) return '—';
   const [hours, minutes] = value.split(':').map(Number);
   if (Number.isNaN(hours)) return value;
   const date = new Date();
   date.setHours(hours, minutes ?? 0, 0, 0);
-  return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  return date.toLocaleTimeString(locale === 'es' ? 'es-US' : 'en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
 }
 
 function ReviewSection({ title, children }: { title: string; children: React.ReactNode }) {
@@ -76,6 +72,7 @@ interface BookingWizardProps {
 
 export function BookingWizard({ services }: BookingWizardProps) {
   const locale = useLocale() as Locale;
+  const copy = getBookingWizardCopy(locale);
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<Partial<BookingInput>>({});
   const [reference, setReference] = useState('');
@@ -98,7 +95,7 @@ export function BookingWizard({ services }: BookingWizardProps) {
     const json = await res.json();
     setLoading(false);
     if (!res.ok) {
-      toast.error(json.error ?? 'Submission failed');
+      toast.error(json.error ?? copy.submissionFailed);
       return;
     }
     setReference(json.referenceNumber);
@@ -108,31 +105,28 @@ export function BookingWizard({ services }: BookingWizardProps) {
   if (step === 6) {
     return (
       <div className="rounded-2xl border border-lime/30 bg-cream p-8 text-center shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-wide text-pink">Request received</p>
-        <h2 className="mt-2 font-display text-3xl text-carbon">Thank you!</h2>
-        <p className="mt-4 text-grey">
-          Your catering request has been submitted. Our team will review the details and follow up soon.
-        </p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-pink">{copy.requestReceived}</p>
+        <h2 className="mt-2 font-display text-3xl text-carbon">{copy.thankYou}</h2>
+        <p className="mt-4 text-grey">{copy.submittedMessage}</p>
         <p className="mt-6 rounded-xl bg-white px-4 py-3 text-sm text-carbon">
-          Reference number: <strong className="font-display text-lg text-pink">{reference}</strong>
+          {copy.referenceLabel} <strong className="font-display text-lg text-pink">{reference}</strong>
         </p>
-        <p className="mt-3 text-xs text-grey">
-          This is a request, not a confirmed booking. We will contact you to confirm availability.
-        </p>
+        <p className="mt-3 text-xs text-grey">{copy.notConfirmed}</p>
       </div>
     );
   }
 
   const selectedService = services.find((service) => service.slug === formData.serviceSlug);
   const serviceName = selectedService ? getLocalized(selectedService.name, locale) : formData.serviceSlug;
+  const interestLabels = copy.productInterestLabels as Record<string, string>;
   const productInterests = (formData.productInterests ?? [])
-    .map((interest) => PRODUCT_INTEREST_LABELS[interest] ?? interest)
+    .map((interest) => interestLabels[interest] ?? interest)
     .join(', ');
 
   return (
     <div>
       <ol className="mb-8 flex flex-wrap gap-2">
-        {STEPS.slice(0, 6).map((label, i) => (
+        {copy.steps.slice(0, 6).map((label, i) => (
           <li key={label} className={`rounded-full px-3 py-1 text-xs font-semibold ${i === step ? 'bg-lime text-ink' : 'bg-cream text-grey'}`}>
             {i + 1}. {label}
           </li>
@@ -141,19 +135,19 @@ export function BookingWizard({ services }: BookingWizardProps) {
 
       {step === 0 && (
         <form onSubmit={handleSubmit((d) => { bookingStepEventSchema.parse(d); next(d); })} className="space-y-4">
-          <Select label="Catering service" options={[{ value: '', label: 'Select…' }, ...services.map((s) => ({ value: s.slug, label: getLocalized(s.name, locale) }))]} {...register('serviceSlug')} error={errors.serviceSlug?.message} />
-          <Input label="Event type" {...register('eventType')} error={errors.eventType?.message} />
-          <Button type="submit">Next</Button>
+          <Select label={copy.cateringService} options={[{ value: '', label: copy.selectPlaceholder }, ...services.map((s) => ({ value: s.slug, label: getLocalized(s.name, locale) }))]} {...register('serviceSlug')} error={errors.serviceSlug?.message} />
+          <Input label={copy.eventType} {...register('eventType')} error={errors.eventType?.message} />
+          <Button type="submit">{copy.next}</Button>
         </form>
       )}
 
       {step === 1 && (
         <form onSubmit={handleSubmit((d) => { bookingStepScheduleSchema.parse(d); next(d); })} className="space-y-4">
-          <Input label="Preferred date" type="date" {...register('preferredDate')} error={errors.preferredDate?.message} />
-          <Input label="Alternate date (optional)" type="date" {...register('alternateDate')} />
-          <Input label="Start time" type="time" {...register('startTime')} error={errors.startTime?.message} />
+          <Input label={copy.preferredDate} type="date" {...register('preferredDate')} error={errors.preferredDate?.message} />
+          <Input label={copy.alternateDate} type="date" {...register('alternateDate')} />
+          <Input label={copy.startTime} type="time" {...register('startTime')} error={errors.startTime?.message} />
           <Input
-            label="Guest count"
+            label={copy.guestCount}
             type="number"
             min={BOOKING_GUEST_COUNT_MIN}
             max={BOOKING_GUEST_COUNT_MAX}
@@ -162,35 +156,35 @@ export function BookingWizard({ services }: BookingWizardProps) {
             error={errors.guestCount?.message}
           />
           <p className="text-sm text-grey">
-            Events are available for {BOOKING_GUEST_COUNT_MIN}–{BOOKING_GUEST_COUNT_MAX} guests.
+            {copy.eventsGuestRangeLead} {BOOKING_GUEST_COUNT_MIN}–{BOOKING_GUEST_COUNT_MAX} {copy.eventsGuestRangeSuffix}
           </p>
-          <Button type="button" variant="outline" onClick={() => setStep(0)}>Back</Button>
-          <Button type="submit">Next</Button>
+          <Button type="button" variant="outline" onClick={() => setStep(0)}>{copy.back}</Button>
+          <Button type="submit">{copy.next}</Button>
         </form>
       )}
 
       {step === 2 && (
         <form onSubmit={handleSubmit((d) => { bookingStepVenueSchema.parse(d); next(d); })} className="space-y-4">
-          <Select label="Fulfillment" options={[{ value: 'delivery', label: 'Delivery' }, { value: 'pickup', label: 'Pickup' }]} {...register('fulfillmentMethod')} />
-          <Input label="Venue name (optional)" {...register('venueName')} />
-          <Input label="Street" {...register('street')} error={errors.street?.message} />
-          <Input label="City" {...register('city')} error={errors.city?.message} />
-          <Input label="State" {...register('state')} error={errors.state?.message} />
-          <Input label="ZIP" {...register('zip')} error={errors.zip?.message} />
-          <Button type="button" variant="outline" onClick={() => setStep(1)}>Back</Button>
-          <Button type="submit">Next</Button>
+          <Select label={copy.fulfillment} options={[{ value: 'delivery', label: copy.delivery }, { value: 'pickup', label: copy.pickup }]} {...register('fulfillmentMethod')} />
+          <Input label={copy.venueName} {...register('venueName')} />
+          <Input label={copy.street} {...register('street')} error={errors.street?.message} />
+          <Input label={copy.city} {...register('city')} error={errors.city?.message} />
+          <Input label={copy.state} {...register('state')} error={errors.state?.message} />
+          <Input label={copy.zip} {...register('zip')} error={errors.zip?.message} />
+          <Button type="button" variant="outline" onClick={() => setStep(1)}>{copy.back}</Button>
+          <Button type="submit">{copy.next}</Button>
         </form>
       )}
 
       {step === 3 && (
         <form onSubmit={handleSubmit((d) => { bookingStepContactSchema.parse(d); next(d); })} className="space-y-4">
-          <Input label="Contact name" {...register('contactName')} error={errors.contactName?.message} />
-          <Input label="Organization (optional)" {...register('organization')} />
-          <Input label="Email" type="email" {...register('email')} error={errors.email?.message} />
-          <Input label="Phone" {...register('phone')} error={errors.phone?.message} />
-          <Select label="Preferred contact" options={[{ value: 'email', label: 'Email' }, { value: 'phone', label: 'Phone' }]} {...register('preferredContactMethod')} />
-          <Button type="button" variant="outline" onClick={() => setStep(2)}>Back</Button>
-          <Button type="submit">Next</Button>
+          <Input label={copy.contactName} {...register('contactName')} error={errors.contactName?.message} />
+          <Input label={copy.organization} {...register('organization')} />
+          <Input label={copy.email} type="email" {...register('email')} error={errors.email?.message} />
+          <Input label={copy.phone} {...register('phone')} error={errors.phone?.message} />
+          <Select label={copy.preferredContact} options={[{ value: 'email', label: copy.email }, { value: 'phone', label: copy.phone }]} {...register('preferredContactMethod')} />
+          <Button type="button" variant="outline" onClick={() => setStep(2)}>{copy.back}</Button>
+          <Button type="submit">{copy.next}</Button>
         </form>
       )}
 
@@ -201,76 +195,74 @@ export function BookingWizard({ services }: BookingWizardProps) {
           next(merged);
         })} className="space-y-4">
           <input type="text" {...register('website')} className="hidden" tabIndex={-1} autoComplete="off" />
-          <Textarea label="Dietary notes" {...register('dietaryNotes')} />
-          <Input label="Budget range (optional)" {...register('budgetRange')} />
-          <Textarea label="Special instructions" {...register('specialInstructions')} />
+          <Textarea label={copy.dietaryNotes} {...register('dietaryNotes')} />
+          <Input label={copy.budgetRange} {...register('budgetRange')} />
+          <Textarea label={copy.specialInstructions} {...register('specialInstructions')} />
           <label className="flex items-start gap-2 text-sm">
             <input type="checkbox" {...register('consent')} />
-            <span>I consent to be contacted about this catering request.</span>
+            <span>{copy.consent}</span>
           </label>
           {errors.consent && <p className="text-sm text-coral">{errors.consent.message}</p>}
-          <Button type="button" variant="outline" onClick={() => setStep(3)}>Back</Button>
-          <Button type="submit">Next</Button>
+          <Button type="button" variant="outline" onClick={() => setStep(3)}>{copy.back}</Button>
+          <Button type="submit">{copy.next}</Button>
         </form>
       )}
 
       {step === 5 && (
         <div className="space-y-6">
           <div>
-            <h2 className="font-display text-3xl text-carbon">Review your request</h2>
-            <p className="mt-2 text-sm text-grey">
-              Please confirm your catering details before submitting.
-            </p>
+            <h2 className="font-display text-3xl text-carbon">{copy.reviewTitle}</h2>
+            <p className="mt-2 text-sm text-grey">{copy.reviewSubtitle}</p>
           </div>
 
-          <ReviewSection title="Event">
-            <ReviewField label="Catering service" value={serviceName} />
-            <ReviewField label="Event type" value={formData.eventType} />
+          <ReviewSection title={copy.sectionEvent}>
+            <ReviewField label={copy.cateringService} value={serviceName} />
+            <ReviewField label={copy.eventType} value={formData.eventType} />
           </ReviewSection>
 
-          <ReviewSection title="Schedule">
-            <ReviewField label="Preferred date" value={formatReviewDate(formData.preferredDate, locale)} />
-            <ReviewField label="Alternate date" value={formatReviewDate(formData.alternateDate, locale)} />
-            <ReviewField label="Start time" value={formatReviewTime(formData.startTime)} />
-            <ReviewField label="Guest count" value={formData.guestCount} />
+          <ReviewSection title={copy.sectionSchedule}>
+            <ReviewField label={copy.preferredDate} value={formatReviewDate(formData.preferredDate, locale)} />
+            <ReviewField label={copy.alternateDate} value={formatReviewDate(formData.alternateDate, locale)} />
+            <ReviewField label={copy.startTime} value={formatReviewTime(formData.startTime, locale)} />
+            <ReviewField label={copy.guestCount} value={formData.guestCount} />
           </ReviewSection>
 
-          <ReviewSection title="Venue">
+          <ReviewSection title={copy.sectionVenue}>
             <ReviewField
-              label="Fulfillment"
-              value={formData.fulfillmentMethod === 'pickup' ? 'Pickup' : 'Delivery'}
+              label={copy.fulfillment}
+              value={formData.fulfillmentMethod === 'pickup' ? copy.pickup : copy.delivery}
             />
-            <ReviewField label="Venue name" value={formData.venueName} />
-            <ReviewField label="Street" value={formData.street} />
-            <ReviewField label="City" value={formData.city} />
-            <ReviewField label="State" value={formData.state} />
-            <ReviewField label="ZIP" value={formData.zip} />
+            <ReviewField label={copy.venueName} value={formData.venueName} />
+            <ReviewField label={copy.street} value={formData.street} />
+            <ReviewField label={copy.city} value={formData.city} />
+            <ReviewField label={copy.state} value={formData.state} />
+            <ReviewField label={copy.zip} value={formData.zip} />
           </ReviewSection>
 
-          <ReviewSection title="Contact">
-            <ReviewField label="Contact name" value={formData.contactName} />
-            <ReviewField label="Organization" value={formData.organization} />
-            <ReviewField label="Email" value={formData.email} />
-            <ReviewField label="Phone" value={formData.phone} />
+          <ReviewSection title={copy.sectionContact}>
+            <ReviewField label={copy.contactName} value={formData.contactName} />
+            <ReviewField label={copy.organization} value={formData.organization} />
+            <ReviewField label={copy.email} value={formData.email} />
+            <ReviewField label={copy.phone} value={formData.phone} />
             <ReviewField
-              label="Preferred contact"
-              value={formData.preferredContactMethod === 'phone' ? 'Phone' : 'Email'}
+              label={copy.preferredContact}
+              value={formData.preferredContactMethod === 'phone' ? copy.phone : copy.email}
             />
           </ReviewSection>
 
-          <ReviewSection title="Details">
-            <ReviewField label="Product interests" value={productInterests} />
-            <ReviewField label="Dietary notes" value={formData.dietaryNotes} />
-            <ReviewField label="Budget range" value={formData.budgetRange} />
-            <ReviewField label="Special instructions" value={formData.specialInstructions} />
+          <ReviewSection title={copy.sectionDetails}>
+            <ReviewField label={copy.productInterests} value={productInterests} />
+            <ReviewField label={copy.dietaryNotes} value={formData.dietaryNotes} />
+            <ReviewField label={copy.budgetRange} value={formData.budgetRange} />
+            <ReviewField label={copy.specialInstructions} value={formData.specialInstructions} />
           </ReviewSection>
 
           <div className="flex flex-wrap gap-3 border-t border-grey/15 pt-6">
             <Button type="button" variant="outline" onClick={() => setStep(4)}>
-              Back
+              {copy.back}
             </Button>
             <Button loading={loading} onClick={submit}>
-              Submit Request
+              {copy.submit}
             </Button>
           </div>
         </div>

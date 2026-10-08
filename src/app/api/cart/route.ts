@@ -68,7 +68,7 @@ export async function PATCH(request: NextRequest) {
       session?.user?.role === 'customer' ? session.user.id : undefined
     );
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update cart' }, { status: 400 });
   }
 }
@@ -84,7 +84,7 @@ export async function DELETE(request: NextRequest) {
       session?.user?.role === 'customer' ? session.user.id : undefined
     );
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to remove item' }, { status: 400 });
   }
 }

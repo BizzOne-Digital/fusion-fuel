@@ -10,7 +10,8 @@ import { PageHero } from '@/components/sections/PageHero';
 import { LifestyleMontage } from '@/components/sections/LifestyleMontage';
 import { PageCtaBanner } from '@/components/sections/PageCtaBanner';
 import { Button } from '@/components/ui/Button';
-import { ACAI_BOWL_EVENT, CONTACT } from '@/lib/brand-content';
+import { CONTACT } from '@/lib/brand-content';
+import { getAcaiBowlEvent } from '@/lib/marketing-i18n';
 import { SITE_IMAGES } from '@/lib/site-images';
 import type { IService } from '@/models/Service';
 import type { Locale } from '@/types';
@@ -22,6 +23,7 @@ interface BookingPageSectionsProps {
 
 export function BookingPageSections({ locale, services }: BookingPageSectionsProps) {
   const isEs = locale === 'es';
+  const acaiEvent = getAcaiBowlEvent(locale);
 
   return (
     <div className="min-w-0 overflow-x-hidden">
@@ -30,8 +32,8 @@ export function BookingPageSections({ locale, services }: BookingPageSectionsPro
         title={isEs ? 'Reservar Catering' : 'Book Catering'}
         subtitle={
           isEs
-            ? `Solicita un evento — incluyendo ${ACAI_BOWL_EVENT.name}. Confirmación después de revisión.`
-            : `Request an event — including our ${ACAI_BOWL_EVENT.name}. Confirmation follows after review.`
+            ? `Solicita un evento — incluyendo ${acaiEvent.name}. Confirmación después de revisión.`
+            : `Request an event — including our ${acaiEvent.name}. Confirmation follows after review.`
         }
         image={SITE_IMAGES.booking}
         imageAlt="Fusion Fuel catering"
@@ -62,12 +64,12 @@ export function BookingPageSections({ locale, services }: BookingPageSectionsPro
               {
                 icon: MapPin,
                 label: isEs ? 'Área de servicio' : 'Service Area',
-                value: ACAI_BOWL_EVENT.serviceArea,
+                value: acaiEvent.serviceArea,
               },
               {
                 icon: PartyPopper,
                 label: isEs ? 'Experiencias' : 'Experiences',
-                value: ACAI_BOWL_EVENT.name,
+                value: acaiEvent.name,
               },
             ].map((item) => (
               <div key={item.label} className="flex items-center gap-4 sm:block sm:text-left">
@@ -92,16 +94,16 @@ export function BookingPageSections({ locale, services }: BookingPageSectionsPro
                 <div className="relative mb-8 overflow-hidden rounded-3xl shadow-xl">
                   <Image
                     src={SITE_IMAGES.acaiBowl}
-                    alt={ACAI_BOWL_EVENT.name}
+                    alt={acaiEvent.name}
                     width={600}
                     height={450}
                     className="h-auto w-full object-cover"
                   />
                 </div>
                 <div className="card-hover rounded-2xl border border-grey/15 bg-cream p-6">
-                  <p className="font-semibold text-carbon">{ACAI_BOWL_EVENT.deposit}</p>
-                  <p className="mt-2 text-grey">{ACAI_BOWL_EVENT.balance}</p>
-                  <p className="mt-4 text-sm text-grey">{ACAI_BOWL_EVENT.serviceArea}</p>
+                  <p className="font-semibold text-carbon">{acaiEvent.deposit}</p>
+                  <p className="mt-2 text-grey">{acaiEvent.balance}</p>
+                  <p className="mt-4 text-sm text-grey">{acaiEvent.serviceArea}</p>
                   <p className="mt-2 text-sm text-grey">
                     {isEs ? 'Llama' : 'Call'} {CONTACT.phoneDisplay} {isEs ? 'con preguntas.' : 'with questions.'}
                   </p>
@@ -143,7 +145,7 @@ export function BookingPageSections({ locale, services }: BookingPageSectionsPro
         </section>
       </SectionReveal>
 
-      <LifestyleMontage />
+      <LifestyleMontage locale={locale} />
       <PageCtaBanner
         title={isEs ? '¿Preguntas antes de reservar?' : 'Questions Before You Book?'}
         primaryHref="/contact"

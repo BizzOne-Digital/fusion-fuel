@@ -277,7 +277,10 @@ export function loadedTeaFlavorNote(flavorName: string): string {
   return `Flavor: ${flavorName}`;
 }
 
-export function loadedTeaItemImage(item: LoadedTeaMenuItem): { url: string; alt: string } {
+export function loadedTeaItemImage(item: {
+  name: string;
+  image?: string;
+}): { url: string; alt: string } {
   const image = 'image' in item && item.image ? item.image : null;
   if (image) {
     return { url: image, alt: item.name };
@@ -290,8 +293,9 @@ export function loadedTeaChipColor(index: number): string {
 }
 
 export function loadedTeaVariantSku(sizeSlug: string, itemSlug: string): string {
-  const sizeKey = sizeSlug.replace('oz', '');
-  return loadedTeaIsPremium(itemSlug) ? `FFB-LTEA-P${sizeKey}` : `FFB-LTEA-${sizeKey}`;
+  const sizeKey = sizeSlug.replace(/oz/i, '');
+  const base = loadedTeaIsPremium(itemSlug) ? `FFB-LTEA-P${sizeKey}` : `FFB-LTEA-${sizeKey}`;
+  return `${base}.${itemSlug}`.toUpperCase();
 }
 
 export function loadedTeaProductShortDescription(): string {

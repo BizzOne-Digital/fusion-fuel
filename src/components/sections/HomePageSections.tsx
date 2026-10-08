@@ -19,7 +19,6 @@ import {
   getMonthlyTeaClub,
 } from '@/lib/marketing-i18n';
 import type { Locale } from '@/types';
-import type { IProduct } from '@/models/Product';
 import type { IProductCategory } from '@/models/ProductCategory';
 import type { IService } from '@/models/Service';
 import type { ISiteSettings } from '@/models/SiteSettings';
@@ -34,7 +33,6 @@ interface HomePageSectionsProps {
     backgroundImage?: { url: string; alt: string };
     cta?: { label: { en: string; es: string }; href: string };
   };
-  products: IProduct[];
   categories: IProductCategory[];
   services: IService[];
   settings: Partial<ISiteSettings>;
@@ -43,7 +41,6 @@ interface HomePageSectionsProps {
 export function HomePageSections({
   locale,
   hero,
-  products,
   categories,
   services,
   settings,
@@ -74,7 +71,7 @@ export function HomePageSections({
         <MegaTeaKitFactsSection locale={locale} kitHref={MEGA_TEA_KITS_MENU_HREF} />
       </SectionReveal>
 
-      {/* Açaí Bowl Event Experience */}      <AcaiBowlEventSection />
+      <AcaiBowlEventSection locale={locale} />
 
       {/* Monthly Tea Club */}      <SectionReveal>
         <MonthlyTeaClubSection locale={locale} />
@@ -131,7 +128,7 @@ export function HomePageSections({
 
       <LifestyleMontage locale={locale} />
 
-      <SocialFollowSection social={settings.social} />
+      <SocialFollowSection locale={locale} social={settings.social} />
 
       {/* 21. Final CTA */}
       <SectionReveal>

@@ -15,9 +15,13 @@ import {
   isLoadedTeaProduct,
   loadedTeaFlavorNote,
   loadedTeaItemImage,
-  loadedTeaSizePriceCents,
   loadedTeaVariantSku,
 } from '@/lib/loaded-teas-menu';
+import {
+  resolveLoadedTeaSizePriceCents,
+  type LoadedTeaMenuView,
+} from '@/lib/menu-catalog/loaded-tea-catalog';
+import type { LoadedTeasCatalogData } from '@/types/menu-catalog';
 import type { IProduct } from '@/models/Product';
 import type { IAddIn } from '@/models/AddIn';
 import type { Locale } from '@/types';
@@ -26,24 +30,47 @@ interface LoadedTeaProductDetailProps {
   product: IProduct;
   addIns: IAddIn[];
   locale: Locale;
+  menu?: LoadedTeaMenuView;
+  loadedTeasCatalog?: LoadedTeasCatalogData;
 }
 
-export function LoadedTeaProductDetail({ product, addIns, locale }: LoadedTeaProductDetailProps) {
+export function LoadedTeaProductDetail({
+  product,
+  addIns,
+  locale,
+  menu,
+  loadedTeasCatalog,
+}: LoadedTeaProductDetailProps) {
+  const menuView = menu ?? {
+    heroImage: LOADED_TEAS_MENU.heroImage,
+    sizes: LOADED_TEAS_MENU.sizes.map((s) => ({ slug: s.slug, name: s.name, price: s.price })),
+    items: LOADED_TEAS_MENU.items.map((item) => ({
+      slug: item.slug,
+      name: item.name,
+      ingredients: [...item.ingredients],
+      image: 'image' in item ? item.image : undefined,
+      servingNote: 'servingNote' in item ? item.servingNote : undefined,
+      boosted: 'boosted' in item ? item.boosted : undefined,
+    })),
+  };
+
+  const priceCents = (sizeSlug: string, flavorSlug?: string) =>
+    resolveLoadedTeaSizePriceCents(loadedTeasCatalog, sizeSlug, flavorSlug);
   const { addItem } = useCart();
   const [flavorSlug, setFlavorSlug] = useState('');
-  const [sizeSlug, setSizeSlug] = useState<string>(LOADED_TEAS_MENU.sizes[0].slug);
+  const [sizeSlug, setSizeSlug] = useState<string>(menuView.sizes[0]?.slug ?? '24oz');
   const [selectedAddIns, setSelectedAddIns] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
 
   const name = getLocalized(product.name, locale);
 
-  const selectedItem = LOADED_TEAS_MENU.items.find((item) => item.slug === flavorSlug);
+  const selectedItem = menuView.items.find((item) => item.slug === flavorSlug);
   const displayImage = selectedItem
     ? loadedTeaItemImage(selectedItem)
-    : (getPrimaryProductImage(product) ?? LOADED_TEAS_MENU.heroImage);
+    : (getPrimaryProductImage(product) ?? menuView.heroImage);
 
   const variantSku = flavorSlug ? loadedTeaVariantSku(sizeSlug, flavorSlug) : '';
-  const unitPrice = flavorSlug ? loadedTeaSizePriceCents(sizeSlug, flavorSlug) : 0;
+  const unitPrice = flavorSlug ? priceCents(sizeSlug, flavorSlug) : 0;
 
   const addInTotal = useMemo(
     () =>
@@ -129,7 +156,7 @@ export function LoadedTeaProductDetail({ product, addIns, locale }: LoadedTeaPro
                     value: '',
                     label: locale === 'es' ? 'Selecciona un sabor' : 'Select a flavor',
                   },
-                  ...LOADED_TEAS_MENU.items.map((item) => ({
+                  ...menuView.items.map((item) => ({
                     value: item.slug,
                     label: item.name,
                   })),
@@ -141,7 +168,7 @@ export function LoadedTeaProductDetail({ product, addIns, locale }: LoadedTeaPro
           <div>
             <h3 className="font-display text-2xl">{locale === 'es' ? 'Tamaño' : 'Size'}</h3>
             <div className="mt-4 flex flex-wrap gap-3">
-              {LOADED_TEAS_MENU.sizes.map((size) => (
+              {menuView.sizes.map((size) => (
                 <button
                   key={size.slug}
                   type="button"
@@ -153,7 +180,7 @@ export function LoadedTeaProductDetail({ product, addIns, locale }: LoadedTeaPro
                   <p className="font-semibold">{size.name}</p>
                   {flavorSlug && (
                     <p className="mt-1 text-sm text-grey">
-                      {formatPrice(loadedTeaSizePriceCents(size.slug, flavorSlug), 'USD', locale)}
+                      {formatPrice(priceCents(size.slug, flavorSlug), 'USD', locale)}
                     </p>
                   )}
                 </button>

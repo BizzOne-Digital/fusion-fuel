@@ -1,6 +1,5 @@
 import { Types } from 'mongoose';
 import connectDB from '@/lib/mongodb';
-import Order from '@/models/Order';
 import Promotion from '@/models/Promotion';
 import type { CartItem, FulfillmentMethod, OrderTotals, PromotionType } from '@/types';
 import { DEFAULT_CURRENCY } from '@/lib/constants';

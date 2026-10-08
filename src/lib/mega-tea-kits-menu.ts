@@ -129,7 +129,8 @@ export function megaTeaKitIncludesSummary(): string {
   return MEGA_TEA_KITS_MENU.includes.join(', ');
 }
 
-export function megaTeaKitDescriptionHtml(_collectionName?: string): string {
+export function megaTeaKitDescriptionHtml(collectionName?: string): string {
+  void collectionName;
   return '';
 }
 

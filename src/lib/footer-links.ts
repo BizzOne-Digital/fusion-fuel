@@ -1,5 +1,5 @@
-import type { FooterSettings, LegalLink } from '@/types';
-import { normalizeAppHref } from '@/lib/utils';
+import type { FooterSettings, LegalLink, LocalizedString } from '@/types';
+import { mergeLocalizedString, normalizeAppHref } from '@/lib/utils';
 
 /** Canonical footer columns — paths must NOT include locale prefix (/en, /es). */
 export const DEFAULT_FOOTER_COLUMNS: FooterSettings['columns'] = [
@@ -72,8 +72,55 @@ export function parseAppLinkHref(href: string): AppLinkTarget {
   return { pathname: pathname || '/', query };
 }
 
+function findDefaultFooterLink(href: string) {
+  const normalized = sanitizeFooterHref(href);
+  for (const column of DEFAULT_FOOTER_COLUMNS ?? []) {
+    const match = column.links.find((link) => sanitizeFooterHref(link.href) === normalized);
+    if (match) return match;
+  }
+  return undefined;
+}
+
+function findDefaultFooterColumn(
+  title: LocalizedString,
+  links: NonNullable<FooterSettings['columns']>[number]['links']
+) {
+  const en = title.en?.trim()?.toLowerCase();
+  const byTitle = (DEFAULT_FOOTER_COLUMNS ?? []).find(
+    (column) => column.title.en?.trim()?.toLowerCase() === en
+  );
+  if (byTitle) return byTitle;
+
+  const firstHref = links[0]?.href;
+  if (!firstHref) return undefined;
+  const normalized = sanitizeFooterHref(firstHref);
+  return (DEFAULT_FOOTER_COLUMNS ?? []).find((column) =>
+    column.links.some((link) => sanitizeFooterHref(link.href) === normalized)
+  );
+}
+
+function mergeFooterColumnsWithDefaults(
+  columns: NonNullable<FooterSettings['columns']>
+): NonNullable<FooterSettings['columns']> {
+  return columns.map((column, index) => {
+    const defaultColumn =
+      findDefaultFooterColumn(column.title, column.links) ?? DEFAULT_FOOTER_COLUMNS?.[index];
+    return {
+      ...column,
+      title: mergeLocalizedString(column.title, defaultColumn?.title ?? column.title),
+      links: column.links.map((link) => {
+        const defaultLink = findDefaultFooterLink(link.href);
+        return {
+          ...link,
+          label: mergeLocalizedString(link.label, defaultLink?.label ?? link.label),
+        };
+      }),
+    };
+  });
+}
+
 function sanitizeFooterColumns(columns: FooterSettings['columns']): NonNullable<FooterSettings['columns']> {
-  return (columns ?? [])
+  const sanitized = (columns ?? [])
     .map((column) => ({
       ...column,
       links: (column.links ?? [])
@@ -87,6 +134,9 @@ function sanitizeFooterColumns(columns: FooterSettings['columns']): NonNullable<
         }),
     }))
     .filter((column) => column.links.length > 0);
+
+  if (sanitized.length === 0) return sanitized;
+  return mergeFooterColumnsWithDefaults(sanitized);
 }
 
 function sanitizeLegalLinks(links: LegalLink[]): LegalLink[] {

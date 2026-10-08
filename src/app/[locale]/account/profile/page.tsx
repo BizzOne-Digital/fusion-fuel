@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { toast } from '@/components/ui/Toast';
 
 export default function ProfilePage() {
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
   const t = useTranslations('account');
 
   if (!session?.user) return null;

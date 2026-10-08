@@ -20,6 +20,27 @@ export function getLocalized(
   return value.en?.trim() || value.es?.trim() || fallback;
 }
 
+/** Use `fallback.es` when stored Spanish is missing, placeholder, or identical to English. */
+export function mergeLocalizedString(
+  value: LocalizedString | undefined,
+  fallback: LocalizedString
+): LocalizedString {
+  const en = value?.en?.trim() || fallback.en;
+  let es = value?.es?.trim() ?? '';
+  if (!es || es === en || isSpanishContentPlaceholder(es)) {
+    es = fallback.es;
+  }
+  return { en, es };
+}
+
+export function resolveLocalized(
+  value: LocalizedString | undefined,
+  locale: Locale,
+  fallback: LocalizedString
+): string {
+  return getLocalized(mergeLocalizedString(value, fallback), locale);
+}
+
 export function formatPrice(
   amountMinor: number | null | undefined,
   currency = DEFAULT_CURRENCY,

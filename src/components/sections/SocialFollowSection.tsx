@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import { SectionReveal } from '@/components/motion/SectionReveal';
 import { CONTACT } from '@/lib/brand-content';
+import { getSocialFollowCopy } from '@/lib/marketing-i18n';
+import type { Locale } from '@/types';
 
 interface SocialLink {
   platform: string;
@@ -11,10 +13,12 @@ interface SocialLink {
 }
 
 interface SocialFollowSectionProps {
+  locale: Locale;
   social?: SocialLink[];
 }
 
-export function SocialFollowSection({ social = [] }: SocialFollowSectionProps) {
+export function SocialFollowSection({ locale, social = [] }: SocialFollowSectionProps) {
+  const copy = getSocialFollowCopy(locale);
   const instagram = social.find((s) => s.platform === 'instagram');
   const facebook = social.find((s) => s.platform === 'facebook');
   const tiktok = social.find((s) => s.platform === 'tiktok');
@@ -27,15 +31,15 @@ export function SocialFollowSection({ social = [] }: SocialFollowSectionProps) {
             <div className="relative h-44 w-44 shrink-0 overflow-hidden rounded-2xl bg-white/10 shadow-lg">
               <Image
                 src={CONTACT.instagramQrImage}
-                alt={`Scan to follow ${CONTACT.instagramHandle} on Instagram`}
+                alt={copy.qrAlt(CONTACT.instagramHandle)}
                 fill
                 className="object-cover"
                 sizes="176px"
               />
             </div>
             <div>
-              <h2 className="font-display text-4xl">Follow the Energy</h2>
-              <p className="mt-2 text-white/85">Scan the code or tap below to follow us on social.</p>
+              <h2 className="font-display text-4xl">{copy.title}</h2>
+              <p className="mt-2 text-white/85">{copy.subtitle}</p>
               <div className="mt-4 flex flex-wrap justify-center gap-4 md:justify-start">
                 <a
                   href={instagram?.url ?? CONTACT.instagramUrl}
