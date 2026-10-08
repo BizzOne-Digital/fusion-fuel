@@ -1,18 +1,28 @@
 import Image from 'next/image';
 import { Sparkles, Gift, Leaf, CalendarHeart, CupSoda, BookOpen, Check } from 'lucide-react';
-import { CATERING_TAGLINE, DELIVERY, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
 import { MonthlyTeaClubJoinPanel } from '@/components/sections/MonthlyTeaClubJoinPanel';
+import {
+  getCateringTagline,
+  getDelivery,
+  getHomePageCopy,
+  getMonthlyTeaClub,
+} from '@/lib/marketing-i18n';
 import { cn } from '@/lib/utils';
+import type { Locale } from '@/types';
 
 const FEATURE_ICONS = [Sparkles, Leaf, Gift, CalendarHeart] as const;
 const INSIDE_ICONS = [CupSoda, BookOpen, Sparkles, Gift, CalendarHeart] as const;
 
 interface MonthlyTeaClubSectionProps {
+  locale?: Locale;
   /** When true, reduces outer padding for use inside the menu category panel. */
   embedded?: boolean;
 }
 
-export function MonthlyTeaClubSection({ embedded = false }: MonthlyTeaClubSectionProps) {
+export function MonthlyTeaClubSection({ locale = 'en', embedded = false }: MonthlyTeaClubSectionProps) {
+  const club = getMonthlyTeaClub(locale);
+  const delivery = getDelivery(locale);
+  const copy = getHomePageCopy(locale);
   return (
     <section className="relative w-full overflow-x-hidden bg-white text-carbon">
       <div
@@ -26,7 +36,7 @@ export function MonthlyTeaClubSection({ embedded = false }: MonthlyTeaClubSectio
             <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-lime/20 via-transparent to-pink/20 blur-2xl" />
             <div className="relative overflow-hidden rounded-[1.75rem] border border-grey/15 bg-white shadow-xl">
               <Image
-                src={MONTHLY_TEA_CLUB.posterImage}
+                src={club.posterImage}
                 alt="Monthly Mega Tea Club — Fusion Fuel & Boost Co."
                 width={720}
                 height={900}
@@ -37,16 +47,16 @@ export function MonthlyTeaClubSection({ embedded = false }: MonthlyTeaClubSectio
           </div>
 
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-pink">{MONTHLY_TEA_CLUB.intro}</p>
-            <h2 className="font-display mt-3 text-5xl leading-none text-carbon md:text-6xl">{MONTHLY_TEA_CLUB.name}</h2>
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-pink">{club.intro}</p>
+            <h2 className="font-display mt-3 text-5xl leading-none text-carbon md:text-6xl">{club.name}</h2>
             <div className="mt-6 space-y-3">
-              <p className="text-xl font-semibold text-carbon md:text-2xl">{MONTHLY_TEA_CLUB.taglines.primary}</p>
-              <p className="text-lg italic text-pink">{MONTHLY_TEA_CLUB.taglines.secondary}</p>
-              <p className="max-w-xl text-base text-grey">{MONTHLY_TEA_CLUB.surpriseNote}</p>
+              <p className="text-xl font-semibold text-carbon md:text-2xl">{club.taglines.primary}</p>
+              <p className="text-lg italic text-pink">{club.taglines.secondary}</p>
+              <p className="max-w-xl text-base text-grey">{club.surpriseNote}</p>
             </div>
 
             <ul className="mt-8 space-y-3 text-sm text-grey">
-              {MONTHLY_TEA_CLUB.features.slice(0, 3).map((feature) => (
+              {club.features.slice(0, 3).map((feature) => (
                 <li key={feature.title} className="flex gap-2">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-pink" aria-hidden />
                   <span>
@@ -58,16 +68,16 @@ export function MonthlyTeaClubSection({ embedded = false }: MonthlyTeaClubSectio
           </div>
         </div>
 
-        <MonthlyTeaClubJoinPanel />
+        <MonthlyTeaClubJoinPanel locale={locale} />
 
         <div className="mt-20 lg:mt-24">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-pink">Membership Benefits</p>
-            <h3 className="font-display mt-3 text-4xl text-carbon md:text-5xl">Why You&apos;ll Love It</h3>
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-pink">{copy.membershipBenefits}</p>
+            <h3 className="font-display mt-3 text-4xl text-carbon md:text-5xl">{copy.whyLoveIt}</h3>
           </div>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {MONTHLY_TEA_CLUB.features.map((feature, index) => {
+            {club.features.map((feature, index) => {
               const Icon = FEATURE_ICONS[index] ?? Sparkles;
               return (
                 <article
@@ -89,14 +99,16 @@ export function MonthlyTeaClubSection({ embedded = false }: MonthlyTeaClubSectio
         <div className="mt-20 rounded-[1.75rem] border border-grey/15 bg-white p-6 shadow-sm md:p-8 lg:mt-24 lg:p-10">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-pink">Every Box Includes</p>
-              <h3 className="font-display mt-2 text-4xl text-carbon md:text-5xl">What&apos;s Inside?</h3>
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-pink">
+                {locale === 'es' ? 'Cada caja incluye' : 'Every Box Includes'}
+              </p>
+              <h3 className="font-display mt-2 text-4xl text-carbon md:text-5xl">{copy.whatsInsideTitle}</h3>
             </div>
-            <p className="max-w-md text-sm text-grey lg:text-right">{MONTHLY_TEA_CLUB.taglines.value}</p>
+            <p className="max-w-md text-sm text-grey lg:text-right">{club.taglines.value}</p>
           </div>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            {MONTHLY_TEA_CLUB.whatsInside.map((item, index) => {
+            {club.whatsInside.map((item, index) => {
               const Icon = INSIDE_ICONS[index] ?? Check;
               return (
                 <div
@@ -114,19 +126,19 @@ export function MonthlyTeaClubSection({ embedded = false }: MonthlyTeaClubSectio
         </div>
 
         <div className="mt-20 rounded-[1.75rem] border border-grey/15 bg-cream/30 p-6 md:p-8 lg:mt-24">
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-pink">{MONTHLY_TEA_CLUB.joinHeadline}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-pink">{club.joinHeadline}</p>
           <ul className="mt-6 space-y-3 text-sm text-grey">
             <li className="flex gap-2">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-pink" aria-hidden />
-              {DELIVERY.local}
+              {delivery.local}
             </li>
             <li className="flex gap-2">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-pink" aria-hidden />
-              {DELIVERY.nationwide}
+              {delivery.nationwide}
             </li>
             <li className="flex gap-2">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-pink" aria-hidden />
-              {CATERING_TAGLINE}
+              {getCateringTagline(locale)}
             </li>
           </ul>
         </div>

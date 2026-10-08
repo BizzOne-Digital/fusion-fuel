@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { VENMO_CHECKOUT } from '@/lib/brand-content';
+import { getVenmoInstructions } from '@/lib/marketing-i18n';
 import { formatPrice } from '@/lib/utils';
 import type { OrderTotals } from '@/types';
 
@@ -41,7 +42,7 @@ export function VenmoPaymentStep({ totals, confirmed, onConfirmedChange }: Venmo
           <p className="mt-3 text-sm text-grey">
             {t('venmoHandle')}: <span className="font-semibold text-carbon">{VENMO_CHECKOUT.handle}</span>
           </p>
-          <p className="mt-4 text-xs text-grey">{VENMO_CHECKOUT.instructions}</p>
+          <p className="mt-4 text-xs text-grey">{getVenmoInstructions(locale)}</p>
         </div>
       </div>
 

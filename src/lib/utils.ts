@@ -1,5 +1,6 @@
 import type { LocalizedRichText, LocalizedString, Locale } from '@/types';
 import { DEFAULT_CURRENCY } from '@/lib/constants';
+import { isSpanishContentPlaceholder } from '@/lib/locale-placeholders';
 
 export function cn(...classes: (string | false | null | undefined)[]): string {
   return classes.filter(Boolean).join(' ');
@@ -11,7 +12,12 @@ export function getLocalized(
   fallback = ''
 ): string {
   if (!value) return fallback;
-  return value[locale] || value.en || fallback;
+  if (locale === 'es') {
+    const es = value.es?.trim();
+    if (es && !isSpanishContentPlaceholder(es)) return es;
+    return value.en?.trim() || fallback;
+  }
+  return value.en?.trim() || value.es?.trim() || fallback;
 }
 
 export function formatPrice(

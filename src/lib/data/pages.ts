@@ -3,7 +3,7 @@ import Page from '@/models/Page';
 import type { IPage } from '@/models/Page';
 import type { Locale } from '@/types';
 import { SITE_IMAGES } from '@/lib/site-images';
-import { CATERING_TAGLINE, DELIVERY, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
+import { getCateringTagline, getDelivery, getMonthlyTeaClub } from '@/lib/marketing-i18n';
 
 const HOME_FALLBACK_SECTIONS = [
   { key: 'hero', type: 'custom' as const, order: 0, visible: true },
@@ -45,6 +45,9 @@ export async function getPublishedPages(): Promise<IPage[]> {
 }
 
 export function getHomeFallback(locale: Locale) {
+  const club = getMonthlyTeaClub(locale);
+  const delivery = getDelivery(locale);
+  const catering = getCateringTagline(locale);
   return {
     pageKey: 'home',
     title: {
@@ -57,15 +60,15 @@ export function getHomeFallback(locale: Locale) {
         es: 'IMPULSA TU DÍA. POTENCIA TU VIDA.',
       },
       subtitle: {
-        en: `${MONTHLY_TEA_CLUB.taglines.primary} Loaded Teas, Monthly Tea Club kits, and catering — ${MONTHLY_TEA_CLUB.taglines.secondary}`,
-        es: `${MONTHLY_TEA_CLUB.taglines.primary} Loaded Teas, kits del Monthly Tea Club y catering — ${MONTHLY_TEA_CLUB.taglines.secondary}`,
+        en: `${getMonthlyTeaClub('en').taglines.primary} Loaded Teas, Monthly Tea Club kits, and catering — ${getMonthlyTeaClub('en').taglines.secondary}`,
+        es: `${club.taglines.primary} Loaded teas, kits del club mensual y catering — ${club.taglines.secondary}`,
       },
       backgroundImage: {
         url: SITE_IMAGES.hero,
         alt: locale === 'es' ? 'Bebidas Loaded Tea' : 'Loaded Tea drinks',
       },
       cta: {
-        label: { en: MONTHLY_TEA_CLUB.cta, es: MONTHLY_TEA_CLUB.cta },
+        label: { en: getMonthlyTeaClub('en').cta, es: club.cta },
         href: '/menu?category=monthly-tea-club',
         variant: 'primary' as const,
       },
@@ -74,7 +77,9 @@ export function getHomeFallback(locale: Locale) {
     seo: {
       title: 'Fusion Fuel & Boost Co. | Premium Fuel for Body and Mind',
       description:
-        `${MONTHLY_TEA_CLUB.name}, Loaded Teas, and loaded tea kits. ${CATERING_TAGLINE} ${DELIVERY.local}`,
+        locale === 'es'
+          ? `${club.name}, loaded teas y kits de té. ${catering} ${delivery.local}`
+          : `${getMonthlyTeaClub('en').name}, Loaded Teas, and loaded tea kits. ${getCateringTagline('en')} ${getDelivery('en').local}`,
     },
   };
 }

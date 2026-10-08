@@ -6,7 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale } from 'next-intl';
 import { z } from 'zod';
 import { EMAIL_REGEX } from '@/lib/constants';
-import { CONTACT, MONTHLY_TEA_CLUB } from '@/lib/brand-content';
+import { CONTACT } from '@/lib/brand-content';
+import { getMonthlyTeaClub } from '@/lib/marketing-i18n';
+import type { Locale } from '@/types';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
@@ -14,7 +16,8 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { toast } from '@/components/ui/Toast';
 
-const PLAN_BADGES = ['Starter', 'Most Popular', 'Best Value', 'Bulk'] as const;
+const PLAN_BADGES_EN = ['Starter', 'Most Popular', 'Best Value', 'Bulk'] as const;
+const PLAN_BADGES_ES = ['Inicial', 'Más popular', 'Mejor valor', 'Mayoreo'] as const;
 
 const monthlyTeaClubSignupSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(120),
@@ -34,8 +37,15 @@ const monthlyTeaClubSignupSchema = z.object({
 
 type MonthlyTeaClubSignupInput = z.infer<typeof monthlyTeaClubSignupSchema>;
 
-export function MonthlyTeaClubJoinPanel() {
-  const locale = useLocale();
+interface MonthlyTeaClubJoinPanelProps {
+  locale?: Locale;
+}
+
+export function MonthlyTeaClubJoinPanel({ locale: localeProp }: MonthlyTeaClubJoinPanelProps) {
+  const localeFromHook = useLocale() as Locale;
+  const locale = localeProp ?? localeFromHook;
+  const club = getMonthlyTeaClub(locale);
+  const planBadges = locale === 'es' ? PLAN_BADGES_ES : PLAN_BADGES_EN;
   const [selectedPlan, setSelectedPlan] = useState<number | null>(null);
   const [fulfillment, setFulfillment] = useState<string>('');
 
@@ -49,8 +59,7 @@ export function MonthlyTeaClubJoinPanel() {
     defaultValues: { preferredContactMethod: 'phone' },
   });
 
-  const selectedPlanLabel =
-    MONTHLY_TEA_CLUB.plans.find((plan) => plan.kits === selectedPlan)?.label ?? null;
+  const selectedPlanLabel = club.plans.find((plan) => plan.kits === selectedPlan)?.label ?? null;
 
   const onSubmit = async (data: MonthlyTeaClubSignupInput) => {
     if (!selectedPlan || !fulfillment) {
@@ -62,7 +71,7 @@ export function MonthlyTeaClubJoinPanel() {
       return;
     }
 
-    const fulfillmentLabel = MONTHLY_TEA_CLUB.fulfillmentOptions.find(
+    const fulfillmentLabel = club.fulfillmentOptions.find(
       (option) => option.slug === fulfillment
     )?.label;
 
@@ -113,13 +122,17 @@ export function MonthlyTeaClubJoinPanel() {
   return (
     <div className="mt-20 lg:mt-24">
       <div className="mx-auto max-w-3xl text-center">
-        <p className="text-xs font-bold uppercase tracking-[0.28em] text-pink">Choose Your Box</p>
-        <h3 className="font-display mt-3 text-4xl text-carbon md:text-5xl">How Many Kits Per Month?</h3>
-        <p className="mt-3 text-base text-grey">{MONTHLY_TEA_CLUB.surpriseNote}</p>
+        <p className="text-xs font-bold uppercase tracking-[0.28em] text-pink">
+          {locale === 'es' ? 'Elige tu caja' : 'Choose Your Box'}
+        </p>
+        <h3 className="font-display mt-3 text-4xl text-carbon md:text-5xl">
+          {locale === 'es' ? '¿Cuántos kits al mes?' : 'How Many Kits Per Month?'}
+        </h3>
+        <p className="mt-3 text-base text-grey">{club.surpriseNote}</p>
       </div>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {MONTHLY_TEA_CLUB.plans.map((plan, index) => {
+        {club.plans.map((plan, index) => {
           const isSelected = selectedPlan === plan.kits;
           const isFeatured = plan.kits === 12;
 
@@ -139,12 +152,12 @@ export function MonthlyTeaClubJoinPanel() {
             >
               {isFeatured && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-pink px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                  {PLAN_BADGES[index]}
+                  {planBadges[index]}
                 </span>
               )}
               {!isFeatured && (
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-grey">
-                  {PLAN_BADGES[index]}
+                  {planBadges[index]}
                 </span>
               )}
               <p
@@ -182,7 +195,7 @@ export function MonthlyTeaClubJoinPanel() {
         </p>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          {MONTHLY_TEA_CLUB.fulfillmentOptions.map((option) => {
+          {club.fulfillmentOptions.map((option) => {
             const isSelected = fulfillment === option.slug;
             return (
               <button
@@ -205,8 +218,8 @@ export function MonthlyTeaClubJoinPanel() {
       </div>
 
       <div className="mt-8 rounded-[1.75rem] border border-grey/15 bg-cream/30 p-6 md:p-8">
-        <h4 className="font-display text-2xl text-carbon">{MONTHLY_TEA_CLUB.cta}</h4>
-        <p className="mt-2 text-sm text-grey">{MONTHLY_TEA_CLUB.ctaDetail}</p>
+        <h4 className="font-display text-2xl text-carbon">{club.cta}</h4>
+        <p className="mt-2 text-sm text-grey">{club.ctaDetail}</p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
           <input type="text" {...register('website')} className="hidden" tabIndex={-1} autoComplete="off" />
@@ -253,7 +266,7 @@ export function MonthlyTeaClubJoinPanel() {
               <strong className="text-carbon">{selectedPlanLabel}</strong>
               {locale === 'es' ? ' por mes · sabores sorpresa · ' : ' per month · surprise flavors · '}
               <strong className="text-carbon">
-                {MONTHLY_TEA_CLUB.fulfillmentOptions.find((option) => option.slug === fulfillment)?.label}
+                {club.fulfillmentOptions.find((option) => option.slug === fulfillment)?.label}
               </strong>
             </p>
           )}

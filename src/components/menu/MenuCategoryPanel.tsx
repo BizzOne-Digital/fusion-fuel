@@ -73,7 +73,7 @@ export function MenuCategoryPanel({
           <h2 className="font-display text-3xl md:text-4xl">{getLocalized(category.name, locale)}</h2>
         )}
         {category.slug === MONTHLY_TEA_CLUB_MENU.slug ? (
-          <MonthlyTeaClubCategoryExplorer />
+          <MonthlyTeaClubCategoryExplorer locale={locale} />
         ) : category.slug === 'mega-tea-kits' ? (
           <MegaTeaKitsCategoryExplorer
             products={categoryProducts}
@@ -131,7 +131,7 @@ export function MenuCategoryPanel({
               <h2 className="font-display text-3xl">{getLocalized(cat.name, locale)}</h2>
             )}
             {isMonthlyTeaClub ? (
-              <MonthlyTeaClubCategoryExplorer />
+              <MonthlyTeaClubCategoryExplorer locale={locale} />
             ) : isKits ? (
               <MegaTeaKitsCategoryExplorer
                 products={categoryProducts}

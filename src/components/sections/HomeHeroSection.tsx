@@ -5,8 +5,9 @@ import { CupSoda, Package, UtensilsCrossed } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { BrandTagline } from '@/components/brand/BrandTagline';
 import { Button } from '@/components/ui/Button';
-import { HOME_HERO } from '@/lib/brand-content';
+import { getHomeHero } from '@/lib/marketing-i18n';
 import { SITE_IMAGES } from '@/lib/site-images';
+import type { Locale } from '@/types';
 
 const FEATURE_ICONS = {
   cup: CupSoda,
@@ -15,6 +16,7 @@ const FEATURE_ICONS = {
 } as const;
 
 interface HomeHeroSectionProps {
+  locale: Locale;
   fuelLine: string;
   boostLine?: string;
   kitHref: string;
@@ -22,11 +24,13 @@ interface HomeHeroSectionProps {
 }
 
 export function HomeHeroSection({
+  locale,
   fuelLine,
   boostLine,
   kitHref,
   backgroundUrl = SITE_IMAGES.heroDrinks,
 }: HomeHeroSectionProps) {
+  const hero = getHomeHero(locale);
   return (
     <section className="relative w-full max-w-full overflow-x-hidden bg-black text-white">
       <div className="absolute inset-0">
@@ -47,7 +51,7 @@ export function HomeHeroSection({
       <div className="relative mx-auto flex min-h-[min(100svh-4.5rem,780px)] max-w-7xl flex-col justify-end px-5 pb-10 pt-8 sm:min-h-[calc(100svh-5rem)] sm:justify-center sm:px-6 sm:pb-8 sm:pt-20 lg:min-h-[min(100svh,920px)] lg:px-8 lg:pt-24">
         <div className="w-full max-w-xl sm:max-w-2xl [text-shadow:0_2px_20px_rgba(0,0,0,0.85)]">
           <p className="max-w-[18rem] text-[10px] font-bold uppercase leading-snug tracking-[0.22em] text-[#F5FF00] sm:max-w-none sm:text-xs sm:tracking-[0.28em]">
-            {HOME_HERO.eyebrow}
+            {hero.eyebrow}
           </p>
 
           <BrandTagline
@@ -60,7 +64,7 @@ export function HomeHeroSection({
           />
 
           <p className="mt-4 max-w-md text-sm leading-relaxed text-white sm:mt-6 sm:max-w-xl sm:text-lg">
-            {HOME_HERO.description}
+            {hero.description}
           </p>
 
           <div className="mt-6 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:flex-wrap sm:gap-4">
@@ -69,7 +73,7 @@ export function HomeHeroSection({
                 size="lg"
                 className="w-full rounded-md px-5 py-3.5 text-xs font-bold uppercase tracking-[0.1em] text-ink sm:w-auto sm:px-7 sm:py-4 sm:text-sm sm:tracking-[0.12em]"
               >
-                {HOME_HERO.ctaPrimary}
+                {hero.ctaPrimary}
               </Button>
             </Link>
             <Link href="/menu" className="w-full sm:w-auto">
@@ -78,7 +82,7 @@ export function HomeHeroSection({
                 size="lg"
                 className="w-full rounded-md border-2 border-white bg-black/25 px-5 py-3.5 text-xs font-bold uppercase tracking-[0.1em] text-white backdrop-blur-sm hover:bg-white hover:text-ink sm:w-auto sm:bg-transparent sm:px-7 sm:py-4 sm:text-sm sm:tracking-[0.12em]"
               >
-                {HOME_HERO.ctaSecondary}
+                {hero.ctaSecondary}
               </Button>
             </Link>
           </div>
@@ -87,14 +91,14 @@ export function HomeHeroSection({
             href="/booking"
             className="mt-5 inline-block text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:text-[#F5FF00] sm:mt-6 sm:text-sm sm:tracking-[0.18em]"
           >
-            {HOME_HERO.ctaTertiary}
+            {hero.ctaTertiary}
           </Link>
         </div>
       </div>
 
       <div className="relative border-t border-white/10 bg-black/55 backdrop-blur-md">
         <div className="mx-auto grid max-w-7xl grid-cols-1 divide-y divide-white/10 md:grid-cols-3 md:divide-x md:divide-y-0">
-          {HOME_HERO.features.map((feature) => {
+          {hero.features.map((feature) => {
             const Icon = FEATURE_ICONS[feature.icon];
             return (
               <Link

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx scripts/seed.ts",
+    "fix:spanish": "tsx scripts/fix-spanish-placeholders.ts",
     "test:smtp": "tsx scripts/test-smtp.ts",
     "typecheck": "tsc --noEmit"
   },

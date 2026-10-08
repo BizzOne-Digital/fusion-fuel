@@ -1,8 +1,18 @@
-import { MONTHLY_TEA_CLUB } from '@/lib/brand-content';
+import type { Locale } from '@/types';
+import { getMonthlyTeaClub } from '@/lib/marketing-i18n';
 
 /** Monthly Tea Club — subscription info (no products; content-only menu category). */
 export const MONTHLY_TEA_CLUB_MENU = {
   slug: 'monthly-tea-club',
-  headline: MONTHLY_TEA_CLUB.name,
-  description: `${MONTHLY_TEA_CLUB.taglines.primary} ${MONTHLY_TEA_CLUB.surpriseNote}`,
+  headline: getMonthlyTeaClub('en').name,
+  description: `${getMonthlyTeaClub('en').taglines.primary} ${getMonthlyTeaClub('en').surpriseNote}`,
 } as const;
+
+export function monthlyTeaClubMenuCopy(locale: Locale) {
+  const club = getMonthlyTeaClub(locale);
+  return {
+    slug: MONTHLY_TEA_CLUB_MENU.slug,
+    headline: club.name,
+    description: `${club.taglines.primary} ${club.surpriseNote}`,
+  };
+}

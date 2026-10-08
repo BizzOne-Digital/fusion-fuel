@@ -3,24 +3,28 @@
 import Image from 'next/image';
 import { SectionReveal } from '@/components/motion/SectionReveal';
 import { LIFESTYLE_IMAGES } from '@/lib/lifestyle-images';
+import { getHomePageCopy } from '@/lib/marketing-i18n';
+import type { Locale } from '@/types';
 
 interface LifestyleMontageProps {
+  locale?: Locale;
   title?: string;
   className?: string;
 }
 
 export function LifestyleMontage({
-  title = 'Fuel Your Lifestyle',
+  locale = 'en',
+  title,
   className = 'bg-white',
 }: LifestyleMontageProps) {
+  const copy = getHomePageCopy(locale);
+  const heading = title ?? copy.lifestyleTitle;
   return (
     <SectionReveal>
       <section className={`py-20 ${className}`}>
         <div className="mx-auto max-w-7xl px-4 lg:px-6">
-          <h2 className="font-display text-4xl text-carbon md:text-5xl">{title}</h2>
-          <p className="mt-3 max-w-2xl text-grey">
-            Loaded teas, protein coffee, açaí bowls, catering, and more — made to energize your day.
-          </p>
+          <h2 className="font-display text-4xl text-carbon md:text-5xl">{heading}</h2>
+          <p className="mt-3 max-w-2xl text-grey">{copy.lifestyleSubtitle}</p>
           <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-3">
             {LIFESTYLE_IMAGES.map((img, index) => {
               const isHero = index === 0;

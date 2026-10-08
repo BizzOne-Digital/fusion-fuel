@@ -60,14 +60,12 @@ import {
   proteinShakeSizePriceCents,
 } from '../src/lib/protein-shakes-menu';
 
-const ES = '[ES - Review Required]';
-
-function loc(en: string) {
-  return { en, es: ES };
+function loc(en: string, es?: string) {
+  return { en, es: es ?? en };
 }
 
-function rich(en: string) {
-  return { en, es: ES };
+function rich(en: string, es?: string) {
+  return { en, es: es ?? en };
 }
 
 function img(url: string, alt: string) {
