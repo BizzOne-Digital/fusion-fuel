@@ -129,9 +129,21 @@ export function pieInACupSizePriceCents(sizeSlug: string): number {
   return size ? Math.round(size.price * 100) : 0;
 }
 
-export function pieInACupVariantSku(sizeSlug: string, productSku: string): string {
-  const size = PROTEIN_TREATS_MENU.pieInACup.sizes.find((entry) => entry.slug === sizeSlug);
-  return size ? `${productSku}-${size.variantSuffix}` : '';
+export function pieInACupVariantSku(
+  sizeSlug: string,
+  productSku: string,
+  flavorSlug?: string
+): string {
+  const slug = sizeSlug.trim();
+  if (!slug || !productSku.trim()) return '';
+  const size = PROTEIN_TREATS_MENU.pieInACup.sizes.find((entry) => entry.slug === slug);
+  const suffix = size?.variantSuffix ?? (() => {
+    const match = /^(\d+)oz$/i.exec(slug);
+    return match ? `${match[1]}OZ` : slug.toUpperCase();
+  })();
+  const base = `${productSku}-${suffix}`;
+  const flavor = flavorSlug?.trim();
+  return flavor ? `${base}.${flavor.toLowerCase()}` : base;
 }
 
 function treatPackConfig(item: ProteinTreatMenuItem) {

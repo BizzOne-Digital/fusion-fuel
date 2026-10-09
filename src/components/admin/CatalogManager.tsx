@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import Image from 'next/image';
+import { AdminStoredImage } from '@/components/admin/AdminStoredImage';
 import { toast } from 'sonner';
 import AdminHeader from '@/components/admin/AdminHeader';
 import DataTable from '@/components/admin/DataTable';
@@ -130,7 +130,7 @@ export default function CatalogManager({
               const src = resolvePublicImageUrl(image?.url, '/images/mega-tea.png');
               return (
                 <div className="relative h-10 w-10 overflow-hidden rounded border border-zinc-200 bg-zinc-100">
-                  <Image src={src} alt={image?.alt ?? ''} fill className="object-cover" unoptimized />
+                  <AdminStoredImage src={src} alt={image?.alt ?? ''} fill className="object-cover" />
                 </div>
               );
             },

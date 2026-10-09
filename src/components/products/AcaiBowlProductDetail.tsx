@@ -9,20 +9,24 @@ import { ProductImageGallery } from '@/components/products/ProductImageGallery';
 import { ProductPlaceholderVisual } from '@/components/products/ProductPlaceholderVisual';
 import { AcaiBowlModifierGroups } from '@/components/products/AcaiBowlModifierGroups';
 import {
-  ACAI_BOWLS_MENU,
-  acaiBowlExtraToppingNames,
   acaiBowlExtraToppingPriceCents,
   acaiBowlMenuItem,
-  acaiBowlModifierConfig,
   acaiBowlModifierSlug,
   acaiBowlOrderNotes,
   acaiBowlValidateSelections,
   isAcaiBowlProduct,
 } from '@/lib/acai-bowls-menu';
+import {
+  bowlFootnote,
+  bowlIncludedFruitOptions,
+  bowlIncludedToppingOptions,
+  resolveBowlExtraToppingsForStorefront,
+  resolveBowlModifierConfig,
+} from '@/lib/menu-catalog/bowl-catalog';
+import type { BowlCategoryCatalogData } from '@/types/menu-catalog';
 import { getPrimaryProductImage } from '@/lib/product-display';
 import { productUsesPlaceholderCard } from '@/lib/product-placeholder';
 import { StorefrontImage } from '@/components/ui/StorefrontImage';
-import { getAddInUnitPrice } from '@/lib/product-add-ins';
 import type { IProduct } from '@/models/Product';
 import type { IAddIn } from '@/models/AddIn';
 import type { Locale } from '@/types';
@@ -32,6 +36,7 @@ interface AcaiBowlProductDetailProps {
   addIns: IAddIn[];
   locale: Locale;
   categorySlug: string;
+  bowlCatalog?: BowlCategoryCatalogData;
 }
 
 export function AcaiBowlProductDetail({
@@ -39,6 +44,7 @@ export function AcaiBowlProductDetail({
   addIns,
   locale,
   categorySlug,
+  bowlCatalog,
 }: AcaiBowlProductDetailProps) {
   const { addItem } = useCart();
   const [includedFruits, setIncludedFruits] = useState<string[]>([]);
@@ -47,7 +53,19 @@ export function AcaiBowlProductDetail({
   const [loading, setLoading] = useState(false);
 
   const menuItem = acaiBowlMenuItem(product.slug);
-  const modifierConfig = menuItem ? acaiBowlModifierConfig(menuItem) : null;
+  const modifierConfig = useMemo(
+    () => resolveBowlModifierConfig(product.slug, bowlCatalog),
+    [product.slug, bowlCatalog]
+  );
+  const includedFruitOptions = useMemo(
+    () => bowlIncludedFruitOptions(bowlCatalog),
+    [bowlCatalog]
+  );
+  const includedToppingOptions = useMemo(
+    () => bowlIncludedToppingOptions(bowlCatalog),
+    [bowlCatalog]
+  );
+  const footnote = useMemo(() => bowlFootnote(bowlCatalog), [bowlCatalog]);
 
   const name = getLocalized(product.name, locale);
   const shortDescription =
@@ -71,16 +89,19 @@ export function AcaiBowlProductDetail({
     return map;
   }, [addIns]);
 
+  const { names: extraToppingOptions, priceCents: extraToppingPriceCents, subtitle: extraToppingsSubtitle } =
+    useMemo(
+      () => resolveBowlExtraToppingsForStorefront(product, addIns, bowlCatalog, locale),
+      [product, addIns, bowlCatalog, locale]
+    );
+
   const extraTotal = useMemo(() => {
     let total = 0;
     for (const topping of extraToppings) {
-      const addIn = addInBySlug.get(acaiBowlModifierSlug('extra-topping', topping));
-      total += addIn
-        ? getAddInUnitPrice(product, addIn)
-        : acaiBowlExtraToppingPriceCents(topping);
+      total += extraToppingPriceCents[topping] ?? acaiBowlExtraToppingPriceCents(topping);
     }
     return total;
-  }, [extraToppings, addInBySlug, product]);
+  }, [extraToppings, extraToppingPriceCents]);
 
   const unitPrice = product.basePrice + extraTotal;
 
@@ -115,7 +136,7 @@ export function AcaiBowlProductDetail({
     setLoading(false);
   };
 
-  if (!isAcaiBowlProduct(product.slug) || !menuItem || !modifierConfig) return null;
+  if (!isAcaiBowlProduct(product.slug) || !modifierConfig) return null;
 
   return (
     <div className="grid gap-12 lg:grid-cols-2">
@@ -153,7 +174,7 @@ export function AcaiBowlProductDetail({
             {formatPrice(product.basePrice, 'USD', locale)}
           </p>
         )}
-        <p className="mt-4 text-sm italic text-grey">{ACAI_BOWLS_MENU.footnote}</p>
+        <p className="mt-4 text-sm italic text-grey">{footnote}</p>
 
         <div className="mt-8 space-y-6 rounded-2xl border border-grey/15 bg-cream p-6">
           <AcaiBowlModifierGroups
@@ -164,9 +185,11 @@ export function AcaiBowlProductDetail({
             includedFruits={includedFruits}
             includedToppings={includedToppings}
             extraToppings={extraToppings}
-            includedFruitOptions={ACAI_BOWLS_MENU.includedFruits}
-            includedToppingOptions={ACAI_BOWLS_MENU.includedToppings}
-            extraToppingOptions={acaiBowlExtraToppingNames()}
+            includedFruitOptions={includedFruitOptions}
+            includedToppingOptions={includedToppingOptions}
+            extraToppingOptions={extraToppingOptions}
+            extraToppingPriceCents={extraToppingPriceCents}
+            extraToppingsSubtitle={extraToppingsSubtitle}
             onIncludedFruitsChange={setIncludedFruits}
             onIncludedToppingsChange={setIncludedToppings}
             onExtraToppingsChange={setExtraToppings}

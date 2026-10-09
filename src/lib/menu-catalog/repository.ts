@@ -1,7 +1,58 @@
 import connectDB from '@/lib/mongodb';
 import MenuCatalog from '@/models/MenuCatalog';
 import { getDefaultMenuCatalogData, isMenuCatalogCategorySlug } from '@/lib/menu-catalog/defaults';
-import type { MenuCatalogCategorySlug, MenuCatalogDataBySlug } from '@/types/menu-catalog';
+import { normalizeBowlCategoryData } from '@/lib/menu-catalog/bowl-catalog';
+import { normalizeProteinCoffeeCatalogData } from '@/lib/menu-catalog/protein-coffee-catalog';
+import { normalizeProteinShakesCatalogData } from '@/lib/menu-catalog/protein-shakes-catalog';
+import { normalizeWafflesCatalogData } from '@/lib/menu-catalog/waffles-catalog';
+import { normalizeProteinTreatsCatalogData } from '@/lib/menu-catalog/protein-treats-catalog';
+import type {
+  BowlCategoryCatalogData,
+  MenuCatalogCategorySlug,
+  MenuCatalogDataBySlug,
+  ProteinCoffeeCatalogData,
+  ProteinShakesCatalogData,
+  WafflesCatalogData,
+  ProteinTreatsCatalogData,
+} from '@/types/menu-catalog';
+
+function finalizeCatalogData<S extends MenuCatalogCategorySlug>(
+  categorySlug: S,
+  defaults: MenuCatalogDataBySlug[S],
+  merged: MenuCatalogDataBySlug[S]
+): MenuCatalogDataBySlug[S] {
+  if (categorySlug === 'acai-bowls' || categorySlug === 'protein-bowls') {
+    return normalizeBowlCategoryData(
+      merged as BowlCategoryCatalogData,
+      defaults as BowlCategoryCatalogData
+    ) as MenuCatalogDataBySlug[S];
+  }
+  if (categorySlug === 'protein-coffee') {
+    return normalizeProteinCoffeeCatalogData(
+      merged as ProteinCoffeeCatalogData,
+      defaults as ProteinCoffeeCatalogData
+    ) as MenuCatalogDataBySlug[S];
+  }
+  if (categorySlug === 'protein-shakes') {
+    return normalizeProteinShakesCatalogData(
+      merged as ProteinShakesCatalogData,
+      defaults as ProteinShakesCatalogData
+    ) as MenuCatalogDataBySlug[S];
+  }
+  if (categorySlug === 'waffles') {
+    return normalizeWafflesCatalogData(
+      merged as WafflesCatalogData,
+      defaults as WafflesCatalogData
+    ) as MenuCatalogDataBySlug[S];
+  }
+  if (categorySlug === 'protein-treats') {
+    return normalizeProteinTreatsCatalogData(
+      merged as ProteinTreatsCatalogData,
+      defaults as ProteinTreatsCatalogData
+    ) as MenuCatalogDataBySlug[S];
+  }
+  return merged;
+}
 
 export async function getMenuCatalogData<S extends MenuCatalogCategorySlug>(
   categorySlug: S
@@ -11,7 +62,8 @@ export async function getMenuCatalogData<S extends MenuCatalogCategorySlug>(
     await connectDB();
     const doc = await MenuCatalog.findOne({ categorySlug }).lean();
     if (!doc?.data) return defaults;
-    return deepMergeDefaults(defaults, doc.data as MenuCatalogDataBySlug[S]);
+    const merged = deepMergeDefaults(defaults, doc.data as MenuCatalogDataBySlug[S]);
+    return finalizeCatalogData(categorySlug, defaults, merged);
   } catch {
     return defaults;
   }

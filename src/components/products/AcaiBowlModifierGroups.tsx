@@ -1,8 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
 import { ModifierChipGroup } from '@/components/products/ModifierChipGroup';
-import { ACAI_BOWL_EXTRA_TOPPINGS } from '@/lib/acai-bowls-menu';
 import type { Locale } from '@/types';
 
 interface AcaiBowlModifierGroupsProps {
@@ -16,6 +14,8 @@ interface AcaiBowlModifierGroupsProps {
   includedFruitOptions: readonly string[];
   includedToppingOptions: readonly string[];
   extraToppingOptions: readonly string[];
+  extraToppingPriceCents: Record<string, number>;
+  extraToppingsSubtitle: string;
   onIncludedFruitsChange: (next: string[]) => void;
   onIncludedToppingsChange: (next: string[]) => void;
   onExtraToppingsChange: (next: string[]) => void;
@@ -32,18 +32,12 @@ export function AcaiBowlModifierGroups({
   includedFruitOptions,
   includedToppingOptions,
   extraToppingOptions,
+  extraToppingPriceCents,
+  extraToppingsSubtitle,
   onIncludedFruitsChange,
   onIncludedToppingsChange,
   onExtraToppingsChange,
 }: AcaiBowlModifierGroupsProps) {
-  const extraToppingPriceCents = useMemo(() => {
-    const prices: Record<string, number> = {};
-    for (const topping of ACAI_BOWL_EXTRA_TOPPINGS) {
-      prices[topping.name] = Math.round(topping.price * 100);
-    }
-    return prices;
-  }, []);
-
   return (
     <div className="space-y-8">
       <div className="space-y-6">
@@ -101,11 +95,7 @@ export function AcaiBowlModifierGroups({
       <div className="border-t border-grey/15 pt-8">
         <ModifierChipGroup
           title={locale === 'es' ? 'Toppings extra' : 'Extra Toppings'}
-          subtitle={
-            locale === 'es'
-              ? 'La mayoría cuesta $1; granola sin gluten y proteína cuestan $3'
-              : 'Most toppings are $1; gluten free granola and protein are $3'
-          }
+          subtitle={extraToppingsSubtitle}
           options={extraToppingOptions}
           selected={extraToppings}
           optionPriceCents={extraToppingPriceCents}

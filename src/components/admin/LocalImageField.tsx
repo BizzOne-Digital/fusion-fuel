@@ -1,8 +1,8 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import Image from 'next/image';
 import { toast } from 'sonner';
+import { AdminStoredImage } from '@/components/admin/AdminStoredImage';
 import { Upload } from 'lucide-react';
 import FormField from '@/components/admin/FormField';
 import { parseStoredUploadUrl, type StoredUploadFolder } from '@/lib/stored-upload-shared';
@@ -106,7 +106,7 @@ export default function LocalImageField({ label, folder, value, onChange, error 
         {value ? (
           <div className="flex flex-wrap items-start gap-4">
             <div className="relative h-28 w-28 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
-              <Image src={value} alt="" fill className="object-cover" unoptimized />
+              <AdminStoredImage src={value} alt="" fill className="object-cover" />
             </div>
             <div className="flex flex-col gap-2">
               <button
@@ -129,10 +129,15 @@ export default function LocalImageField({ label, folder, value, onChange, error 
             </div>
           </div>
         ) : (
-          <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-zinc-300 bg-zinc-50 px-6 py-8 transition-colors hover:border-orange-400 hover:bg-orange-50/30">
+          <button
+            type="button"
+            disabled={uploading}
+            onClick={() => inputRef.current?.click()}
+            className="flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-zinc-300 bg-zinc-50 px-6 py-8 transition-colors hover:border-orange-400 hover:bg-orange-50/30 disabled:cursor-not-allowed disabled:opacity-60"
+          >
             <Upload className="mb-2 h-6 w-6 text-zinc-400" />
             <span className="text-sm text-zinc-600">{uploading ? 'Uploading…' : 'Choose image (JPEG, PNG, WebP, GIF)'}</span>
-          </label>
+          </button>
         )}
 
         <input

@@ -1,47 +1,89 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { getLocalized, formatPrice, hasPrice } from '@/lib/utils';
+import { getVariantPriceCents } from '@/lib/product-display';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { ProductImageGallery } from '@/components/products/ProductImageGallery';
+import { resolvePieInACupSizePriceCents } from '@/lib/menu-catalog/protein-treats-catalog';
 import {
   PROTEIN_TREATS_MENU,
   isPieInACupProduct,
-  pieInACupFlavorImage,
   pieInACupFlavorNote,
-  pieInACupSizePriceCents,
   pieInACupVariantSku,
 } from '@/lib/protein-treats-menu';
 import type { IProduct } from '@/models/Product';
 import type { Locale } from '@/types';
+import type { ProteinTreatsCatalogData } from '@/types/menu-catalog';
 
 interface PieInACupProductDetailProps {
   product: IProduct;
   locale: Locale;
+  catalog?: ProteinTreatsCatalogData;
 }
 
-export function PieInACupProductDetail({ product, locale }: PieInACupProductDetailProps) {
+export function PieInACupProductDetail({ product, locale, catalog }: PieInACupProductDetailProps) {
   const { addItem } = useCart();
+
+  const pieSizes = useMemo(() => {
+    const fromCatalog = catalog?.pieInACup.sizes.filter((s) => !s.hidden) ?? [];
+    if (fromCatalog.length > 0) {
+      return fromCatalog.map((s) => ({ slug: s.slug, name: s.name, price: s.price }));
+    }
+    return PROTEIN_TREATS_MENU.pieInACup.sizes.map((s) => ({
+      slug: s.slug,
+      name: s.name,
+      price: s.price,
+    }));
+  }, [catalog]);
+
+  const pieFlavors = useMemo(() => {
+    const fromCatalog = catalog?.pieInACup.flavors.filter((f) => !f.hidden) ?? [];
+    if (fromCatalog.length > 0) {
+      return fromCatalog.map((f) => ({ slug: f.slug, name: f.name, image: f.image }));
+    }
+    return PROTEIN_TREATS_MENU.pieInACup.flavors.map((f) => ({
+      slug: f.slug,
+      name: f.name,
+      image: 'image' in f ? f.image : undefined,
+    }));
+  }, [catalog]);
+
   const [flavorSlug, setFlavorSlug] = useState('');
-  const [sizeSlug, setSizeSlug] = useState<string>(PROTEIN_TREATS_MENU.pieInACup.sizes[0].slug);
+  const [sizeSlug, setSizeSlug] = useState<string>(pieSizes[0]?.slug ?? '9oz');
   const [loading, setLoading] = useState(false);
 
   const name = getLocalized(product.name, locale);
   const galleryImages = product.images.filter((image) => image.url?.trim());
 
-  const selectedFlavor = PROTEIN_TREATS_MENU.pieInACup.flavors.find(
-    (flavor) => flavor.slug === flavorSlug
-  );
-  const displayImage = selectedFlavor
-    ? pieInACupFlavorImage(selectedFlavor)
-    : PROTEIN_TREATS_MENU.pieInACup.image;
+  const selectedFlavor = pieFlavors.find((flavor) => flavor.slug === flavorSlug);
 
-  const variantSku = flavorSlug ? pieInACupVariantSku(sizeSlug, product.sku) : '';
-  const unitPrice = flavorSlug ? pieInACupSizePriceCents(sizeSlug) : 0;
+  const displayImage = useMemo(() => {
+    if (selectedFlavor?.image) {
+      return { url: selectedFlavor.image, alt: selectedFlavor.name };
+    }
+    const main = catalog?.pieInACup.mainImage;
+    if (main) {
+      return { url: main, alt: catalog?.pieInACup.name ?? name };
+    }
+    return PROTEIN_TREATS_MENU.pieInACup.image;
+  }, [selectedFlavor, catalog, name]);
+
+  const sizePriceCents = (size: string, flavor?: string) => {
+    const baseSku = pieInACupVariantSku(size, product.sku);
+    const fromVariant = baseSku ? getVariantPriceCents(product, baseSku) : null;
+    if (fromVariant != null && fromVariant > 0 && !flavor) {
+      return fromVariant;
+    }
+    return resolvePieInACupSizePriceCents(catalog, size, flavor);
+  };
+
+  const variantSku = flavorSlug ? pieInACupVariantSku(sizeSlug, product.sku, flavorSlug) : '';
+  const unitPrice = flavorSlug ? sizePriceCents(sizeSlug, flavorSlug) : 0;
   const canAdd = Boolean(selectedFlavor && hasPrice(unitPrice));
 
   const handleAdd = async () => {
@@ -78,8 +120,8 @@ export function PieInACupProductDetail({ product, locale }: PieInACupProductDeta
         ) : (
           <div className="relative aspect-square overflow-hidden rounded-2xl bg-cream">
             <Image
-              src={PROTEIN_TREATS_MENU.pieInACup.image.url}
-              alt={PROTEIN_TREATS_MENU.pieInACup.image.alt}
+              src={displayImage.url}
+              alt={displayImage.alt || name}
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -111,7 +153,7 @@ export function PieInACupProductDetail({ product, locale }: PieInACupProductDeta
                     value: '',
                     label: locale === 'es' ? 'Selecciona un sabor' : 'Select a flavor',
                   },
-                  ...PROTEIN_TREATS_MENU.pieInACup.flavors.map((flavor) => ({
+                  ...pieFlavors.map((flavor) => ({
                     value: flavor.slug,
                     label: flavor.name,
                   })),
@@ -123,7 +165,7 @@ export function PieInACupProductDetail({ product, locale }: PieInACupProductDeta
           <div>
             <h3 className="font-display text-2xl">{locale === 'es' ? 'Tamaño' : 'Size'}</h3>
             <div className="mt-4 flex flex-wrap gap-3">
-              {PROTEIN_TREATS_MENU.pieInACup.sizes.map((size) => (
+              {pieSizes.map((size) => (
                 <button
                   key={size.slug}
                   type="button"
@@ -134,7 +176,11 @@ export function PieInACupProductDetail({ product, locale }: PieInACupProductDeta
                 >
                   <p className="font-semibold">{size.name}</p>
                   <p className="mt-1 text-sm text-grey">
-                    {formatPrice(pieInACupSizePriceCents(size.slug), 'USD', locale)}
+                    {formatPrice(
+                      sizePriceCents(size.slug, flavorSlug || undefined),
+                      'USD',
+                      locale
+                    )}
                   </p>
                 </button>
               ))}

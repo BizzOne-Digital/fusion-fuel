@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import LocalImageField from '@/components/admin/LocalImageField';
@@ -29,8 +29,13 @@ export function CatalogImageField({
 
 export function useMenuCatalog<S extends MenuCatalogCategorySlug>(categorySlug: S) {
   const [data, setData] = useState<MenuCatalogDataBySlug[S] | null>(null);
+  const dataRef = useRef<MenuCatalogDataBySlug[S] | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -38,7 +43,9 @@ export function useMenuCatalog<S extends MenuCatalogCategorySlug>(categorySlug: 
       `/api/admin/menu-catalog/${categorySlug}`
     );
     if (error) toast.error(error);
-    setData(res?.data ?? null);
+    const loaded = res?.data ?? null;
+    setData(loaded);
+    dataRef.current = loaded;
     setLoading(false);
   }, [categorySlug]);
 
@@ -46,18 +53,24 @@ export function useMenuCatalog<S extends MenuCatalogCategorySlug>(categorySlug: 
     void load();
   }, [load]);
 
-  const save = async (next: MenuCatalogDataBySlug[S]) => {
+  const save = async (next?: MenuCatalogDataBySlug[S]) => {
+    const payload = next ?? dataRef.current;
+    if (!payload) {
+      toast.error('Nothing to save');
+      return false;
+    }
     setSaving(true);
     const { error } = await adminFetch(`/api/admin/menu-catalog/${categorySlug}`, {
       method: 'PUT',
-      body: JSON.stringify({ data: next }),
+      body: JSON.stringify({ data: payload }),
     });
     setSaving(false);
     if (error) {
       toast.error(error);
       return false;
     }
-    setData(next);
+    setData(payload);
+    dataRef.current = payload;
     toast.success('Saved & synced to storefront');
     return true;
   };
@@ -103,11 +116,15 @@ export function ItemStatusTags({
   onDelete?: () => void;
 }) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2 self-start">
       {hidden ? (
-        <span className="rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-semibold text-zinc-700">Hidden</span>
+        <span className="inline-flex shrink-0 rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-semibold text-zinc-700">
+          Hidden
+        </span>
       ) : (
-        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800">Visible</span>
+        <span className="inline-flex shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800">
+          Visible
+        </span>
       )}
       {onToggleHide ? (
         <button type="button" onClick={onToggleHide} className="text-xs font-semibold text-orange-600 hover:underline">

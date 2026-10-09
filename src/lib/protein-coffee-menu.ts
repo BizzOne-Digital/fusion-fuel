@@ -111,9 +111,12 @@ export function proteinCoffeeFlavorImage(flavorSlug: string): { url: string; alt
   return { url: image.url, alt: flavor?.name ?? image.alt };
 }
 
-export function proteinCoffeeVariantSku(sizeSlug: string): string {
-  const size = PROTEIN_COFFEE.icedSizes.find((entry) => entry.slug === sizeSlug);
-  return size ? `FFB-PCOF-${size.variantSuffix}` : '';
+export function proteinCoffeeVariantSku(sizeSlug: string, flavorSlug?: string): string {
+  const slug = sizeSlug.trim();
+  if (!slug) return '';
+  const base = `FFB-PCOF-${slug.toUpperCase()}`;
+  const flavor = flavorSlug?.trim();
+  return flavor ? `${base}.${flavor.toLowerCase()}` : base;
 }
 
 export function proteinCoffeeFlavorList(): string {

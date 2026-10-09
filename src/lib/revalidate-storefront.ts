@@ -8,6 +8,7 @@ export function revalidateStorefrontCatalog(options?: { productSlug?: string }) 
     revalidatePath(`/${locale}/menu`);
     revalidatePath(`/${locale}`);
     revalidatePath(`/${locale}/pricing`);
+    revalidatePath(`/${locale}/products`, 'layout');
     if (options?.productSlug) {
       revalidatePath(`/${locale}/products/${options.productSlug}`);
     }

@@ -75,10 +75,19 @@ export type BowlCategoryCatalogData = {
   types: BowlTypeConfig[];
 };
 
+export type ProteinCoffeeFlavorConfig = {
+  slug: string;
+  name: string;
+  image?: string;
+  hidden?: boolean;
+  /** Optional price override per iced size slug; omit to use the base size price. */
+  sizePrices?: Partial<Record<string, number>>;
+};
+
 export type ProteinCoffeeCatalogData = {
   mainImages: { url: string; alt?: string }[];
   sizes: LoadedTeaSizeConfig[];
-  flavors: { slug: string; name: string; image?: string; hidden?: boolean }[];
+  flavors: ProteinCoffeeFlavorConfig[];
   addOns: LoadedTeaAddOnConfig[];
   formula1Flavors: LoadedTeaAddOnConfig[];
 };
@@ -113,6 +122,13 @@ export type WaffleToppingGroupConfig = {
   items: string[];
 };
 
+export type WaffleExtraToppingConfig = {
+  name: string;
+  groupLabel: string;
+  price: number;
+  hidden?: boolean;
+};
+
 export type WafflesCatalogData = {
   presets: WafflePresetConfig[];
   buildYourOwn: {
@@ -121,8 +137,11 @@ export type WafflesCatalogData = {
     price: number;
     image?: string;
     extraToppingPrice: number;
+    /** When true, every extra topping uses `extraToppingPrice` (individual prices locked in admin). */
+    uniformExtraToppingPrice: boolean;
     includedToppingMax: number;
     toppingGroups: WaffleToppingGroupConfig[];
+    extraToppings: WaffleExtraToppingConfig[];
     hidden?: boolean;
   };
 };
@@ -133,6 +152,22 @@ export type ProteinTreatPackConfig = {
   label: string;
   price: number;
   count: number;
+  hidden?: boolean;
+};
+
+export type PieInACupFlavorConfig = {
+  slug: string;
+  name: string;
+  image?: string;
+  hidden?: boolean;
+  /** Optional per-size price override (size slug e.g. 9oz, 16oz). */
+  sizePrices?: Partial<Record<string, number>>;
+};
+
+export type ProteinMiniDonutFlavorConfig = {
+  slug: string;
+  name: string;
+  image?: string;
   hidden?: boolean;
 };
 
@@ -150,7 +185,7 @@ export type ProteinTreatsCatalogData = {
     image?: string;
     packPrice: number;
     packCount: number;
-    flavors: { slug: string; name: string; image?: string; hidden?: boolean }[];
+    flavors: ProteinMiniDonutFlavorConfig[];
     hidden?: boolean;
   };
   pieInACup: {
@@ -158,7 +193,7 @@ export type ProteinTreatsCatalogData = {
     description?: string;
     mainImage?: string;
     sizes: LoadedTeaSizeConfig[];
-    flavors: { slug: string; name: string; image?: string; hidden?: boolean }[];
+    flavors: PieInACupFlavorConfig[];
     hidden?: boolean;
   };
 };

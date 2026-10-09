@@ -5,6 +5,9 @@ import Product from '@/models/Product';
 import AddIn from '@/models/AddIn';
 import Flavor from '@/models/Flavor';
 import { resolveLoadedTeaVariantPriceCents } from '@/lib/menu-catalog/loaded-tea-runtime';
+import { resolveProteinCoffeeVariantPriceCents } from '@/lib/menu-catalog/protein-coffee-runtime';
+import { resolveProteinShakeVariantPriceCents } from '@/lib/menu-catalog/protein-shakes-runtime';
+import { resolvePieInACupVariantPriceCents } from '@/lib/menu-catalog/protein-treats-runtime';
 import { calculateOrderPricing } from '@/lib/pricing';
 import { getSiteSettings } from '@/lib/data/settings';
 import type { CartItem, CartItem as CartItemType } from '@/types';
@@ -54,9 +57,24 @@ async function buildCartItem(input: ReturnType<typeof cartItemInputSchema.parse>
   if (input.variantSku) {
     const sku = input.variantSku.toUpperCase();
     const loadedTeaPrice = await resolveLoadedTeaVariantPriceCents(sku);
-    const variant = product.variants.find((v) => v.sku === sku);
+    const proteinCoffeePrice = await resolveProteinCoffeeVariantPriceCents(sku);
+    const proteinShakePrice = await resolveProteinShakeVariantPriceCents(sku);
+    const pieInACupPrice = await resolvePieInACupVariantPriceCents(sku);
+    const variant = product.variants.find((v) => v.sku.toUpperCase() === sku);
     if (loadedTeaPrice != null && loadedTeaPrice > 0) {
       unitPrice = loadedTeaPrice;
+      variantName = variant?.name;
+      variantSku = variant?.sku ?? sku;
+    } else if (proteinCoffeePrice != null && proteinCoffeePrice > 0) {
+      unitPrice = proteinCoffeePrice;
+      variantName = variant?.name;
+      variantSku = variant?.sku ?? sku;
+    } else if (proteinShakePrice != null && proteinShakePrice > 0) {
+      unitPrice = proteinShakePrice;
+      variantName = variant?.name;
+      variantSku = variant?.sku ?? sku;
+    } else if (pieInACupPrice != null && pieInACupPrice > 0) {
+      unitPrice = pieInACupPrice;
       variantName = variant?.name;
       variantSku = variant?.sku ?? sku;
     } else if (variant && variant.price > 0) {

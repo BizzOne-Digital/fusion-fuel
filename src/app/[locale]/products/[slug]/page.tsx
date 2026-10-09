@@ -23,8 +23,13 @@ import {
   buildLoadedTeaMenuView,
   getLoadedTeasCatalogData,
 } from '@/lib/menu-catalog/loaded-tea-runtime';
+import { getProteinCoffeeCatalogData } from '@/lib/menu-catalog/protein-coffee-runtime';
+import { getProteinShakesCatalogData } from '@/lib/menu-catalog/protein-shakes-runtime';
+import { getWafflesCatalogData } from '@/lib/menu-catalog/waffles-runtime';
+import { getProteinTreatsCatalogData } from '@/lib/menu-catalog/protein-treats-runtime';
 import { isProteinShakeProduct } from '@/lib/protein-shakes-menu';
-import { isAcaiBowlProduct } from '@/lib/acai-bowls-menu';
+import { acaiBowlMenuItem, bowlProductCategorySlug, isAcaiBowlProduct } from '@/lib/acai-bowls-menu';
+import { getBowlCatalogData } from '@/lib/menu-catalog/bowl-runtime';
 import { isWaffleProduct } from '@/lib/waffles-menu';
 import { PieInACupProductDetail } from '@/components/products/PieInACupProductDetail';
 import { ProteinTreatProductDetail } from '@/components/products/ProteinTreatProductDetail';
@@ -83,10 +88,38 @@ export default async function ProductDetailPage({
   assertProductMenuConfig(slug);
 
   const isLoadedTeaSlug = isLoadedTeaProduct(slug);
-  const [flavors, addIns, loadedTeasCatalog] = await Promise.all([
+  const isProteinCoffeeSlug = isProteinCoffeeProduct(slug);
+  const isProteinShakeSlug = isProteinShakeProduct(slug);
+  const isWaffleSlug = isWaffleProduct(slug);
+  const isAcaiBowlSlug = isAcaiBowlProduct(slug);
+  const bowlCatalogCategorySlug = isAcaiBowlSlug
+    ? (() => {
+        const item = acaiBowlMenuItem(slug);
+        return item ? bowlProductCategorySlug(item) : 'acai-bowls';
+      })()
+    : null;
+  const isProteinTreatSlug =
+    isProteinTreatProduct(slug) || isPieInACupProduct(slug);
+  const [
+    flavors,
+    addIns,
+    loadedTeasCatalog,
+    proteinCoffeeCatalog,
+    proteinShakesCatalog,
+    wafflesCatalog,
+    proteinTreatsCatalog,
+    bowlCatalog,
+  ] = await Promise.all([
     getPublishedFlavors(),
     getPublishedAddIns(),
     isLoadedTeaSlug ? getLoadedTeasCatalogData() : Promise.resolve(undefined),
+    isProteinCoffeeSlug ? getProteinCoffeeCatalogData() : Promise.resolve(undefined),
+    isProteinShakeSlug ? getProteinShakesCatalogData() : Promise.resolve(undefined),
+    isWaffleSlug ? getWafflesCatalogData() : Promise.resolve(undefined),
+    isProteinTreatSlug ? getProteinTreatsCatalogData() : Promise.resolve(undefined),
+    bowlCatalogCategorySlug
+      ? getBowlCatalogData(bowlCatalogCategorySlug)
+      : Promise.resolve(undefined),
   ]);
   const loadedTeaMenu =
     loadedTeasCatalog != null ? buildLoadedTeaMenuView(loadedTeasCatalog) : undefined;
@@ -104,7 +137,7 @@ export default async function ProductDetailPage({
   const isMegaTeaKit = isMegaTeaKitDetailProduct(slug);
   const isLoadedTea = isLoadedTeaProduct(slug);
   const isProteinShake = isProteinShakeProduct(slug);
-  const isAcaiBowl = isAcaiBowlProduct(slug);
+  const isAcaiBowl = isAcaiBowlSlug;
   const isWaffle = isWaffleProduct(slug);
   const isPieInACup = isPieInACupProduct(slug);
   const isProteinTreat = isProteinTreatProduct(slug) && !isPieInACup;
@@ -127,13 +160,19 @@ export default async function ProductDetailPage({
             loadedTeasCatalog={loadedTeasCatalog}
           />
         ) : isProteinShake ? (
-          <ProteinShakeProductDetail product={product} addIns={productAddIns} locale={typedLocale} />
+          <ProteinShakeProductDetail
+            product={product}
+            addIns={productAddIns}
+            locale={typedLocale}
+            catalog={proteinShakesCatalog}
+          />
         ) : isAcaiBowl ? (
           <AcaiBowlProductDetail
             product={product}
             addIns={productAddIns}
             locale={typedLocale}
             categorySlug={categorySlug}
+            bowlCatalog={bowlCatalog}
           />
         ) : isWaffle ? (
           <WaffleProductDetail
@@ -141,13 +180,27 @@ export default async function ProductDetailPage({
             addIns={productAddIns}
             locale={typedLocale}
             categorySlug={categorySlug}
+            catalog={wafflesCatalog}
           />
         ) : isPieInACup ? (
-          <PieInACupProductDetail product={product} locale={typedLocale} />
+          <PieInACupProductDetail
+            product={product}
+            locale={typedLocale}
+            catalog={proteinTreatsCatalog}
+          />
         ) : isProteinTreat ? (
-          <ProteinTreatProductDetail product={product} locale={typedLocale} />
+          <ProteinTreatProductDetail
+            product={product}
+            locale={typedLocale}
+            catalog={proteinTreatsCatalog}
+          />
         ) : isProteinCoffee ? (
-          <ProteinCoffeeProductDetail product={product} addIns={productAddIns} locale={typedLocale} />
+          <ProteinCoffeeProductDetail
+            product={product}
+            addIns={productAddIns}
+            locale={typedLocale}
+            catalog={proteinCoffeeCatalog}
+          />
         ) : isMakeYourOwnLoadedTea ? (
           <MakeYourOwnLoadedTeaProductDetail
             product={product}

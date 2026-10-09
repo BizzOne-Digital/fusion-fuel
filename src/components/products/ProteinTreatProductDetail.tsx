@@ -15,15 +15,18 @@ import {
   proteinTreatPackLabel,
   proteinTreatMenuItem,
   proteinMiniDonutFlavorNote,
-  proteinTrufflePackPriceCents,
   proteinTruffleVariantSku,
 } from '@/lib/protein-treats-menu';
 import type { IProduct } from '@/models/Product';
 import type { Locale } from '@/types';
+import type { ProteinTreatsCatalogData } from '@/types/menu-catalog';
+import { resolveTrufflePackPriceCents } from '@/lib/menu-catalog/protein-treats-catalog';
+import { getVariantPriceCents } from '@/lib/product-display';
 
 interface ProteinTreatProductDetailProps {
   product: IProduct;
   locale: Locale;
+  catalog?: ProteinTreatsCatalogData;
 }
 
 function resolveSellableVariant(product: IProduct) {
@@ -34,17 +37,41 @@ function resolveSellableVariant(product: IProduct) {
   return { variant, unitPrice };
 }
 
-export function ProteinTreatProductDetail({ product, locale }: ProteinTreatProductDetailProps) {
+export function ProteinTreatProductDetail({ product, locale, catalog }: ProteinTreatProductDetailProps) {
   const { addItem } = useCart();
   const [loading, setLoading] = useState(false);
-  const [packSlug, setPackSlug] = useState<string>(PROTEIN_TREATS_MENU.proteinTruffles.packs[0].slug);
+
+  const trufflePacks = useMemo(() => {
+    const fromCatalog = catalog?.truffles.packs.filter((p) => !p.hidden) ?? [];
+    if (fromCatalog.length > 0) {
+      return fromCatalog.map((p) => ({ slug: p.slug, label: p.label, price: p.price }));
+    }
+    return PROTEIN_TREATS_MENU.proteinTruffles.packs.map((p) => ({
+      slug: p.slug,
+      label: p.label,
+      price: p.price,
+    }));
+  }, [catalog]);
+
+  const donutFlavors = useMemo(() => {
+    const fromCatalog = catalog?.miniDonuts.flavors.filter((f) => !f.hidden) ?? [];
+    if (fromCatalog.length > 0) {
+      return fromCatalog.map((f) => ({ slug: f.slug, name: f.name }));
+    }
+    return PROTEIN_TREATS_MENU.proteinMiniDonuts.flavors.map((f) => ({
+      slug: f.slug,
+      name: f.name,
+    }));
+  }, [catalog]);
+
+  const [packSlug, setPackSlug] = useState<string>(trufflePacks[0]?.slug ?? '2pk');
   const [flavorSlug, setFlavorSlug] = useState('');
 
   const menuItem = proteinTreatMenuItem(product.slug);
   const isTruffles = menuItem?.kind === 'protein-truffles';
   const isMiniDonuts = menuItem?.kind === 'protein-mini-donuts';
   const selectedFlavor = isMiniDonuts
-    ? PROTEIN_TREATS_MENU.proteinMiniDonuts.flavors.find((flavor) => flavor.slug === flavorSlug)
+    ? donutFlavors.find((flavor) => flavor.slug === flavorSlug)
     : undefined;
   const name = getLocalized(product.name, locale);
   const image = menuItem ? proteinTreatItemImage(menuItem) : null;
@@ -54,7 +81,15 @@ export function ProteinTreatProductDetail({ product, locale }: ProteinTreatProdu
     [product]
   );
 
-  const unitPrice = isTruffles ? proteinTrufflePackPriceCents(packSlug) : defaultUnitPrice;
+  const unitPrice = isTruffles
+    ? (() => {
+        const sku = proteinTruffleVariantSku(packSlug, product.sku);
+        const fromVariant = sku ? getVariantPriceCents(product, sku) : null;
+        return fromVariant != null && fromVariant > 0
+          ? fromVariant
+          : resolveTrufflePackPriceCents(catalog, packSlug);
+      })()
+    : defaultUnitPrice;
   const variantSku = isTruffles
     ? proteinTruffleVariantSku(packSlug, product.sku)
     : defaultVariant?.sku;
@@ -122,7 +157,7 @@ export function ProteinTreatProductDetail({ product, locale }: ProteinTreatProdu
             <div>
               <h3 className="font-display text-2xl">{locale === 'es' ? 'Cantidad' : 'Quantity'}</h3>
               <div className="mt-4 flex flex-wrap gap-3">
-                {PROTEIN_TREATS_MENU.proteinTruffles.packs.map((pack) => (
+                {trufflePacks.map((pack) => (
                   <button
                     key={pack.slug}
                     type="button"
@@ -133,7 +168,7 @@ export function ProteinTreatProductDetail({ product, locale }: ProteinTreatProdu
                   >
                     <p className="font-semibold">{pack.label}</p>
                     <p className="mt-1 text-sm text-grey">
-                      {formatPrice(proteinTrufflePackPriceCents(pack.slug), 'USD', locale)}
+                      {formatPrice(resolveTrufflePackPriceCents(catalog, pack.slug), 'USD', locale)}
                     </p>
                   </button>
                 ))}
@@ -154,7 +189,7 @@ export function ProteinTreatProductDetail({ product, locale }: ProteinTreatProdu
                       value: '',
                       label: locale === 'es' ? 'Selecciona un sabor' : 'Select a flavor',
                     },
-                    ...PROTEIN_TREATS_MENU.proteinMiniDonuts.flavors.map((flavor) => ({
+                    ...donutFlavors.map((flavor) => ({
                       value: flavor.slug,
                       label: flavor.name,
                     })),

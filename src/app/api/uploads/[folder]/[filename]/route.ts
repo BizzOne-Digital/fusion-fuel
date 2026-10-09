@@ -8,6 +8,7 @@ import {
   storedUploadPublicUrl,
   type StoredUploadFolder,
 } from '@/lib/stored-upload';
+import { bufferFromStoredUploadData } from '@/lib/stored-upload-buffer';
 
 export const runtime = 'nodejs';
 
@@ -32,11 +33,20 @@ export async function GET(_request: Request, context: RouteContext) {
     }
 
     const doc = await getStoredUpload(folder as StoredUploadFolder, filename);
-    if (!doc?.data) {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    if (!doc) {
+      return NextResponse.json(
+        { error: 'Not found' },
+        { status: 404, headers: { 'Cache-Control': 'no-store' } }
+      );
     }
 
-    const body = Buffer.isBuffer(doc.data) ? doc.data : Buffer.from(doc.data);
+    const body = bufferFromStoredUploadData(doc.data);
+    if (!body || body.length === 0) {
+      return NextResponse.json(
+        { error: 'Not found' },
+        { status: 404, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
 
     return new NextResponse(new Uint8Array(body), {
       status: 200,

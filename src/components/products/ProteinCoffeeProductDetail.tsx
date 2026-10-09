@@ -10,48 +10,103 @@ import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { AddInSelector } from '@/components/products/AddInSelector';
+import { resolveProteinCoffeeSizePriceCents } from '@/lib/menu-catalog/protein-coffee-catalog';
 import {
   PROTEIN_COFFEE,
   isProteinCoffeeProduct,
   proteinCoffeeFlavorImage,
   proteinCoffeeFlavorNote,
-  proteinCoffeeIcedPriceCents,
   proteinCoffeePricingSummary,
   proteinCoffeeVariantSku,
 } from '@/lib/protein-coffee-menu';
 import type { IProduct } from '@/models/Product';
 import type { IAddIn } from '@/models/AddIn';
 import type { Locale } from '@/types';
+import type { ProteinCoffeeCatalogData } from '@/types/menu-catalog';
 
 interface ProteinCoffeeProductDetailProps {
   product: IProduct;
   addIns: IAddIn[];
   locale: Locale;
+  catalog?: ProteinCoffeeCatalogData;
 }
 
-export function ProteinCoffeeProductDetail({ product, addIns, locale }: ProteinCoffeeProductDetailProps) {
+export function ProteinCoffeeProductDetail({
+  product,
+  addIns,
+  locale,
+  catalog,
+}: ProteinCoffeeProductDetailProps) {
   const { addItem } = useCart();
   const [flavorSlug, setFlavorSlug] = useState('');
-  const [sizeSlug, setSizeSlug] = useState<string>(PROTEIN_COFFEE.icedSizes[0].slug);
+
+  const icedSizes = useMemo(() => {
+    const fromCatalog = catalog?.sizes.filter((s) => !s.hidden) ?? [];
+    if (fromCatalog.length > 0) {
+      return fromCatalog.map((s) => ({ slug: s.slug, name: s.name, price: s.price }));
+    }
+    return PROTEIN_COFFEE.icedSizes.map((s) => ({ slug: s.slug, name: s.name, price: s.price }));
+  }, [catalog]);
+
+  const flavors = useMemo(() => {
+    const fromCatalog = catalog?.flavors.filter((f) => !f.hidden) ?? [];
+    if (fromCatalog.length > 0) {
+      return fromCatalog.map((f) => ({ slug: f.slug, name: f.name, image: f.image }));
+    }
+    return PROTEIN_COFFEE.flavors.map((f) => ({ slug: f.slug, name: f.name }));
+  }, [catalog]);
+
+  const [sizeSlug, setSizeSlug] = useState<string>(icedSizes[0]?.slug ?? '24oz');
   const [selectedAddIns, setSelectedAddIns] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
 
   const name = getLocalized(product.name, locale);
 
-  const selectedFlavor = PROTEIN_COFFEE.flavors.find((flavor) => flavor.slug === flavorSlug);
-  const displayImage = selectedFlavor
-    ? proteinCoffeeFlavorImage(flavorSlug)
-    : (getPrimaryProductImage(product) ?? PROTEIN_COFFEE.galleryImages[0]);
+  const selectedFlavor = flavors.find((flavor) => flavor.slug === flavorSlug);
+  const catalogFlavor = catalog?.flavors.find((f) => f.slug === flavorSlug);
 
-  const variantSku = flavorSlug ? proteinCoffeeVariantSku(sizeSlug) : '';
-  const unitPrice =
-    (variantSku ? getVariantPriceCents(product, variantSku) : null) ??
-    proteinCoffeeIcedPriceCents(sizeSlug);
+  const displayImage = useMemo(() => {
+    if (catalogFlavor?.image) {
+      return { url: catalogFlavor.image, alt: catalogFlavor.name };
+    }
+    if (selectedFlavor && 'image' in selectedFlavor && selectedFlavor.image) {
+      return { url: selectedFlavor.image, alt: selectedFlavor.name };
+    }
+    if (selectedFlavor) {
+      return proteinCoffeeFlavorImage(flavorSlug);
+    }
+    const main = catalog?.mainImages[0];
+    if (main?.url) {
+      return { url: main.url, alt: main.alt ?? name };
+    }
+    return getPrimaryProductImage(product) ?? PROTEIN_COFFEE.galleryImages[0];
+  }, [catalog, catalogFlavor, selectedFlavor, flavorSlug, product, name]);
 
-  const formula1SlugSet = useMemo(
-    () => new Set<string>(PROTEIN_COFFEE.formula1Flavors.map((flavor) => flavor.slug)),
-    []
-  );
+  const sizePriceCents = (size: string, flavor?: string) =>
+    resolveProteinCoffeeSizePriceCents(catalog, size, flavor);
+
+  const variantSku = flavorSlug ? proteinCoffeeVariantSku(sizeSlug, flavorSlug) : '';
+  const unitPrice = flavorSlug
+    ? sizePriceCents(sizeSlug, flavorSlug)
+    : (getVariantPriceCents(product, proteinCoffeeVariantSku(sizeSlug)) ?? sizePriceCents(sizeSlug));
+
+  const pricingSummary = useMemo(() => {
+    if (icedSizes.length === 0) return proteinCoffeePricingSummary();
+    return icedSizes
+      .map((size) => {
+        const cents = resolveProteinCoffeeSizePriceCents(catalog, size.slug);
+        return `${size.name} ${formatPrice(cents, 'USD', locale)}`;
+      })
+      .join(' · ');
+  }, [catalog, icedSizes, locale]);
+
+  const formula1SlugSet = useMemo(() => {
+    const fromCatalog = catalog?.formula1Flavors.filter((f) => !f.hidden).map((f) => f.slug) ?? [];
+    if (fromCatalog.length > 0) {
+      return new Set<string>(fromCatalog);
+    }
+    return new Set<string>(PROTEIN_COFFEE.formula1Flavors.map((flavor) => flavor.slug));
+  }, [catalog]);
   const optionalAddIns = useMemo(
     () => addIns.filter((addIn) => !formula1SlugSet.has(addIn.slug)),
     [addIns, formula1SlugSet]
@@ -107,7 +162,7 @@ export function ProteinCoffeeProductDetail({ product, addIns, locale }: ProteinC
       </div>
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
-        <p className="mt-2 text-sm leading-relaxed text-grey">{proteinCoffeePricingSummary()}</p>
+        <p className="mt-2 text-sm leading-relaxed text-grey">{pricingSummary}</p>
         <p className="mt-4 font-display text-3xl text-pink">
           {formatPrice(linePrice, 'USD', locale)}
         </p>
@@ -125,7 +180,7 @@ export function ProteinCoffeeProductDetail({ product, addIns, locale }: ProteinC
                     value: '',
                     label: locale === 'es' ? 'Selecciona un sabor' : 'Select a flavor',
                   },
-                  ...PROTEIN_COFFEE.flavors.map((flavor) => ({
+                  ...flavors.map((flavor) => ({
                     value: flavor.slug,
                     label: flavor.name,
                   })),
@@ -137,7 +192,7 @@ export function ProteinCoffeeProductDetail({ product, addIns, locale }: ProteinC
           <div>
             <h3 className="font-display text-2xl">{locale === 'es' ? 'Tamaño' : 'Size'}</h3>
             <div className="mt-4 flex flex-wrap gap-3">
-              {PROTEIN_COFFEE.icedSizes.map((size) => (
+              {icedSizes.map((size) => (
                 <button
                   key={size.slug}
                   type="button"
@@ -148,7 +203,11 @@ export function ProteinCoffeeProductDetail({ product, addIns, locale }: ProteinC
                 >
                   <p className="font-semibold">{size.name}</p>
                   <p className="mt-1 text-sm text-grey">
-                    {formatPrice(proteinCoffeeIcedPriceCents(size.slug), 'USD', locale)}
+                    {formatPrice(
+                      sizePriceCents(size.slug, flavorSlug || undefined),
+                      'USD',
+                      locale
+                    )}
                   </p>
                 </button>
               ))}

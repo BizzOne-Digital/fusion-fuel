@@ -121,8 +121,13 @@ export function proteinShakeItemImage(item: ProteinShakeMenuItem): { url: string
 }
 
 export function proteinShakeVariantSku(sizeSlug: string): string {
-  const size = PROTEIN_SHAKES_MENU.sizes.find((entry) => entry.slug === sizeSlug);
-  return size ? `FFB-PSHK-${size.variantSuffix}` : '';
+  const slug = sizeSlug.trim();
+  if (!slug) return '';
+  const size = PROTEIN_SHAKES_MENU.sizes.find((entry) => entry.slug === slug);
+  if (size) return `FFB-PSHK-${size.variantSuffix}`;
+  const ozMatch = /^(\d+)oz$/i.exec(slug);
+  if (ozMatch) return `FFB-PSHK-${ozMatch[1]}`;
+  return '';
 }
 
 export function proteinShakeProductShortDescription(): string {

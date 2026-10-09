@@ -169,11 +169,19 @@ function buildWafflesDefaults(): WafflesCatalogData {
       price: WAFFLES_MENU.price,
       image: cyo.image,
       extraToppingPrice: WAFFLES_MENU.extraToppingPrice,
+      uniformExtraToppingPrice: true,
       includedToppingMax: WAFFLES_MENU.includedToppingMax,
       toppingGroups: WAFFLES_MENU.toppingGroups.map((g) => ({
         label: g.label,
         items: [...g.items],
       })),
+      extraToppings: WAFFLES_MENU.toppingGroups.flatMap((g) =>
+        g.items.map((name) => ({
+          name,
+          groupLabel: g.label,
+          price: WAFFLES_MENU.extraToppingPrice,
+        }))
+      ),
     },
   };
 }

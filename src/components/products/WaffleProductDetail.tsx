@@ -24,12 +24,18 @@ import { getAddInUnitPrice } from '@/lib/product-add-ins';
 import type { IProduct } from '@/models/Product';
 import type { IAddIn } from '@/models/AddIn';
 import type { Locale } from '@/types';
+import type { WafflesCatalogData } from '@/types/menu-catalog';
+import {
+  buildWaffleToppingGroupsFromExtras,
+  waffleExtraToppingPriceMap,
+} from '@/lib/menu-catalog/waffles-catalog';
 
 interface WaffleProductDetailProps {
   product: IProduct;
   addIns: IAddIn[];
   locale: Locale;
   categorySlug: string;
+  catalog?: WafflesCatalogData;
 }
 
 export function WaffleProductDetail({
@@ -37,6 +43,7 @@ export function WaffleProductDetail({
   addIns,
   locale,
   categorySlug,
+  catalog,
 }: WaffleProductDetailProps) {
   const { addItem } = useCart();
   const [includedToppings, setIncludedToppings] = useState<string[]>([]);
@@ -45,7 +52,31 @@ export function WaffleProductDetail({
 
   const menuItem = waffleMenuItem(product.slug);
   const isBuildYourOwn = isWaffleBuildYourOwnProduct(product.slug);
-  const allToppings = waffleAllToppings();
+  const buildYourOwnConfig = catalog?.buildYourOwn;
+  const toppingGroups = useMemo(() => {
+    if (buildYourOwnConfig?.extraToppings?.length) {
+      return buildWaffleToppingGroupsFromExtras(buildYourOwnConfig.extraToppings);
+    }
+    return WAFFLES_MENU.toppingGroups;
+  }, [buildYourOwnConfig]);
+
+  const allToppings = useMemo(() => {
+    if (buildYourOwnConfig?.extraToppings?.length) {
+      return buildYourOwnConfig.extraToppings.filter((t) => !t.hidden).map((t) => t.name);
+    }
+    return waffleAllToppings();
+  }, [buildYourOwnConfig]);
+
+  const includedMax =
+    buildYourOwnConfig?.includedToppingMax ?? WAFFLES_MENU.includedToppingMax;
+  const uniformExtra = buildYourOwnConfig?.uniformExtraToppingPrice ?? true;
+  const extraPriceCents = Math.round(
+    (buildYourOwnConfig?.extraToppingPrice ?? WAFFLES_MENU.extraToppingPrice) * 100
+  );
+  const extraOptionPriceCents = useMemo(
+    () => (buildYourOwnConfig ? waffleExtraToppingPriceMap(buildYourOwnConfig) : undefined),
+    [buildYourOwnConfig]
+  );
   const shortDescription = getLocalized(product.shortDescription, locale);
   const name = getLocalized(product.name, locale);
   const galleryImages = product.images.filter((image) => image.url?.trim());
@@ -155,12 +186,14 @@ export function WaffleProductDetail({
           {isBuildYourOwn ? (
             <WaffleModifierGroups
               locale={locale}
-              toppingGroups={WAFFLES_MENU.toppingGroups}
+              toppingGroups={toppingGroups}
               allToppings={allToppings}
               includedToppings={includedToppings}
               extraToppings={extraToppings}
-              includedMax={WAFFLES_MENU.includedToppingMax}
-              extraPriceCents={Math.round(WAFFLES_MENU.extraToppingPrice * 100)}
+              includedMax={includedMax}
+              extraPriceCents={extraPriceCents}
+              uniformExtraPrice={uniformExtra}
+              extraOptionPriceCents={uniformExtra ? undefined : extraOptionPriceCents}
               onIncludedChange={setIncludedToppings}
               onExtraChange={setExtraToppings}
             />

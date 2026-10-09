@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import Image from 'next/image';
+import { AdminStoredImage } from '@/components/admin/AdminStoredImage';
 import { toast } from 'sonner';
 import AdminHeader from '@/components/admin/AdminHeader';
 import DataTable from '@/components/admin/DataTable';
@@ -176,7 +176,7 @@ export default function CategoryManager() {
                 const src = resolvePublicImageUrl(image?.url, '/images/mega-tea.png');
                 return (
                   <div className="relative h-12 w-12 overflow-hidden rounded-md border border-zinc-200 bg-zinc-100">
-                    <Image src={src} alt={image?.alt ?? ''} fill className="object-cover" unoptimized />
+                    <AdminStoredImage src={src} alt={image?.alt ?? ''} fill className="object-cover" />
                   </div>
                 );
               },

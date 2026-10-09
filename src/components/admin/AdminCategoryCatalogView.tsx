@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import { AdminStoredImage } from '@/components/admin/AdminStoredImage';
 import AdminHeader from '@/components/admin/AdminHeader';
 import {
   type AdminCatalogEntry,
@@ -64,7 +64,7 @@ function CatalogLineList({
               >
                 {entry.imageUrl ? (
                   <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-zinc-100">
-                    <Image src={entry.imageUrl} alt="" fill className="object-cover" sizes="56px" />
+                    <AdminStoredImage src={entry.imageUrl} alt="" fill className="object-cover" sizes="56px" />
                   </div>
                 ) : (
                   <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-xs text-zinc-500">
@@ -122,7 +122,13 @@ function DbProductDetail({
       <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
         {image?.url ? (
           <div className="relative aspect-square overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
-            <Image src={image.url} alt={image.alt || product.name.en} fill className="object-cover" sizes="240px" />
+            <AdminStoredImage
+              src={image.url}
+              alt={image.alt || product.name.en}
+              fill
+              className="object-cover"
+              sizes="240px"
+            />
           </div>
         ) : null}
         <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-6">
@@ -227,7 +233,7 @@ function StaticInfoDetail({
       </Link>
       {imageUrl ? (
         <div className="relative mb-6 aspect-[16/10] max-w-xl overflow-hidden rounded-xl border border-zinc-200">
-          <Image src={imageUrl} alt="" fill className="object-cover" sizes="640px" />
+          <AdminStoredImage src={imageUrl} alt="" fill className="object-cover" sizes="640px" />
         </div>
       ) : null}
       <p className="text-sm text-zinc-700">{description}</p>

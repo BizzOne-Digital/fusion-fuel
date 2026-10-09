@@ -10,43 +10,111 @@ import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { AddInSelector } from '@/components/products/AddInSelector';
+import { resolveProteinShakeSizePriceCents } from '@/lib/menu-catalog/protein-shakes-catalog';
 import {
   PROTEIN_SHAKES_MENU,
   isProteinShakeProduct,
   proteinShakeFlavorNote,
   proteinShakeItemImage,
-  proteinShakePricingSummary,
-  proteinShakeSizePriceCents,
   proteinShakeVariantSku,
 } from '@/lib/protein-shakes-menu';
 import type { IProduct } from '@/models/Product';
 import type { IAddIn } from '@/models/AddIn';
 import type { Locale } from '@/types';
+import type { ProteinShakesCatalogData } from '@/types/menu-catalog';
 
 interface ProteinShakeProductDetailProps {
   product: IProduct;
   addIns: IAddIn[];
   locale: Locale;
+  catalog?: ProteinShakesCatalogData;
 }
 
-export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinShakeProductDetailProps) {
+export function ProteinShakeProductDetail({
+  product,
+  addIns,
+  locale,
+  catalog,
+}: ProteinShakeProductDetailProps) {
   const { addItem } = useCart();
+
+  const shakeSizes = useMemo(() => {
+    const fromCatalog = catalog?.sizes.filter((s) => !s.hidden) ?? [];
+    if (fromCatalog.length > 0) {
+      return fromCatalog.map((s) => ({ slug: s.slug, name: s.name, price: s.price }));
+    }
+    return PROTEIN_SHAKES_MENU.sizes.map((s) => ({ slug: s.slug, name: s.name, price: s.price }));
+  }, [catalog]);
+
+  const shakeFlavors = useMemo(() => {
+    const fromCatalog = catalog?.flavors.filter((f) => !f.hidden) ?? [];
+    if (fromCatalog.length > 0) {
+      return fromCatalog.map((f) => ({
+        slug: f.slug,
+        name: f.name,
+        image: f.image,
+      }));
+    }
+    return PROTEIN_SHAKES_MENU.items.map((item) => ({
+      slug: item.slug,
+      name: item.name,
+      image: item.image,
+    }));
+  }, [catalog]);
+
   const [flavorSlug, setFlavorSlug] = useState('');
-  const [sizeSlug, setSizeSlug] = useState<string>(PROTEIN_SHAKES_MENU.sizes[0].slug);
+  const [sizeSlug, setSizeSlug] = useState<string>(shakeSizes[0]?.slug ?? '24oz');
   const [selectedAddIns, setSelectedAddIns] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
 
   const name = getLocalized(product.name, locale);
 
-  const selectedItem = PROTEIN_SHAKES_MENU.items.find((item) => item.slug === flavorSlug);
-  const displayImage = selectedItem
-    ? proteinShakeItemImage(selectedItem)
-    : (getPrimaryProductImage(product) ?? PROTEIN_SHAKES_MENU.heroImage);
+  const selectedItem = shakeFlavors.find((item) => item.slug === flavorSlug);
+
+  const displayImage = useMemo(() => {
+    if (selectedItem?.image) {
+      return { url: selectedItem.image, alt: selectedItem.name };
+    }
+    if (selectedItem) {
+      const staticItem = PROTEIN_SHAKES_MENU.items.find((i) => i.slug === selectedItem.slug);
+      if (staticItem) return proteinShakeItemImage(staticItem);
+    }
+    const hero = catalog?.heroImage?.url;
+    if (hero) {
+      return { url: hero, alt: catalog?.heroImage?.alt ?? name };
+    }
+    return getPrimaryProductImage(product) ?? PROTEIN_SHAKES_MENU.heroImage;
+  }, [selectedItem, catalog, product, name]);
+
+  const sizePriceCents = (size: string, flavor?: string) => {
+    const sku = proteinShakeVariantSku(size);
+    const fromVariant = sku ? getVariantPriceCents(product, sku) : null;
+    if (fromVariant != null && fromVariant > 0) {
+      return fromVariant;
+    }
+    return resolveProteinShakeSizePriceCents(catalog, size, flavor);
+  };
 
   const variantSku = flavorSlug ? proteinShakeVariantSku(sizeSlug) : '';
-  const unitPrice =
-    (variantSku ? getVariantPriceCents(product, variantSku) : null) ??
-    proteinShakeSizePriceCents(sizeSlug);
+  const unitPrice = flavorSlug
+    ? sizePriceCents(sizeSlug, flavorSlug)
+    : sizePriceCents(sizeSlug);
+
+  const pricingSummary = useMemo(
+    () =>
+      shakeSizes
+        .map((size) => {
+          const sku = proteinShakeVariantSku(size.slug);
+          const fromVariant = sku ? getVariantPriceCents(product, sku) : null;
+          const cents =
+            fromVariant != null && fromVariant > 0
+              ? fromVariant
+              : resolveProteinShakeSizePriceCents(catalog, size.slug);
+          return `${size.name} ${formatPrice(cents, 'USD', locale)}`;
+        })
+        .join(' · '),
+    [shakeSizes, catalog, product, locale]
+  );
 
   const addInTotal = useMemo(
     () =>
@@ -94,7 +162,7 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
       </div>
       <div>
         <h1 className="font-display text-5xl">{name}</h1>
-        <p className="mt-2 text-sm leading-relaxed text-grey">{proteinShakePricingSummary()}</p>
+        <p className="mt-2 text-sm leading-relaxed text-grey">{pricingSummary}</p>
         <p className="mt-4 font-display text-3xl text-pink">
           {formatPrice(linePrice, 'USD', locale)}
         </p>
@@ -112,7 +180,7 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
                     value: '',
                     label: locale === 'es' ? 'Selecciona un sabor' : 'Select a flavor',
                   },
-                  ...PROTEIN_SHAKES_MENU.items.map((item) => ({
+                  ...shakeFlavors.map((item) => ({
                     value: item.slug,
                     label: item.name,
                   })),
@@ -124,7 +192,7 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
           <div>
             <h3 className="font-display text-2xl">{locale === 'es' ? 'Tamaño' : 'Size'}</h3>
             <div className="mt-4 flex flex-wrap gap-3">
-              {PROTEIN_SHAKES_MENU.sizes.map((size) => (
+              {shakeSizes.map((size) => (
                 <button
                   key={size.slug}
                   type="button"
@@ -135,7 +203,11 @@ export function ProteinShakeProductDetail({ product, addIns, locale }: ProteinSh
                 >
                   <p className="font-semibold">{size.name}</p>
                   <p className="mt-1 text-sm text-grey">
-                    {formatPrice(proteinShakeSizePriceCents(size.slug), 'USD', locale)}
+                    {formatPrice(
+                      sizePriceCents(size.slug, flavorSlug || undefined),
+                      'USD',
+                      locale
+                    )}
                   </p>
                 </button>
               ))}

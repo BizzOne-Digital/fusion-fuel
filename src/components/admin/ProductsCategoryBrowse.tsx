@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import { AdminStoredImage } from '@/components/admin/AdminStoredImage';
 import AdminHeader from '@/components/admin/AdminHeader';
 import { adminProductsCategoryHref } from '@/lib/admin/category-catalog';
 import { richTextToPlainText } from '@/lib/utils';
@@ -30,7 +30,7 @@ export default function ProductsCategoryBrowse({ categories }: ProductsCategoryB
             <div className="flex min-w-0 flex-1 items-center gap-4">
               {category.image?.url ? (
                 <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-zinc-100">
-                  <Image
+                  <AdminStoredImage
                     src={category.image.url}
                     alt={category.image.alt || category.name.en}
                     fill

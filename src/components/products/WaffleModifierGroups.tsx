@@ -17,6 +17,8 @@ interface WaffleModifierGroupsProps {
   extraToppings: string[];
   includedMax: number;
   extraPriceCents: number;
+  uniformExtraPrice?: boolean;
+  extraOptionPriceCents?: Readonly<Record<string, number>>;
   onIncludedChange: (next: string[]) => void;
   onExtraChange: (next: string[]) => void;
 }
@@ -29,6 +31,8 @@ export function WaffleModifierGroups({
   extraToppings,
   includedMax,
   extraPriceCents,
+  uniformExtraPrice = true,
+  extraOptionPriceCents,
   onIncludedChange,
   onExtraChange,
 }: WaffleModifierGroupsProps) {
@@ -98,10 +102,19 @@ export function WaffleModifierGroups({
 
       <ModifierChipGroup
         title={locale === 'es' ? 'Toppings extra' : 'Extra Toppings'}
-        subtitle={locale === 'es' ? 'Opcional' : 'Optional — same choices, +$1.00 each'}
+        subtitle={
+          locale === 'es'
+            ? uniformExtraPrice
+              ? 'Opcional — mismo precio por topping extra'
+              : 'Opcional — precio según el topping'
+            : uniformExtraPrice
+              ? 'Optional — same price per extra topping'
+              : 'Optional — price varies by topping'
+        }
         options={allToppings}
         selected={extraToppings}
-        priceCents={extraPriceCents}
+        priceCents={uniformExtraPrice ? extraPriceCents : 0}
+        optionPriceCents={uniformExtraPrice ? undefined : extraOptionPriceCents}
         locale={locale}
         onChange={onExtraChange}
       />
