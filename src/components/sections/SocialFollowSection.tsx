@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { SectionReveal } from '@/components/motion/SectionReveal';
 import { CONTACT } from '@/lib/brand-content';
+import { useSiteContact } from '@/context/SiteSettingsContext';
 import { getSocialFollowCopy } from '@/lib/marketing-i18n';
 import type { Locale } from '@/types';
 
@@ -19,9 +20,8 @@ interface SocialFollowSectionProps {
 
 export function SocialFollowSection({ locale, social = [] }: SocialFollowSectionProps) {
   const copy = getSocialFollowCopy(locale);
-  const instagram = social.find((s) => s.platform === 'instagram');
-  const facebook = social.find((s) => s.platform === 'facebook');
-  const tiktok = social.find((s) => s.platform === 'tiktok');
+  const { instagram, facebook, tiktok } = useSiteContact();
+  void social; // kept for API compatibility; values now come from site settings
 
   return (
     <SectionReveal>
@@ -31,7 +31,7 @@ export function SocialFollowSection({ locale, social = [] }: SocialFollowSection
             <div className="relative h-44 w-44 shrink-0 overflow-hidden rounded-2xl bg-white/10 shadow-lg">
               <Image
                 src={CONTACT.instagramQrImage}
-                alt={copy.qrAlt(CONTACT.instagramHandle)}
+                alt={copy.qrAlt(instagram.label)}
                 fill
                 className="object-cover"
                 sizes="176px"
@@ -42,40 +42,29 @@ export function SocialFollowSection({ locale, social = [] }: SocialFollowSection
               <p className="mt-2 text-white/85">{copy.subtitle}</p>
               <div className="mt-4 flex flex-wrap justify-center gap-4 md:justify-start">
                 <a
-                  href={instagram?.url ?? CONTACT.instagramUrl}
+                  href={instagram.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-lg font-semibold underline transition hover:text-lime"
                 >
-                  {instagram?.label ?? CONTACT.instagramHandle}
+                  {instagram.label}
                 </a>
                 <a
-                  href={facebook?.url ?? CONTACT.facebookUrl}
+                  href={facebook.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-lg font-semibold underline transition hover:text-lime"
                 >
-                  {facebook?.label ?? CONTACT.facebookLabel}
+                  {facebook.label}
                 </a>
-                {tiktok ? (
-                  <a
-                    href={tiktok.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-lg font-semibold underline transition hover:text-lime"
-                  >
-                    {tiktok.label ?? CONTACT.tiktokHandle}
-                  </a>
-                ) : (
-                  <a
-                    href={CONTACT.tiktokUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-lg font-semibold underline transition hover:text-lime"
-                  >
-                    {CONTACT.tiktokHandle}
-                  </a>
-                )}
+                <a
+                  href={tiktok.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-lg font-semibold underline transition hover:text-lime"
+                >
+                  {tiktok.label}
+                </a>
               </div>
             </div>
           </div>

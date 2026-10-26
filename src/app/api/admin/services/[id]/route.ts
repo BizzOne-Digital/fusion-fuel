@@ -1,4 +1,5 @@
 import connectDB from '@/lib/mongodb';
+import { revalidateSiteContent } from '@/lib/revalidate-storefront';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { writeAuditLog } from '@/lib/admin/audit';
 import { serializeDoc } from '@/lib/admin/serialize';
@@ -36,6 +37,7 @@ export async function PUT(request: Request, context: RouteContext) {
     const before = service.toObject();
     Object.assign(service, data);
     await service.save();
+    revalidateSiteContent();
 
     await writeAuditLog({
       action: 'update',
@@ -58,6 +60,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
     const { id } = await context.params;
     const service = await Service.findByIdAndDelete(toObjectId(id));
     if (!service) return jsonError('Service not found', 404);
+    revalidateSiteContent();
 
     await writeAuditLog({
       action: 'delete',

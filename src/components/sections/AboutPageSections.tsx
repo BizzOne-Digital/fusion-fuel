@@ -33,7 +33,8 @@ import {
   ABOUT_VALUES,
   type AboutServiceIcon,
 } from '@/lib/about-content';
-import { CONTACT } from '@/lib/brand-content';
+import { resolveContact } from '@/lib/site-content';
+import type { ISiteSettings } from '@/models/SiteSettings';
 import { SITE_IMAGES } from '@/lib/site-images';
 import { getLocalized } from '@/lib/utils';
 import type { ITestimonial } from '@/models/Testimonial';
@@ -113,46 +114,47 @@ function TaglineBanner({ className = '' }: { className?: string }) {
 interface AboutPageSectionsProps {
   locale: Locale;
   testimonials: ITestimonial[];
+  settings?: Partial<ISiteSettings>;
 }
 
-export function AboutPageSections({ locale, testimonials }: AboutPageSectionsProps) {
-  const phoneHref = `tel:${CONTACT.phone.replace(/\s/g, '')}`;
+export function AboutPageSections({ locale, testimonials, settings }: AboutPageSectionsProps) {
+  const contact = resolveContact(settings);
 
   const connectLinks = [
     {
-      href: CONTACT.facebookUrl,
+      href: contact.facebook.url,
       external: true,
       icon: <FacebookIcon className="h-5 w-5" />,
       label: 'Facebook',
-      value: CONTACT.facebookLabel,
+      value: contact.facebook.label,
     },
     {
-      href: CONTACT.instagramUrl,
+      href: contact.instagram.url,
       external: true,
       icon: <InstagramIcon className="h-5 w-5" />,
       label: 'Instagram',
-      value: CONTACT.instagramHandle,
+      value: contact.instagram.label,
     },
     {
-      href: CONTACT.tiktokUrl,
+      href: contact.tiktok.url,
       external: true,
       icon: <TikTokIcon className="h-5 w-5" />,
       label: 'TikTok',
-      value: CONTACT.tiktokHandle,
+      value: contact.tiktok.label,
     },
     {
-      href: `mailto:${CONTACT.email}`,
+      href: `mailto:${contact.email}`,
       external: false,
       icon: <Mail className="h-5 w-5" aria-hidden />,
       label: 'Email',
-      value: CONTACT.email,
+      value: contact.email,
     },
     {
-      href: phoneHref,
+      href: contact.phoneHref,
       external: false,
       icon: <Phone className="h-5 w-5" aria-hidden />,
       label: locale === 'es' ? 'Llama o envía texto' : 'Call or Text',
-      value: CONTACT.phoneDisplay,
+      value: contact.phone,
     },
   ];
 

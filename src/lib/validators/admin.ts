@@ -393,6 +393,41 @@ export const settingsFormSchema = z.object({
     .optional(),
 });
 
+const cateringText = (max = 600) => z.object({ en: z.string().trim().max(max), es: z.string().trim().max(max) });
+const cateringList = z.object({
+  en: z.array(z.string().trim().min(1).max(200)).max(40),
+  es: z.array(z.string().trim().min(1).max(200)).max(40),
+});
+
+export const cateringFormSchema = z
+  .object({
+    tagline: cateringText(),
+    eventName: cateringText(200),
+    headline: cateringText(),
+    serviceArea: cateringText(),
+    deliveryNote: cateringText(),
+    serviceDuration: cateringText(),
+    deposit: cateringText(),
+    balance: cateringText(),
+    bowlSizes: cateringList,
+    venueTypes: cateringList,
+    perfectFor: cateringList,
+    freshFruits: cateringList,
+    premiumToppings: cateringList,
+    packageIncludes: cateringList,
+    howItWorks: cateringList,
+    guestPackages: z.array(z.number().int().min(1).max(100000)).max(30),
+    guestMin: z.number().int().min(1).max(100000),
+    guestMax: z.number().int().min(1).max(100000),
+    notificationEmail: z.union([z.literal(''), z.string().trim().regex(EMAIL_REGEX)]),
+  })
+  .refine((d) => d.guestMax >= d.guestMin, {
+    message: 'Maximum guests must be greater than or equal to minimum guests',
+    path: ['guestMax'],
+  });
+
+export type CateringFormInput = z.infer<typeof cateringFormSchema>;
+
 export const integrationTestSchema = z.object({
   eventType: z
     .enum(['customer.created', 'order.paid', 'order.status_changed', 'booking.created', 'contact.created'])

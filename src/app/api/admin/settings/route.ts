@@ -1,4 +1,5 @@
 import connectDB from '@/lib/mongodb';
+import { revalidateSiteContent } from '@/lib/revalidate-storefront';
 import { SITE_SETTINGS_KEY } from '@/lib/constants';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { writeAuditLog } from '@/lib/admin/audit';
@@ -49,6 +50,7 @@ export async function PUT(request: Request) {
     if (data.footer) settings.footer = data.footer;
     if (data.legalLinks) settings.legalLinks = data.legalLinks;
     await settings.save();
+    revalidateSiteContent();
 
     await writeAuditLog({
       action: 'update',

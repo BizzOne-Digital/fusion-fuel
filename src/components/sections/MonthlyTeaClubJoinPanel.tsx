@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale } from 'next-intl';
 import { z } from 'zod';
 import { EMAIL_REGEX } from '@/lib/constants';
-import { CONTACT } from '@/lib/brand-content';
+import { useSiteContact } from '@/context/SiteSettingsContext';
 import { getMonthlyTeaClub } from '@/lib/marketing-i18n';
 import type { Locale } from '@/types';
 import { cn } from '@/lib/utils';
@@ -44,6 +44,7 @@ interface MonthlyTeaClubJoinPanelProps {
 export function MonthlyTeaClubJoinPanel({ locale: localeProp }: MonthlyTeaClubJoinPanelProps) {
   const localeFromHook = useLocale() as Locale;
   const locale = localeProp ?? localeFromHook;
+  const contact = useSiteContact();
   const club = getMonthlyTeaClub(locale);
   const planBadges = locale === 'es' ? PLAN_BADGES_ES : PLAN_BADGES_EN;
   const [selectedPlan, setSelectedPlan] = useState<number | null>(null);
@@ -283,25 +284,25 @@ export function MonthlyTeaClubJoinPanel({ locale: localeProp }: MonthlyTeaClubJo
           <ul className="mt-3 space-y-2">
             <li>
               Phone:{' '}
-              <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`} className="font-semibold text-carbon hover:text-pink">
-                {CONTACT.phoneDisplay}
+              <a href={contact.phoneHref} className="font-semibold text-carbon hover:text-pink">
+                {contact.phone}
               </a>
             </li>
             <li>
               Email:{' '}
-              <a href={`mailto:${CONTACT.email}`} className="font-semibold text-carbon hover:text-pink">
-                {CONTACT.email}
+              <a href={`mailto:${contact.email}`} className="font-semibold text-carbon hover:text-pink">
+                {contact.email}
               </a>
             </li>
             <li>
               Instagram:{' '}
               <a
-                href={CONTACT.instagramUrl}
+                href={contact.instagram.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-carbon hover:text-pink"
               >
-                {CONTACT.instagramHandle}
+                {contact.instagram.label}
               </a>
             </li>
           </ul>

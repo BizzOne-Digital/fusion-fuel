@@ -9,8 +9,7 @@ import {
   bookingStepVenueSchema,
   bookingStepContactSchema,
   bookingStepDetailsSchema,
-  BOOKING_GUEST_COUNT_MIN,
-  BOOKING_GUEST_COUNT_MAX,
+  guestCountRangeError,
   type BookingInput,
 } from '@/lib/validators';
 import { Input } from '@/components/ui/Input';
@@ -21,6 +20,7 @@ import { toast } from '@/components/ui/Toast';
 import type { IService } from '@/models/Service';
 import { getLocalized } from '@/lib/utils';
 import { getBookingWizardCopy } from '@/lib/marketing-i18n';
+import { useCatering } from '@/context/SiteSettingsContext';
 import type { Locale } from '@/types';
 
 function formatReviewDate(value: unknown, locale: Locale): string {
@@ -73,12 +73,13 @@ interface BookingWizardProps {
 export function BookingWizard({ services }: BookingWizardProps) {
   const locale = useLocale() as Locale;
   const copy = getBookingWizardCopy(locale);
+  const { guestMin, guestMax } = useCatering(locale);
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<Partial<BookingInput>>({});
   const [reference, setReference] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<BookingInput>();
+  const { register, handleSubmit, setError, formState: { errors } } = useForm<BookingInput>();
 
   const next = (data: Partial<BookingInput>) => {
     setFormData((prev) => ({ ...prev, ...data }));
@@ -95,7 +96,9 @@ export function BookingWizard({ services }: BookingWizardProps) {
     const json = await res.json();
     setLoading(false);
     if (!res.ok) {
-      toast.error(json.error ?? copy.submissionFailed);
+      const fieldErrors = (json.error?.fieldErrors ?? {}) as Record<string, string[]>;
+      const firstFieldError = Object.values(fieldErrors).flat()[0];
+      toast.error(firstFieldError ?? (typeof json.error === 'string' ? json.error : copy.submissionFailed));
       return;
     }
     setReference(json.referenceNumber);
@@ -142,21 +145,29 @@ export function BookingWizard({ services }: BookingWizardProps) {
       )}
 
       {step === 1 && (
-        <form onSubmit={handleSubmit((d) => { bookingStepScheduleSchema.parse(d); next(d); })} className="space-y-4">
+        <form onSubmit={handleSubmit((d) => {
+          bookingStepScheduleSchema.parse(d);
+          const rangeError = guestCountRangeError(Number(d.guestCount), guestMin, guestMax);
+          if (rangeError) {
+            setError('guestCount', { type: 'range', message: rangeError });
+            return;
+          }
+          next(d);
+        })} className="space-y-4">
           <Input label={copy.preferredDate} type="date" {...register('preferredDate')} error={errors.preferredDate?.message} />
           <Input label={copy.alternateDate} type="date" {...register('alternateDate')} />
           <Input label={copy.startTime} type="time" {...register('startTime')} error={errors.startTime?.message} />
           <Input
             label={copy.guestCount}
             type="number"
-            min={BOOKING_GUEST_COUNT_MIN}
-            max={BOOKING_GUEST_COUNT_MAX}
-            placeholder={`${BOOKING_GUEST_COUNT_MIN}–${BOOKING_GUEST_COUNT_MAX}`}
+            min={guestMin}
+            max={guestMax}
+            placeholder={`${guestMin}–${guestMax}`}
             {...register('guestCount')}
             error={errors.guestCount?.message}
           />
           <p className="text-sm text-grey">
-            {copy.eventsGuestRangeLead} {BOOKING_GUEST_COUNT_MIN}–{BOOKING_GUEST_COUNT_MAX} {copy.eventsGuestRangeSuffix}
+            {copy.eventsGuestRangeLead} {guestMin}–{guestMax} {copy.eventsGuestRangeSuffix}
           </p>
           <Button type="button" variant="outline" onClick={() => setStep(0)}>{copy.back}</Button>
           <Button type="submit">{copy.next}</Button>

@@ -3,8 +3,10 @@ import { auth } from '@/lib/auth';
 import connectDB from '@/lib/mongodb';
 import Booking from '@/models/Booking';
 import Service from '@/models/Service';
-import { bookingSchema } from '@/lib/validators';
+import { bookingSchema, guestCountRangeError } from '@/lib/validators';
 import { BOOKING_REFERENCE_PREFIX } from '@/lib/constants';
+import { getSiteSettings } from '@/lib/data/settings';
+import { mergeCatering } from '@/lib/site-content';
 import {
   buildBookingBusinessEmail,
   buildBookingCustomerEmail,
@@ -22,6 +24,16 @@ export async function POST(request: NextRequest) {
     const parsed = bookingSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    }
+
+    const settings = await getSiteSettings();
+    const catering = mergeCatering(settings.catering);
+    const rangeError = guestCountRangeError(parsed.data.guestCount, catering.guestMin, catering.guestMax);
+    if (rangeError) {
+      return NextResponse.json(
+        { error: { fieldErrors: { guestCount: [rangeError] }, formErrors: [] } },
+        { status: 400 }
+      );
     }
 
     await connectDB();
@@ -89,7 +101,7 @@ export async function POST(request: NextRequest) {
     });
 
     await sendEmail({ to: parsed.data.email, ...customerEmail });
-    await sendEmail({ to: getContactToEmail(), ...businessEmail, replyTo: parsed.data.email });
+    await sendEmail({ to: getContactToEmail(catering.notificationEmail || settings.contactEmail), ...businessEmail, replyTo: parsed.data.email });
 
     return NextResponse.json({ success: true, referenceNumber, id: booking._id });
   } catch (error) {

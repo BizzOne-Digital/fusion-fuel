@@ -14,3 +14,8 @@ export function revalidateStorefrontCatalog(options?: { productSlug?: string }) 
     }
   }
 }
+
+/** Bust every cached public page (footer, contact, catering, services all read site settings). */
+export function revalidateSiteContent() {
+  revalidatePath('/', 'layout');
+}

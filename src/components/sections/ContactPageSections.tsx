@@ -1,6 +1,6 @@
 'use client';
 
-import { Mail, MapPin, Phone } from 'lucide-react';
+import { Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { ContactForm } from '@/components/forms/ContactForm';
 import { SectionReveal } from '@/components/motion/SectionReveal';
@@ -9,7 +9,7 @@ import { LifestyleMontage } from '@/components/sections/LifestyleMontage';
 import { SocialFollowSection } from '@/components/sections/SocialFollowSection';
 import { PageCtaBanner } from '@/components/sections/PageCtaBanner';
 import { Button } from '@/components/ui/Button';
-import { CONTACT } from '@/lib/brand-content';
+import { formatHours, resolveContact } from '@/lib/site-content';
 import { SITE_IMAGES } from '@/lib/site-images';
 import type { ISiteSettings } from '@/models/SiteSettings';
 import type { Locale } from '@/types';
@@ -21,7 +21,8 @@ interface ContactPageSectionsProps {
 
 export function ContactPageSections({ locale, settings }: ContactPageSectionsProps) {
   const isEs = locale === 'es';
-  const phoneHref = `tel:${(settings.contactPhone ?? CONTACT.phone).replace(/\s/g, '')}`;
+  const contact = resolveContact(settings);
+  const hours = formatHours(contact.hours, locale);
 
   return (
     <div className="min-w-0 overflow-x-hidden">
@@ -38,7 +39,7 @@ export function ContactPageSections({ locale, settings }: ContactPageSectionsPro
         badge={
           <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-lime/40 bg-lime/15 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-lime">
             <MapPin className="h-3.5 w-3.5" aria-hidden />
-            Wimauma, FL
+            {[contact.address.city, contact.address.state].filter(Boolean).join(', ')}
           </span>
         }
       >
@@ -77,7 +78,11 @@ export function ContactPageSections({ locale, settings }: ContactPageSectionsPro
                   </div>
                   <div>
                     <dt className="text-xs font-bold uppercase tracking-widest text-grey">Email</dt>
-                    <dd className="mt-1 font-semibold">{settings.contactEmail ?? CONTACT.email}</dd>
+                    <dd className="mt-1">
+                      <a href={`mailto:${contact.email}`} className="font-semibold text-pink hover:underline">
+                        {contact.email}
+                      </a>
+                    </dd>
                   </div>
                 </div>
                 <div className="card-hover flex gap-4 rounded-2xl border border-grey/10 bg-cream p-5">
@@ -87,12 +92,49 @@ export function ContactPageSections({ locale, settings }: ContactPageSectionsPro
                   <div>
                     <dt className="text-xs font-bold uppercase tracking-widest text-grey">Phone</dt>
                     <dd className="mt-1">
-                      <a href={phoneHref} className="font-semibold text-pink hover:underline">
-                        {settings.contactPhone ?? CONTACT.phoneDisplay}
+                      <a href={contact.phoneHref} className="font-semibold text-pink hover:underline">
+                        {contact.phone}
                       </a>
                     </dd>
                   </div>
                 </div>
+                {contact.addressLines.length > 0 && (
+                  <div className="card-hover flex gap-4 rounded-2xl border border-grey/10 bg-cream p-5">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-lime/30">
+                      <MapPin className="h-5 w-5 text-carbon" aria-hidden />
+                    </div>
+                    <div>
+                      <dt className="text-xs font-bold uppercase tracking-widest text-grey">
+                        {isEs ? 'Dirección' : 'Address'}
+                      </dt>
+                      <dd className="mt-1 font-semibold">
+                        {contact.addressLines.map((line) => (
+                          <span key={line} className="block">{line}</span>
+                        ))}
+                      </dd>
+                    </div>
+                  </div>
+                )}
+                {hours.length > 0 && (
+                  <div className="card-hover flex gap-4 rounded-2xl border border-grey/10 bg-cream p-5">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-pink/20">
+                      <Clock className="h-5 w-5 text-carbon" aria-hidden />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <dt className="text-xs font-bold uppercase tracking-widest text-grey">
+                        {isEs ? 'Horario' : 'Hours'}
+                      </dt>
+                      <dd className="mt-2 space-y-1 text-sm">
+                        {hours.map((h) => (
+                          <span key={h.day} className="flex justify-between gap-4">
+                            <span>{h.day}</span>
+                            <span className="font-semibold">{h.value}</span>
+                          </span>
+                        ))}
+                      </dd>
+                    </div>
+                  </div>
+                )}
                 {settings.social?.map((link) => (
                   <div
                     key={link.url}

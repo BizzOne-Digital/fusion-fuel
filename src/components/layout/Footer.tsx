@@ -3,6 +3,7 @@ import { Logo } from './Logo';
 import { AppLink } from '@/components/ui/AppLink';
 import { resolveFooterColumns } from '@/lib/footer-links';
 import { BRAND } from '@/lib/constants';
+import { resolveContact } from '@/lib/site-content';
 import { getLocalized, resolveLocalized } from '@/lib/utils';
 import type { ISiteSettings } from '@/models/SiteSettings';
 import type { Locale } from '@/types';
@@ -15,6 +16,7 @@ interface FooterProps {
 export async function Footer({ settings, locale }: FooterProps) {
   const t = await getTranslations({ locale, namespace: 'footer' });
   const columns = resolveFooterColumns(settings.footer?.columns);
+  const contact = resolveContact(settings);
 
   return (
     <footer className="site-content section-lime mt-auto w-full overflow-x-hidden border-t border-carbon/10">
@@ -26,8 +28,19 @@ export async function Footer({ settings, locale }: FooterProps) {
               {resolveLocalized(settings.footer?.tagline ?? settings.tagline, locale, BRAND.tagline)}
             </p>
             <div className="space-y-1 break-all text-sm text-carbon/90">
-              <p>{settings.contactEmail}</p>
-              <p>{settings.contactPhone}</p>
+              <p>
+                <a href={`mailto:${contact.email}`} className="hover:underline">
+                  {contact.email}
+                </a>
+              </p>
+              <p>
+                <a href={contact.phoneHref} className="hover:underline">
+                  {contact.phone}
+                </a>
+              </p>
+              {contact.addressLines.map((line) => (
+                <p key={line}>{line}</p>
+              ))}
             </div>
             <div className="flex flex-wrap gap-4">
               {settings.social?.map((s) => (

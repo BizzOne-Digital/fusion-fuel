@@ -7,6 +7,7 @@ import {
   SITE_SETTINGS_KEY,
   SUPPORTED_LOCALES,
 } from '@/lib/constants';
+import type { CateringContent } from '@/lib/site-content';
 import {
   AnnouncementBar,
   FooterSettings,
@@ -51,6 +52,8 @@ export interface ISiteSettings extends Document {
   social: SocialLink[];
   hours: BusinessHoursEntry[];
   legalLinks: LegalLink[];
+  /** Admin-editable catering content; see lib/site-content.ts for defaults. */
+  catering?: Partial<CateringContent>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -166,6 +169,7 @@ const SiteSettingsSchema = new Schema<ISiteSettings>(
     social: [SocialLinkSchema],
     hours: { type: [BusinessHoursSchema], default: () => [...DEFAULT_BUSINESS_HOURS] },
     legalLinks: [LegalLinkSchema],
+    catering: { type: Schema.Types.Mixed },
   },
   { timestamps: true }
 );

@@ -353,6 +353,7 @@ ${payload.verifyUrl}
   return { subject, text, html };
 }
 
-export function getContactToEmail(): string {
-  return process.env.CONTACT_TO_EMAIL ?? BUSINESS_DEFAULTS.email;
+/** Admin-configured address wins; then the CONTACT_TO_EMAIL env var; then the built-in default. */
+export function getContactToEmail(override?: string): string {
+  return override?.trim() || process.env.CONTACT_TO_EMAIL || BUSINESS_DEFAULTS.email;
 }

@@ -12,6 +12,7 @@ import {
   PlusCircle,
   ShoppingCart,
   Calendar,
+  UtensilsCrossed,
   Users,
   MessageSquare,
   HelpCircle,
@@ -54,6 +55,7 @@ const navGroups = [
     items: [
       { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
       { href: '/admin/bookings', label: 'Bookings', icon: Calendar },
+      { href: '/admin/catering', label: 'Catering', icon: UtensilsCrossed },
       { href: '/admin/customers', label: 'Customers', icon: Users },
       { href: '/admin/pricing', label: 'Pricing', icon: DollarSign },
       { href: '/admin/promotions', label: 'Promotions', icon: Tag },

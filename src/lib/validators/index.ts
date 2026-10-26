@@ -16,6 +16,7 @@ export {
   bookingStepVenueSchema,
   BOOKING_GUEST_COUNT_MIN,
   BOOKING_GUEST_COUNT_MAX,
+  guestCountRangeError,
 } from './booking';
 export type { BookingInput } from './booking';
 

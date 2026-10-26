@@ -1,4 +1,5 @@
 import connectDB from '@/lib/mongodb';
+import { revalidateSiteContent } from '@/lib/revalidate-storefront';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { writeAuditLog } from '@/lib/admin/audit';
 import { serializeDoc } from '@/lib/admin/serialize';
@@ -42,6 +43,7 @@ export async function PUT(request: Request, context: RouteContext) {
     const before = page.toObject();
     Object.assign(page, data);
     await page.save();
+    revalidateSiteContent();
 
     await writeAuditLog({
       action: 'update',

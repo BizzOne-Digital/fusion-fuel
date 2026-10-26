@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
+import { getSiteSettings } from '@/lib/data/settings';
 import ContactSubmission from '@/models/ContactSubmission';
 import { contactSchema } from '@/lib/validators';
 import {
@@ -37,7 +38,8 @@ export async function POST(request: NextRequest) {
     const businessEmail = buildContactBusinessEmail(parsed.data);
 
     await sendEmail({ to: parsed.data.email, ...customerEmail });
-    await sendEmail({ to: getContactToEmail(), ...businessEmail, replyTo: parsed.data.email });
+    const settings = await getSiteSettings();
+    await sendEmail({ to: getContactToEmail(settings.contactEmail), ...businessEmail, replyTo: parsed.data.email });
 
     return NextResponse.json({ success: true });
   } catch (error) {

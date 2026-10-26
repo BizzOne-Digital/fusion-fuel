@@ -6,8 +6,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/Button';
-import { CONTACT } from '@/lib/brand-content';
-import { getAcaiBowlEvent, getBrandTagline } from '@/lib/marketing-i18n';
+import { useCatering, useSiteContact } from '@/context/SiteSettingsContext';
+import { getBrandTagline } from '@/lib/marketing-i18n';
 import { SITE_IMAGES } from '@/lib/site-images';
 import type { Locale } from '@/types';
 
@@ -20,7 +20,8 @@ interface AcaiBowlEventSectionProps {
 }
 
 export function AcaiBowlEventSection({ locale }: AcaiBowlEventSectionProps) {
-  const event = getAcaiBowlEvent(locale);
+  const event = useCatering(locale);
+  const contact = useSiteContact();
   const isEs = locale === 'es';
   const sectionRef = useRef<HTMLDivElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
@@ -163,7 +164,7 @@ export function AcaiBowlEventSection({ locale }: AcaiBowlEventSectionProps) {
             </div>
             <p className="mt-4 text-sm text-grey">
               {isEs ? '¿Preguntas? Llama al ' : 'Questions? Call '}
-              {CONTACT.phoneDisplay}
+              {contact.phone}
             </p>
           </div>
 

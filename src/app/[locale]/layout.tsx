@@ -7,6 +7,8 @@ import { SiteChrome } from '@/components/layout/SiteChrome';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/Toast';
 import { CartProvider } from '@/context/CartContext';
+import { SiteSettingsProvider } from '@/context/SiteSettingsContext';
+import { resolveCatering, resolveContact } from '@/lib/site-content';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { OrganizationJsonLd } from '@/components/seo/OrganizationJsonLd';
 import { WebSiteJsonLd } from '@/components/seo/WebSiteJsonLd';
@@ -33,9 +35,14 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   const settings = await getSiteSettings();
   const localeKey = locale as Locale;
+  const siteValue = {
+    contact: resolveContact(settings),
+    catering: { en: resolveCatering(settings.catering, 'en'), es: resolveCatering(settings.catering, 'es') },
+  };
 
   return (
     <NextIntlClientProvider messages={messages}>
+      <SiteSettingsProvider value={siteValue}>
       <AuthProvider>
         <CartProvider>
           <OrganizationJsonLd settings={settings} />
@@ -56,6 +63,7 @@ export default async function LocaleLayout({
           <Toaster position="top-center" richColors closeButton />
         </CartProvider>
       </AuthProvider>
+      </SiteSettingsProvider>
     </NextIntlClientProvider>
   );
 }

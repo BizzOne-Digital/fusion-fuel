@@ -1,9 +1,10 @@
 import { BRAND, BUSINESS_DEFAULTS, DEFAULT_BUSINESS_HOURS } from '@/lib/constants';
 import { absoluteUrl, localePath } from '@/lib/seo';
 import { SITE_IMAGES } from '@/lib/site-images';
+import type { BusinessHoursEntry } from '@/types';
 
-function openingHoursSpecification() {
-  return DEFAULT_BUSINESS_HOURS.map((entry) => ({
+function openingHoursSpecification(hours: BusinessHoursEntry[]) {
+  return hours.filter((entry) => !entry.closed).map((entry) => ({
     '@type': 'OpeningHoursSpecification',
     dayOfWeek: entry.day.charAt(0).toUpperCase() + entry.day.slice(1),
     opens: entry.open,
@@ -15,6 +16,8 @@ export function OrganizationJsonLd({
   settings,
 }: {
   settings?: {
+    businessName?: string;
+    hours?: BusinessHoursEntry[];
     contactPhone?: string;
     contactEmail?: string;
     address?: { street?: string; city?: string; state?: string; zip?: string; country?: string };
@@ -26,7 +29,7 @@ export function OrganizationJsonLd({
     '@context': 'https://schema.org',
     '@type': 'FoodEstablishment',
     '@id': `${absoluteUrl(localePath('en'))}#organization`,
-    name: BRAND.name,
+    name: settings?.businessName || BRAND.name,
     url: absoluteUrl(localePath('en')),
     image: absoluteUrl(SITE_IMAGES.heroDrinks),
     email: settings?.contactEmail ?? BUSINESS_DEFAULTS.email,
@@ -41,7 +44,7 @@ export function OrganizationJsonLd({
     },
     servesCuisine: 'Loaded Teas, Protein Beverages, Açaí Bowls',
     priceRange: '$$',
-    openingHoursSpecification: openingHoursSpecification(),
+    openingHoursSpecification: openingHoursSpecification(settings?.hours?.length ? settings.hours : DEFAULT_BUSINESS_HOURS),
   };
 
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;

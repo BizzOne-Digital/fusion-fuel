@@ -13,11 +13,11 @@ import { SocialFollowSection } from '@/components/sections/SocialFollowSection';
 import { SITE_IMAGES } from '@/lib/site-images';
 import { Button } from '@/components/ui/Button';
 import {
-  getCateringTagline,
   getDelivery,
   getHomePageCopy,
   getMonthlyTeaClub,
 } from '@/lib/marketing-i18n';
+import { resolveCatering } from '@/lib/site-content';
 import type { Locale } from '@/types';
 import type { IProductCategory } from '@/models/ProductCategory';
 import type { IService } from '@/models/Service';
@@ -74,7 +74,7 @@ export function HomePageSections({
       <AcaiBowlEventSection locale={locale} />
 
       {/* Monthly Tea Club */}      <SectionReveal>
-        <MonthlyTeaClubSection locale={locale} />
+        <MonthlyTeaClubSection locale={locale} cateringTagline={resolveCatering(settings.catering, locale).tagline} />
       </SectionReveal>
 
       {/* 13. Catering */}
@@ -84,7 +84,7 @@ export function HomePageSections({
             <Image src={SITE_IMAGES.catering} alt={homeCopy.cateringTitle} width={600} height={450} className="img-zoom h-auto w-full rounded-2xl object-cover transition duration-500 hover:scale-[1.02]" />
             <div>
               <h2 className="font-display text-4xl">{homeCopy.cateringTitle}</h2>
-              <p className="mt-3 text-grey">{getCateringTagline(locale)}</p>
+              <p className="mt-3 text-grey">{resolveCatering(settings.catering, locale).tagline}</p>
               <ul className="mt-4 space-y-2 text-grey">
                 {services.slice(0, 5).map((s) => (
                   <li key={String(s._id)}>• {getLocalized(s.name, locale)}</li>

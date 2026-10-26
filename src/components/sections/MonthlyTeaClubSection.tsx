@@ -15,11 +15,13 @@ const INSIDE_ICONS = [CupSoda, BookOpen, Sparkles, Gift, CalendarHeart] as const
 
 interface MonthlyTeaClubSectionProps {
   locale?: Locale;
+  /** Admin-editable catering tagline (falls back to the built-in copy). */
+  cateringTagline?: string;
   /** When true, reduces outer padding for use inside the menu category panel. */
   embedded?: boolean;
 }
 
-export function MonthlyTeaClubSection({ locale = 'en', embedded = false }: MonthlyTeaClubSectionProps) {
+export function MonthlyTeaClubSection({ locale = 'en', embedded = false, cateringTagline }: MonthlyTeaClubSectionProps) {
   const club = getMonthlyTeaClub(locale);
   const delivery = getDelivery(locale);
   const copy = getHomePageCopy(locale);
@@ -138,7 +140,7 @@ export function MonthlyTeaClubSection({ locale = 'en', embedded = false }: Month
             </li>
             <li className="flex gap-2">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-pink" aria-hidden />
-              {getCateringTagline(locale)}
+              {cateringTagline ?? getCateringTagline(locale)}
             </li>
           </ul>
         </div>

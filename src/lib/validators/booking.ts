@@ -1,8 +1,14 @@
 import { z } from 'zod';
 import { EMAIL_REGEX } from '@/lib/constants';
 
+/** Built-in defaults; the live range comes from admin Catering settings. */
 export const BOOKING_GUEST_COUNT_MIN = 50;
 export const BOOKING_GUEST_COUNT_MAX = 150;
+
+export function guestCountRangeError(count: number, min: number, max: number): string | null {
+  if (count >= min && count <= max) return null;
+  return `Guest count must be between ${min} and ${max}`;
+}
 
 export const bookingStepEventSchema = z.object({
   serviceSlug: z.string().trim().min(1, 'Please select a catering service'),
@@ -13,17 +19,8 @@ export const bookingStepScheduleSchema = z.object({
   preferredDate: z.coerce.date({ invalid_type_error: 'Preferred date is required' }),
   alternateDate: z.coerce.date().optional(),
   startTime: z.string().trim().min(1, 'Start time is required').max(10),
-  guestCount: z.coerce
-    .number()
-    .int()
-    .min(
-      BOOKING_GUEST_COUNT_MIN,
-      `Guest count must be between ${BOOKING_GUEST_COUNT_MIN} and ${BOOKING_GUEST_COUNT_MAX}`
-    )
-    .max(
-      BOOKING_GUEST_COUNT_MAX,
-      `Guest count must be between ${BOOKING_GUEST_COUNT_MIN} and ${BOOKING_GUEST_COUNT_MAX}`
-    ),
+  // The allowed range is set in admin (Catering); see guestCountRangeError().
+  guestCount: z.coerce.number().int().min(1, 'Guest count is required').max(100000),
 });
 
 export const bookingStepVenueSchema = z.object({

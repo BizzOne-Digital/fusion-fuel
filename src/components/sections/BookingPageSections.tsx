@@ -10,8 +10,7 @@ import { PageHero } from '@/components/sections/PageHero';
 import { LifestyleMontage } from '@/components/sections/LifestyleMontage';
 import { PageCtaBanner } from '@/components/sections/PageCtaBanner';
 import { Button } from '@/components/ui/Button';
-import { CONTACT } from '@/lib/brand-content';
-import { getAcaiBowlEvent } from '@/lib/marketing-i18n';
+import { useCatering, useSiteContact } from '@/context/SiteSettingsContext';
 import { SITE_IMAGES } from '@/lib/site-images';
 import type { IService } from '@/models/Service';
 import type { Locale } from '@/types';
@@ -23,7 +22,8 @@ interface BookingPageSectionsProps {
 
 export function BookingPageSections({ locale, services }: BookingPageSectionsProps) {
   const isEs = locale === 'es';
-  const acaiEvent = getAcaiBowlEvent(locale);
+  const acaiEvent = useCatering(locale);
+  const contact = useSiteContact();
 
   return (
     <div className="min-w-0 overflow-x-hidden">
@@ -44,10 +44,10 @@ export function BookingPageSections({ locale, services }: BookingPageSectionsPro
           </span>
         }
       >
-        <Link href={`tel:${CONTACT.phone.replace(/\s/g, '')}`}>
+        <Link href={contact.phoneHref}>
           <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
             <Phone className="mr-2 h-4 w-4" aria-hidden />
-            {CONTACT.phoneDisplay}
+            {contact.phone}
           </Button>
         </Link>
       </PageHero>
@@ -105,7 +105,7 @@ export function BookingPageSections({ locale, services }: BookingPageSectionsPro
                   <p className="mt-2 text-grey">{acaiEvent.balance}</p>
                   <p className="mt-4 text-sm text-grey">{acaiEvent.serviceArea}</p>
                   <p className="mt-2 text-sm text-grey">
-                    {isEs ? 'Llama' : 'Call'} {CONTACT.phoneDisplay} {isEs ? 'con preguntas.' : 'with questions.'}
+                    {isEs ? 'Llama' : 'Call'} {contact.phone} {isEs ? 'con preguntas.' : 'with questions.'}
                   </p>
                 </div>
                 <div className="mt-8">

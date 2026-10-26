@@ -1,4 +1,5 @@
 import connectDB from '@/lib/mongodb';
+import { revalidateSiteContent } from '@/lib/revalidate-storefront';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { writeAuditLog } from '@/lib/admin/audit';
 import { serializeDoc } from '@/lib/admin/serialize';
@@ -39,6 +40,7 @@ export async function POST(request: Request) {
     await connectDB();
     const data = serviceFormSchema.parse(await parseJsonBody(request));
     const service = await Service.create(data);
+    revalidateSiteContent();
 
     await writeAuditLog({
       action: 'create',
