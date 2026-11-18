@@ -40,6 +40,22 @@ export function validateStoredUploadFile(file: File): void {
   }
 }
 
+function matchesImageSignature(buf: Buffer, mimeType: string): boolean {
+  if (buf.length < 12) return false;
+  switch (mimeType) {
+    case 'image/jpeg':
+      return buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
+    case 'image/png':
+      return buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+    case 'image/gif':
+      return buf.subarray(0, 4).toString('ascii') === 'GIF8';
+    case 'image/webp':
+      return buf.subarray(0, 4).toString('ascii') === 'RIFF' && buf.subarray(8, 12).toString('ascii') === 'WEBP';
+    default:
+      return false;
+  }
+}
+
 function buildStoredUploadFilename(mimeType: string): string {
   const ext = extensionForMime(mimeType);
   if (!ext) {
@@ -55,6 +71,9 @@ export async function saveStoredUpload(options: {
   validateStoredUploadFile(options.file);
 
   const buffer = Buffer.from(await options.file.arrayBuffer());
+  if (!matchesImageSignature(buffer, options.file.type)) {
+    throw new Error('File content does not match its image type.');
+  }
   const filename = buildStoredUploadFilename(options.file.type);
 
   await connectDB();
@@ -93,4 +112,45 @@ export async function getStoredUpload(folder: StoredUploadFolder, filename: stri
 
   await connectDB();
   return StoredUpload.findOne({ folder, filename }).lean();
+}
+
+/** Collect every Mongo-backed upload URL (`/api/uploads/...`) found anywhere inside a document. */
+export function collectStoredUploadUrls(value: unknown): Set<string> {
+  const urls = new Set<string>();
+  let plain: unknown;
+  try {
+    plain = JSON.parse(JSON.stringify(value ?? null));
+  } catch {
+    return urls;
+  }
+
+  const walk = (node: unknown) => {
+    if (typeof node === 'string') {
+      if (parseStoredUploadUrl(node)) urls.add(node.trim());
+    } else if (Array.isArray(node)) {
+      node.forEach(walk);
+    } else if (node && typeof node === 'object') {
+      Object.values(node as Record<string, unknown>).forEach(walk);
+    }
+  };
+  walk(plain);
+  return urls;
+}
+
+/**
+ * Delete uploads that were referenced by `before` but are no longer referenced by `after`.
+ * Call this only AFTER the parent document was saved (or deleted: omit `after`).
+ * Never throws: a cleanup failure must not fail the admin save.
+ */
+export async function deleteUnusedStoredUploads(before: unknown, after?: unknown): Promise<void> {
+  try {
+    const kept = collectStoredUploadUrls(after);
+    for (const url of collectStoredUploadUrls(before)) {
+      if (!kept.has(url)) {
+        await deleteStoredUploadByUrl(url);
+      }
+    }
+  } catch (error) {
+    console.error('Stored upload cleanup failed', error);
+  }
 }

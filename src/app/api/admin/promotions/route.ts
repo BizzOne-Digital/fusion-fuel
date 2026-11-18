@@ -1,3 +1,4 @@
+import { revalidateSiteContent } from '@/lib/revalidate-storefront';
 import { z } from 'zod';
 import connectDB from '@/lib/mongodb';
 import { requireAdmin } from '@/lib/admin/require-admin';
@@ -62,6 +63,7 @@ export async function POST(request: Request) {
     await connectDB();
     const data = promotionApiSchema.parse(await parseJsonBody(request));
     const promotion = await Promotion.create(mapPromotionInput(data));
+    revalidateSiteContent();
     await writeAuditLog({
       action: 'create',
       entityType: 'promotion',

@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { AdminStoredImage } from '@/components/admin/AdminStoredImage';
 import { Upload } from 'lucide-react';
 import FormField from '@/components/admin/FormField';
-import { parseStoredUploadUrl, type StoredUploadFolder } from '@/lib/stored-upload-shared';
+import type { StoredUploadFolder } from '@/lib/stored-upload-shared';
 
 interface LocalImageFieldProps {
   label: string;
@@ -15,23 +15,6 @@ interface LocalImageFieldProps {
   error?: string;
 }
 
-async function deleteStoredUploadClient(url: string): Promise<void> {
-  const parsed = parseStoredUploadUrl(url);
-  if (!parsed) {
-    return;
-  }
-
-  const response = await fetch(`/api/uploads/${parsed.folder}/${parsed.filename}`, {
-    method: 'DELETE',
-    credentials: 'same-origin',
-  });
-
-  if (!response.ok && response.status !== 404) {
-    const data = await response.json().catch(() => ({}));
-    throw new Error((data as { error?: string }).error ?? 'Failed to remove image');
-  }
-}
-
 export default function LocalImageField({ label, folder, value, onChange, error }: LocalImageFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -39,17 +22,9 @@ export default function LocalImageField({ label, folder, value, onChange, error 
   async function uploadFile(file: File) {
     setUploading(true);
     try {
-      const previousUrl = value?.trim() || null;
-      if (previousUrl?.startsWith('/api/uploads/')) {
-        await deleteStoredUploadClient(previousUrl);
-      }
-
       const formData = new FormData();
       formData.append('file', file);
       formData.append('folder', folder);
-      if (previousUrl) {
-        formData.append('replaceUrl', previousUrl);
-      }
 
       const response = await fetch('/api/upload', {
         method: 'POST',
@@ -79,25 +54,10 @@ export default function LocalImageField({ label, folder, value, onChange, error 
     }
   }
 
-  async function handleRemove() {
-    const current = value?.trim();
-    if (!current) {
-      onChange(null);
-      return;
-    }
-
-    setUploading(true);
-    try {
-      if (current.startsWith('/api/uploads/')) {
-        await deleteStoredUploadClient(current);
-      }
-      onChange(null);
-      toast.success('Image removed');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to remove image');
-    } finally {
-      setUploading(false);
-    }
+  // Removing only clears the field. The stored file is deleted by the server
+  // after the parent record is saved, so cancelling the form never breaks the live site.
+  function handleRemove() {
+    onChange(null);
   }
 
   return (
@@ -120,7 +80,7 @@ export default function LocalImageField({ label, folder, value, onChange, error 
               <button
                 type="button"
                 disabled={uploading}
-                onClick={() => void handleRemove()}
+                onClick={handleRemove}
                 className="rounded-lg border border-red-200 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
               >
                 Remove

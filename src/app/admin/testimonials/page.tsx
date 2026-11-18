@@ -7,6 +7,7 @@ import DataTable from '@/components/admin/DataTable';
 import StatusBadge from '@/components/admin/StatusBadge';
 import FormField, { inputClassName, textareaClassName } from '@/components/admin/FormField';
 import LocalizedTabs from '@/components/admin/LocalizedTabs';
+import ImageUploadField from '@/components/admin/ImageUploadField';
 import { adminFetch } from '@/lib/admin/client';
 
 type TestimonialRow = Record<string, unknown> & { id: string };
@@ -17,6 +18,7 @@ export default function AdminTestimonialsPage() {
   const [name, setName] = useState('');
   const [quote, setQuote] = useState({ en: '', es: '' });
   const [rating, setRating] = useState(5);
+  const [image, setImage] = useState<{ url: string; alt: string } | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   async function load() {
@@ -36,6 +38,7 @@ export default function AdminTestimonialsPage() {
         name,
         quote,
         rating,
+        ...(image ? { image: { url: image.url, alt: image.alt || name } } : {}),
         verified: true,
         order: 0,
         status: 'published',
@@ -46,6 +49,7 @@ export default function AdminTestimonialsPage() {
       toast.success('Testimonial created');
       setName('');
       setQuote({ en: '', es: '' });
+      setImage(null);
       void load();
     }
   }
@@ -137,6 +141,7 @@ export default function AdminTestimonialsPage() {
             onChange={(e) => setRating(Number(e.target.value))}
           />
         </FormField>
+        <ImageUploadField label="Customer photo (optional)" directory="testimonials" value={image} onChange={setImage} />
         <button type="submit" className="rounded-lg bg-orange-500 px-4 py-2 text-sm text-white">
           Add Testimonial
         </button>

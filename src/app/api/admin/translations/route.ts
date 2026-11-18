@@ -1,67 +1,45 @@
-import { readFile, writeFile } from 'fs/promises';
+import { readFile } from 'fs/promises';
 import path from 'path';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { writeAuditLog } from '@/lib/admin/audit';
 import { jsonOk, handleApiError } from '@/lib/admin/response';
 import { parseJsonBody } from '@/lib/admin/utils';
 import { translationUpdateSchema } from '@/lib/validators/admin';
+import { revalidateSiteContent } from '@/lib/revalidate-storefront';
+import {
+  applyOverrides,
+  flattenKeys,
+  getTranslationOverrides,
+  saveTranslationOverrides,
+} from '@/lib/translation-overrides';
+
+export const runtime = 'nodejs';
 
 const MESSAGES_DIR = path.join(process.cwd(), 'src', 'messages');
 
-function flattenKeys(obj: Record<string, unknown>, prefix = ''): Record<string, string> {
-  const result: Record<string, string> = {};
-  for (const [key, value] of Object.entries(obj)) {
-    const fullKey = prefix ? `${prefix}.${key}` : key;
-    if (typeof value === 'string') {
-      result[fullKey] = value;
-    } else if (value && typeof value === 'object') {
-      Object.assign(result, flattenKeys(value as Record<string, unknown>, fullKey));
-    }
-  }
-  return result;
-}
-
-function unflattenKeys(flat: Record<string, string>): Record<string, unknown> {
-  const result: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(flat)) {
-    const parts = key.split('.');
-    let current = result;
-    for (let i = 0; i < parts.length - 1; i++) {
-      const part = parts[i];
-      if (!current[part] || typeof current[part] !== 'object') {
-        current[part] = {};
-      }
-      current = current[part] as Record<string, unknown>;
-    }
-    current[parts[parts.length - 1]] = value;
-  }
-  return result;
+async function readBaseMessages(locale: 'en' | 'es'): Promise<Record<string, unknown>> {
+  const content = await readFile(path.join(MESSAGES_DIR, `${locale}.json`), 'utf-8');
+  return JSON.parse(content) as Record<string, unknown>;
 }
 
 export async function GET(request: Request) {
   try {
     await requireAdmin();
     const { searchParams } = new URL(request.url);
-    const locale = (searchParams.get('locale') ?? 'en') as 'en' | 'es';
-    const filePath = path.join(MESSAGES_DIR, `${locale}.json`);
-    const content = await readFile(filePath, 'utf-8');
-    const json = JSON.parse(content) as Record<string, unknown>;
+    const locale = searchParams.get('locale') === 'es' ? 'es' : 'en';
+    const tree = applyOverrides(await readBaseMessages(locale), await getTranslationOverrides(locale));
 
-    return jsonOk({
-      locale,
-      translations: flattenKeys(json),
-      tree: json,
-    });
+    return jsonOk({ locale, translations: flattenKeys(tree), tree });
   } catch (error) {
     return handleApiError(error);
   }
 }
 
+/** Edits are stored in MongoDB (the deployed filesystem is read-only) and merged over the JSON files at request time. */
 export async function PUT(request: Request) {
   try {
     const session = await requireAdmin();
     const data = translationUpdateSchema.parse(await parseJsonBody(request));
-    const filePath = path.join(MESSAGES_DIR, `${data.locale}.json`);
 
     const flatUpdates: Record<string, string> = {};
     for (const [key, value] of Object.entries(data.translations)) {
@@ -70,11 +48,8 @@ export async function PUT(request: Request) {
       }
     }
 
-    const content = await readFile(filePath, 'utf-8');
-    const existing = JSON.parse(content) as Record<string, unknown>;
-    const merged = { ...existing, ...unflattenKeys(flatUpdates) };
-
-    await writeFile(filePath, `${JSON.stringify(merged, null, 2)}\n`, 'utf-8');
+    await saveTranslationOverrides(data.locale, flatUpdates);
+    revalidateSiteContent();
 
     await writeAuditLog({
       action: 'update',

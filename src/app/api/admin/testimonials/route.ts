@@ -1,3 +1,4 @@
+import { revalidateSiteContent } from '@/lib/revalidate-storefront';
 import connectDB from '@/lib/mongodb';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { writeAuditLog } from '@/lib/admin/audit';
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
     await connectDB();
     const data = testimonialFormSchema.parse(await parseJsonBody(request));
     const testimonial = await Testimonial.create(data);
+    revalidateSiteContent();
     await writeAuditLog({
       action: 'create',
       entityType: 'testimonial',

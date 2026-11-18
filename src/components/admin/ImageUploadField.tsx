@@ -4,11 +4,10 @@ import { useState } from 'react';
 import LocalImageField from '@/components/admin/LocalImageField';
 import FormField from '@/components/admin/FormField';
 import type { StoredUploadFolder } from '@/lib/stored-upload-shared';
-import type { UploadDirectory } from '@/lib/upload';
 
 interface ImageUploadFieldProps {
   label: string;
-  directory?: UploadDirectory;
+  directory?: 'pages' | 'products' | 'services' | 'gallery' | 'blog' | 'testimonials' | 'settings';
   folder?: StoredUploadFolder;
   value?: { url: string; alt: string; width?: number; height?: number } | null;
   onChange: (value: { url: string; alt: string; width?: number; height?: number } | null) => void;
@@ -17,7 +16,7 @@ interface ImageUploadFieldProps {
   error?: string;
 }
 
-function mapDirectoryToFolder(directory: UploadDirectory): StoredUploadFolder {
+function mapDirectoryToFolder(directory: NonNullable<ImageUploadFieldProps['directory']>): StoredUploadFolder {
   if (directory === 'gallery') return 'gallery';
   if (directory === 'pages') return 'pages';
   if (directory === 'products') return 'products';

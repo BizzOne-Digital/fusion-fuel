@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import {
-  deleteStoredUploadByUrl,
   isStoredUploadFolder,
   saveStoredUpload,
   type StoredUploadFolder,
@@ -16,7 +15,6 @@ export async function POST(request: Request): Promise<Response> {
     const formData = await request.formData();
     const file = formData.get('file');
     const folder = formData.get('folder') ?? formData.get('directory');
-    const replaceUrl = formData.get('replaceUrl');
     const alt = formData.get('alt');
 
     if (!(file instanceof File)) {
@@ -25,10 +23,6 @@ export async function POST(request: Request): Promise<Response> {
 
     if (typeof folder !== 'string' || !isStoredUploadFolder(folder)) {
       return NextResponse.json({ error: 'Invalid upload folder' }, { status: 400 });
-    }
-
-    if (typeof replaceUrl === 'string' && replaceUrl.trim()) {
-      await deleteStoredUploadByUrl(replaceUrl.trim());
     }
 
     const saved = await saveStoredUpload({ folder: folder as StoredUploadFolder, file });

@@ -1,5 +1,6 @@
 import { getRequestConfig } from 'next-intl/server';
 import { routing } from './routing';
+import { applyOverrides, getTranslationOverrides } from '@/lib/translation-overrides';
 
 const NAV_EXTRAS = {
   en: {
@@ -33,15 +34,19 @@ export default getRequestConfig(async ({ requestLocale }) => {
   };
 
   const localeKey = locale as keyof typeof NAV_EXTRAS;
+  const overrides = await getTranslationOverrides(locale as 'en' | 'es');
 
   return {
     locale,
-    messages: {
-      ...imported,
-      nav: {
-        ...(imported.nav ?? {}),
-        ...NAV_EXTRAS[localeKey],
+    messages: applyOverrides(
+      {
+        ...imported,
+        nav: {
+          ...(imported.nav ?? {}),
+          ...NAV_EXTRAS[localeKey],
+        },
       },
-    },
+      overrides
+    ),
   };
 });
