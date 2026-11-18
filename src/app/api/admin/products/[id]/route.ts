@@ -1,3 +1,4 @@
+import { deleteUnusedStoredUploads } from '@/lib/stored-upload';
 import connectDB from '@/lib/mongodb';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { writeAuditLog } from '@/lib/admin/audit';
@@ -82,6 +83,7 @@ export async function PUT(request: Request, context: RouteContext) {
     const before = product.toObject();
     Object.assign(product, mapProductInput(prepared));
     await product.save();
+    await deleteUnusedStoredUploads(before, product.toObject());
     revalidateStorefrontCatalog({ productSlug: product.slug });
 
     await writeAuditLog({
@@ -105,6 +107,8 @@ export async function DELETE(_request: Request, context: RouteContext) {
     const { id } = await context.params;
     const product = await Product.findByIdAndDelete(toObjectId(id));
     if (!product) return jsonError('Product not found', 404);
+    await deleteUnusedStoredUploads(product.toObject());
+    revalidateStorefrontCatalog({ productSlug: product.slug });
 
     await writeAuditLog({
       action: 'delete',

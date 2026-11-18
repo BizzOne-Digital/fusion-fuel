@@ -1,3 +1,4 @@
+import { deleteUnusedStoredUploads } from '@/lib/stored-upload';
 import connectDB from '@/lib/mongodb';
 import { revalidateSiteContent } from '@/lib/revalidate-storefront';
 import { requireAdmin } from '@/lib/admin/require-admin';
@@ -43,6 +44,7 @@ export async function PUT(request: Request, context: RouteContext) {
     const before = page.toObject();
     Object.assign(page, data);
     await page.save();
+    await deleteUnusedStoredUploads(before, page.toObject());
     revalidateSiteContent();
 
     await writeAuditLog({
@@ -68,6 +70,8 @@ export async function DELETE(_request: Request, context: RouteContext) {
     if (!page) {
       return jsonError('Page not found', 404);
     }
+    await deleteUnusedStoredUploads(page.toObject());
+    revalidateSiteContent();
 
     await writeAuditLog({
       action: 'delete',

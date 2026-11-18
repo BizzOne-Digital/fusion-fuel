@@ -1,3 +1,4 @@
+import { revalidateSiteContent } from '@/lib/revalidate-storefront';
 import connectDB from '@/lib/mongodb';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { writeAuditLog } from '@/lib/admin/audit';
@@ -97,6 +98,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
     const addIn = await AddIn.findByIdAndDelete(toObjectId(id));
     if (!addIn) return jsonError('Add-in not found', 404);
 
+    revalidateSiteContent();
     await writeAuditLog({
       action: 'delete',
       entityType: 'add_in',

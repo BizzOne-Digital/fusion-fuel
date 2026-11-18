@@ -1,3 +1,5 @@
+import { revalidateSiteContent } from '@/lib/revalidate-storefront';
+import { deleteUnusedStoredUploads } from '@/lib/stored-upload';
 import connectDB from '@/lib/mongodb';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { writeAuditLog } from '@/lib/admin/audit';
@@ -32,8 +34,11 @@ export async function PUT(request: Request, context: RouteContext) {
     const data = testimonialFormSchema.parse(await parseJsonBody(request));
     const testimonial = await Testimonial.findById(toObjectId(id));
     if (!testimonial) return jsonError('Testimonial not found', 404);
+    const before = testimonial.toObject();
     Object.assign(testimonial, data);
     await testimonial.save();
+    await deleteUnusedStoredUploads(before, testimonial.toObject());
+    revalidateSiteContent();
     await writeAuditLog({
       action: 'update',
       entityType: 'testimonial',
@@ -53,6 +58,8 @@ export async function DELETE(_request: Request, context: RouteContext) {
     const { id } = await context.params;
     const testimonial = await Testimonial.findByIdAndDelete(toObjectId(id));
     if (!testimonial) return jsonError('Testimonial not found', 404);
+    await deleteUnusedStoredUploads(testimonial.toObject());
+    revalidateSiteContent();
     await writeAuditLog({
       action: 'delete',
       entityType: 'testimonial',

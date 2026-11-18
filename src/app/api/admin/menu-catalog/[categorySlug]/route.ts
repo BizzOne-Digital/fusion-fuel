@@ -1,3 +1,5 @@
+import { revalidateStorefrontCatalog, revalidateSiteContent } from '@/lib/revalidate-storefront';
+import { deleteUnusedStoredUploads } from '@/lib/stored-upload';
 import { requireAdmin } from '@/lib/admin/require-admin';
 import { jsonOk, jsonError, handleApiError } from '@/lib/admin/response';
 import { getMenuCatalogData, saveMenuCatalogData } from '@/lib/menu-catalog/repository';
@@ -77,8 +79,12 @@ export async function PUT(request: Request, context: RouteContext) {
         defaults as ProteinTreatsCatalogData
       ) as MenuCatalogDataBySlug[MenuCatalogCategorySlug];
     }
+    const previous = await getMenuCatalogData(slug).catch(() => null);
     await saveMenuCatalogData(slug, payload);
     await syncMenuCatalogToDatabase(slug, payload);
+    await deleteUnusedStoredUploads(previous, payload);
+    revalidateStorefrontCatalog();
+    revalidateSiteContent();
 
     return jsonOk({ data: payload, saved: true });
   } catch (error) {
