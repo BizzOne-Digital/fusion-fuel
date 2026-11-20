@@ -125,7 +125,8 @@ export function AcaiBowlEventSection({ locale }: AcaiBowlEventSectionProps) {
               <ol className="mt-4 space-y-3 text-sm text-white/90">
                 {event.howItWorks.map((step, index) => (
                   <li key={step}>
-                    <span className="font-bold text-lime">{index + 1}.</span> {step}
+                    <span className="font-bold text-lime">{index + 1}.</span>{' '}
+                    {step.replace(/^s*d+[.)]s*/, '')}
                   </li>
                 ))}
               </ol>

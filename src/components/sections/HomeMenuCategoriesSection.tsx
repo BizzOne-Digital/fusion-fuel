@@ -1,7 +1,7 @@
 import { Link } from '@/i18n/navigation';
 import { StorefrontImage } from '@/components/ui/StorefrontImage';
 import { getCategoryDisplayName } from '@/lib/category-display-names';
-import { Button } from '@/components/ui/Button';
+import { OrderNowLink } from '@/components/ui/OrderNowLink';
 import { categoryImageUrl } from '@/lib/public-image';
 import { getCategoryImage } from '@/lib/site-images';
 import type { IProductCategory } from '@/models/ProductCategory';
@@ -50,9 +50,9 @@ export function HomeMenuCategoriesSection({ categories, locale }: HomeMenuCatego
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/menu">
-            <Button size="lg">{locale === 'es' ? 'Ver menú' : 'View menu'}</Button>
-          </Link>
+          <OrderNowLink locale={locale} className="px-8 py-4 text-base">
+            {locale === 'es' ? 'Ver menú y precios' : 'View Menu and Prices'}
+          </OrderNowLink>
         </div>
       </div>
     </section>

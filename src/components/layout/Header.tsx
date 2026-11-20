@@ -1,13 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Menu, Search, ShoppingBag, User } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { Logo } from './Logo';
 import { LanguageToggle } from './LanguageToggle';
 import { MobileNav } from './MobileNav';
 import { useCart } from '@/context/CartContext';
+import { OrderNowLink } from '@/components/ui/OrderNowLink';
+import type { Locale } from '@/types';
 
 const navItems = [
   { href: '/menu', key: 'menu' },
@@ -30,10 +32,13 @@ function HeaderActions({
   className?: string;
 }) {
   const t = useTranslations('nav');
+  const locale = useLocale() as Locale;
 
   return (
     <div className={className}>
       {showLanguage ? <LanguageToggle className="hidden md:flex" /> : null}
+
+      {showLanguage ? <OrderNowLink locale={locale} className="mr-1 px-4 py-2 text-xs xl:px-5" /> : null}
 
       <Link
         href="/menu"

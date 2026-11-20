@@ -6,16 +6,19 @@ export const CONTACT = {
   phone: '+17867122133',
   phoneDisplay: '786-712-2133',
   email: 'fusionfuelboostco@gmail.com',
-  instagramHandle: '@fusionfuelandboostco',
-  instagramUrl: 'https://www.instagram.com/fusionfuelandboostco/',
+  instagramHandle: '@fusionfuelboostco',
+  instagramUrl: 'https://www.instagram.com/fusionfuelboostco',
   facebookUrl: 'https://www.facebook.com/fusionfuelandboostco',
   facebookLabel: 'Fusion Fuel & Boost Co.',
   tiktokHandle: '@fusionfuelandboostco',
   tiktokUrl: 'https://www.tiktok.com/@fusionfuelandboostco',
-  instagramQrImage: '/brand/instagram-qr.png',
+  instagramQrImage: '/brand/instagram-fusionfuelboostco-qr.png',
   venmoQrImage: '/brand/venmo-qr.png',
   venmoHandle: '@FusionFuelBoostCo',
 } as const;
+
+/** Online ordering menu (loaded teas, protein coffee, shakes, açaí bowls). */
+export const ORDER_MENU_URL = 'https://menu.fusionfuelboost.com';
 
 export const VENMO_CHECKOUT = {
   qrImage: CONTACT.venmoQrImage,
@@ -38,7 +41,7 @@ export const MONTHLY_TEA_CLUB = {
   surpriseNote:
     'Pick how many kits you want each month — flavors are a monthly surprise, delivered locally or shipped nationwide.',
   cta: 'Join the Club',
-  ctaDetail: 'Text or DM us to subscribe, or complete the sign-up form below.',
+  ctaDetail: 'Complete the sign-up form below to join the club.',
   joinHeadline: 'JOIN THE CLUB',
   plans: [
     { kits: 6, label: '6 Kits', slug: '6-kits' },
@@ -50,7 +53,7 @@ export const MONTHLY_TEA_CLUB = {
     {
       slug: 'local-delivery',
       label: 'Local Delivery',
-      description: 'Delivered within 3 miles ($25 minimum order).',
+      description: 'Delivered within 3 miles of Wimauma ($25 minimum order).',
     },
     {
       slug: 'nationwide-shipping',
@@ -88,14 +91,16 @@ export const MONTHLY_TEA_CLUB = {
 } as const;
 
 export const DELIVERY = {
-  local: 'Local delivery available within 3 miles (minimum order $25).',
-  nationwide: 'Nationwide shipping available.',
+  local: 'Local delivery available within 3 miles of Wimauma (minimum order $25).',
+  nationwide: 'Nationwide shipping is also available for Mega Tea Kits and Tea Club boxes.',
+  event: 'Event delivery and setup are included within 20 miles.',
 } as const;
 
 export const HOME_HERO = {
   eyebrow: 'Made to Order • Flavorful • Customizable',
   description:
     'Loaded Teas, protein-forward favorites, açaí bowls and more—crafted to complement your active lifestyle.',
+  ctaOrder: 'Order Now',
   ctaPrimary: 'Shop Mega Tea Kits',
   ctaSecondary: 'Explore the Menu',
   ctaTertiary: 'Book Catering',
@@ -161,7 +166,7 @@ export const ACAI_BOWL_EVENT = {
   bowlSizes: ['5 oz Mini Bowl', '9 oz Bowl', '12 oz Bowl'] as const,
   venueTypes: ['Indoor', 'Outdoor'] as const,
   serviceArea: 'Serving events throughout Hillsborough & Manatee Counties',
-  deliveryNote: 'Delivery included within 20 miles',
+  deliveryNote: 'Event delivery and setup are included within 20 miles.',
   serviceDuration: 'Up to 2 hours of on-site service',
   deposit: 'A 50% deposit is required to secure your event date.',
   balance: 'The remaining 50% balance is due prior to the start of service on the day of the event.',
@@ -194,7 +199,7 @@ export const ACAI_BOWL_EVENT = {
     'Professional event setup and serving station',
     'Bowls finished fresh on-site with each guest’s choice of fruits and toppings',
     'Up to 2 hours of service',
-    'Delivery included within 20 miles',
+    'Event delivery and setup included within 20 miles',
   ],
   howItWorks: [
     'We arrive with bowls pre-portioned to ensure a smooth and efficient service experience.',

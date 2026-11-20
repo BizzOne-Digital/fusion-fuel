@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { X } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { OrderNowLink } from '@/components/ui/OrderNowLink';
+import type { Locale } from '@/types';
 
 interface MobileNavProps {
   open: boolean;
@@ -41,6 +43,7 @@ const labelKeys: Record<(typeof links)[number], string> = {
 
 export function MobileNav({ open, onClose }: MobileNavProps) {
   const t = useTranslations('nav');
+  const locale = useLocale() as Locale;
 
   useEffect(() => {
     if (!open) return;
@@ -72,6 +75,9 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
           >
             <X className="h-5 w-5" />
           </button>
+        </div>
+        <div className="px-4 pt-4">
+          <OrderNowLink locale={locale} className="w-full py-3.5" />
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3 py-2" aria-label="Mobile">
           {links.map((href) => (

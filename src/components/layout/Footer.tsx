@@ -2,8 +2,9 @@ import { getTranslations } from 'next-intl/server';
 import { Logo } from './Logo';
 import { AppLink } from '@/components/ui/AppLink';
 import { resolveFooterColumns } from '@/lib/footer-links';
-import { BRAND } from '@/lib/constants';
-import { resolveContact } from '@/lib/site-content';
+import { BRAND, DEFAULT_BUSINESS_HOURS } from '@/lib/constants';
+import { formatHoursGrouped, resolveContact } from '@/lib/site-content';
+import { OrderNowLink } from '@/components/ui/OrderNowLink';
 import { getLocalized, resolveLocalized } from '@/lib/utils';
 import type { ISiteSettings } from '@/models/SiteSettings';
 import type { Locale } from '@/types';
@@ -17,6 +18,7 @@ export async function Footer({ settings, locale }: FooterProps) {
   const t = await getTranslations({ locale, namespace: 'footer' });
   const columns = resolveFooterColumns(settings.footer?.columns);
   const contact = resolveContact(settings);
+  const hours = formatHoursGrouped(contact.hours.length ? contact.hours : DEFAULT_BUSINESS_HOURS, locale);
 
   return (
     <footer className="site-content section-lime mt-auto w-full overflow-x-hidden border-t border-carbon/10">
@@ -42,6 +44,14 @@ export async function Footer({ settings, locale }: FooterProps) {
                 <p key={line}>{line}</p>
               ))}
             </div>
+            <ul className="space-y-1 text-sm text-carbon/90">
+              {hours.map((h) => (
+                <li key={h.days}>
+                  <span className="font-semibold">{h.days}:</span> {h.value}
+                </li>
+              ))}
+            </ul>
+            <OrderNowLink locale={locale} />
             <div className="flex flex-wrap gap-4">
               {settings.social?.map((s) => (
                 <a

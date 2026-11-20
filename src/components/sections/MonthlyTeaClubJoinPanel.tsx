@@ -218,7 +218,7 @@ export function MonthlyTeaClubJoinPanel({ locale: localeProp }: MonthlyTeaClubJo
         </div>
       </div>
 
-      <div className="mt-8 rounded-[1.75rem] border border-grey/15 bg-cream/30 p-6 md:p-8">
+      <div id="club-signup" className="mt-8 scroll-mt-28 rounded-[1.75rem] border border-grey/15 bg-cream/30 p-6 md:p-8">
         <h4 className="font-display text-2xl text-carbon">{club.cta}</h4>
         <p className="mt-2 text-sm text-grey">{club.ctaDetail}</p>
 
@@ -279,7 +279,7 @@ export function MonthlyTeaClubJoinPanel({ locale: localeProp }: MonthlyTeaClubJo
 
         <div className="mt-8 border-t border-grey/15 pt-6 text-sm text-grey">
           <p className="font-semibold text-carbon">
-            {locale === 'es' ? '¿Prefieres escribirnos?' : 'Prefer to text or DM?'}
+            {locale === 'es' ? '¿Preguntas? Contáctanos' : 'Questions? Contact us'}
           </p>
           <ul className="mt-3 space-y-2">
             <li>

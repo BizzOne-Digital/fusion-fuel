@@ -7,6 +7,7 @@ import {
   getHomePageCopy,
   getMonthlyTeaClub,
 } from '@/lib/marketing-i18n';
+import { resolveContact } from '@/lib/site-content';
 import { cn } from '@/lib/utils';
 import type { Locale } from '@/types';
 
@@ -19,12 +20,15 @@ interface MonthlyTeaClubSectionProps {
   cateringTagline?: string;
   /** When true, reduces outer padding for use inside the menu category panel. */
   embedded?: boolean;
+  /** Site settings (admin-editable contact info); falls back to built-in defaults. */
+  settings?: Parameters<typeof resolveContact>[0];
 }
 
-export function MonthlyTeaClubSection({ locale = 'en', embedded = false, cateringTagline }: MonthlyTeaClubSectionProps) {
+export function MonthlyTeaClubSection({ locale = 'en', embedded = false, cateringTagline, settings }: MonthlyTeaClubSectionProps) {
   const club = getMonthlyTeaClub(locale);
   const delivery = getDelivery(locale);
   const copy = getHomePageCopy(locale);
+  const contact = resolveContact(settings);
   return (
     <section className="relative w-full overflow-x-hidden bg-white text-carbon">
       <div
@@ -57,16 +61,20 @@ export function MonthlyTeaClubSection({ locale = 'en', embedded = false, caterin
               <p className="max-w-xl text-base text-grey">{club.surpriseNote}</p>
             </div>
 
-            <ul className="mt-8 space-y-3 text-sm text-grey">
-              {club.features.slice(0, 3).map((feature) => (
-                <li key={feature.title} className="flex gap-2">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-pink" aria-hidden />
-                  <span>
-                    <strong className="text-carbon">{feature.title}</strong> — {feature.description}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <div className="mt-8">
+              <a
+                href="#club-signup"
+                className="inline-flex items-center justify-center rounded-full bg-lime px-8 py-4 text-lg font-semibold text-ink transition hover:brightness-95"
+              >
+                {club.cta}
+              </a>
+              <p className="mt-3 text-sm text-grey">
+                {locale === 'es' ? '¿Preguntas? Escríbenos al ' : 'Questions? Text us at '}
+                <a href={contact.phoneHref} className="font-semibold text-carbon hover:text-pink">
+                  {contact.phone}
+                </a>
+              </p>
+            </div>
           </div>
         </div>
 
@@ -128,7 +136,9 @@ export function MonthlyTeaClubSection({ locale = 'en', embedded = false, caterin
         </div>
 
         <div className="mt-20 rounded-[1.75rem] border border-grey/15 bg-cream/30 p-6 md:p-8 lg:mt-24">
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-pink">{club.joinHeadline}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-pink">
+            {locale === 'es' ? 'Entrega y envío del club' : 'Club Delivery & Shipping'}
+          </p>
           <ul className="mt-6 space-y-3 text-sm text-grey">
             <li className="flex gap-2">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-pink" aria-hidden />

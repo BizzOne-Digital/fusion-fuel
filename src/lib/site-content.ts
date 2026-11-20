@@ -252,3 +252,30 @@ export function formatHours(hours: BusinessHoursEntry[], locale: Locale): Array<
       value: entry.closed ? (locale === 'es' ? 'Cerrado' : 'Closed') : `${formatTime(entry.open, locale)} – ${formatTime(entry.close, locale)}`,
     }));
 }
+
+/**
+ * One consistent, customer-friendly hours line per run of days with the same hours,
+ * e.g. "Monday–Friday: 7:00 AM – 4:00 PM". Days missing from the list are shown as closed
+ * so a day is never silently omitted.
+ */
+export function formatHoursGrouped(hours: BusinessHoursEntry[], locale: Locale): Array<{ days: string; value: string }> {
+  const byDay = new Map(hours.map((entry) => [entry.day, entry]));
+  const rows = DAY_ORDER.map((day) => {
+    const entry = byDay.get(day);
+    const value =
+      !entry || entry.closed
+        ? locale === 'es' ? 'Cerrado' : 'Closed'
+        : `${formatTime(entry.open, locale)} – ${formatTime(entry.close, locale)}`;
+    return { day, value };
+  });
+  const groups: Array<{ first: BusinessHoursEntry['day']; last: BusinessHoursEntry['day']; value: string }> = [];
+  for (const row of rows) {
+    const prev = groups[groups.length - 1];
+    if (prev && prev.value === row.value) prev.last = row.day;
+    else groups.push({ first: row.day, last: row.day, value: row.value });
+  }
+  return groups.map((g) => ({
+    days: g.first === g.last ? DAY_NAMES[locale][g.first] : `${DAY_NAMES[locale][g.first]}–${DAY_NAMES[locale][g.last]}`,
+    value: g.value,
+  }));
+}

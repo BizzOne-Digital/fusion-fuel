@@ -44,13 +44,14 @@ export const SUPPORTED_LOCALES: Locale[] = ['en', 'es'];
 export const DEFAULT_LOCALE: Locale = 'en';
 
 export const DEFAULT_BUSINESS_HOURS: BusinessHoursEntry[] = [
-  { day: 'monday', open: '07:00', close: '19:00' },
-  { day: 'tuesday', open: '07:00', close: '19:00' },
-  { day: 'wednesday', open: '07:00', close: '19:00' },
-  { day: 'thursday', open: '07:00', close: '19:00' },
-  { day: 'friday', open: '07:00', close: '20:00' },
-  { day: 'saturday', open: '08:00', close: '18:00' },
-  { day: 'sunday', open: '09:00', close: '17:00' },
+  { day: 'monday', open: '07:00', close: '16:00' },
+  { day: 'tuesday', open: '07:00', close: '16:00' },
+  { day: 'wednesday', open: '07:00', close: '16:00' },
+  { day: 'thursday', open: '07:00', close: '16:00' },
+  { day: 'friday', open: '07:00', close: '16:00' },
+  { day: 'saturday', open: '08:00', close: '14:00' },
+  // Sunday closed: pending owner confirmation (the fix list asks Katerine to confirm).
+  { day: 'sunday', open: '00:00', close: '00:00', closed: true },
 ];
 
 export const SITE_SETTINGS_KEY = 'default';

@@ -5,6 +5,7 @@ import { CupSoda, Package, UtensilsCrossed } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 import { BrandTagline } from '@/components/brand/BrandTagline';
 import { Button } from '@/components/ui/Button';
+import { OrderNowLink } from '@/components/ui/OrderNowLink';
 import { getHomeHero } from '@/lib/marketing-i18n';
 import { SITE_IMAGES } from '@/lib/site-images';
 import type { Locale } from '@/types';
@@ -68,31 +69,37 @@ export function HomeHeroSection({
           </p>
 
           <div className="mt-6 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:flex-wrap sm:gap-4">
-            <Link href={kitHref} className="w-full sm:w-auto">
-              <Button
-                size="lg"
-                className="w-full rounded-md px-5 py-3.5 text-xs font-bold uppercase tracking-[0.1em] text-ink sm:w-auto sm:px-7 sm:py-4 sm:text-sm sm:tracking-[0.12em]"
-              >
-                {hero.ctaPrimary}
-              </Button>
-            </Link>
-            <Link href="/menu" className="w-full sm:w-auto">
+            <OrderNowLink
+              locale={locale}
+              className="w-full rounded-md px-5 py-3.5 text-xs tracking-[0.1em] sm:w-auto sm:px-7 sm:py-4 sm:text-sm sm:tracking-[0.12em]"
+            >
+              {hero.ctaOrder}
+            </OrderNowLink>
+            <Link href="/booking" className="w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="lg"
                 className="w-full rounded-md border-2 border-white bg-black/25 px-5 py-3.5 text-xs font-bold uppercase tracking-[0.1em] text-white backdrop-blur-sm hover:bg-white hover:text-ink sm:w-auto sm:bg-transparent sm:px-7 sm:py-4 sm:text-sm sm:tracking-[0.12em]"
               >
-                {hero.ctaSecondary}
+                {hero.ctaTertiary}
               </Button>
             </Link>
           </div>
 
-          <Link
-            href="/booking"
-            className="mt-5 inline-block text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:text-[#F5FF00] sm:mt-6 sm:text-sm sm:tracking-[0.18em]"
-          >
-            {hero.ctaTertiary}
-          </Link>
+          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 sm:mt-6">
+            <Link
+              href={kitHref}
+              className="inline-block text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:text-[#F5FF00] sm:text-sm sm:tracking-[0.18em]"
+            >
+              {hero.ctaPrimary}
+            </Link>
+            <Link
+              href="/menu"
+              className="inline-block text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:text-[#F5FF00] sm:text-sm sm:tracking-[0.18em]"
+            >
+              {hero.ctaSecondary}
+            </Link>
+          </div>
         </div>
       </div>
 

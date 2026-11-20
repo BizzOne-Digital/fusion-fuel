@@ -17,7 +17,7 @@ const TEXT_FIELDS: Array<{ key: TextKey; label: string; hint?: string; long?: bo
   { key: 'tagline', label: 'Catering tagline', hint: 'Short line shown on the home page and Monthly Tea Club section.', long: true },
   { key: 'headline', label: 'Headline / intro', long: true },
   { key: 'serviceArea', label: 'Service area' },
-  { key: 'deliveryNote', label: 'Delivery note', hint: 'e.g. Delivery included within 20 miles' },
+  { key: 'deliveryNote', label: 'Delivery note', hint: 'e.g. Event delivery and setup are included within 20 miles.' },
   { key: 'serviceDuration', label: 'Service duration', hint: 'e.g. Up to 2 hours of on-site service' },
   { key: 'deposit', label: 'Deposit policy', long: true },
   { key: 'balance', label: 'Balance / payment policy', long: true },

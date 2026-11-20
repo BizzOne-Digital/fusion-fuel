@@ -33,6 +33,7 @@ export function getHomeHero(locale: Locale) {
     eyebrow: 'Hecho a pedido • Con sabor • Personalizable',
     description:
       'Loaded teas, favoritos con proteína, bowls de açaí y más — elaborados para complementar tu estilo de vida activo.',
+    ctaOrder: 'Ordenar ahora',
     ctaPrimary: 'Comprar Mega Tea Kits',
     ctaSecondary: 'Explorar el menú',
     ctaTertiary: 'Reservar catering',
@@ -60,7 +61,7 @@ export function getMonthlyTeaClub(locale: Locale) {
     surpriseNote:
       'Elige cuántos kits quieres cada mes — los sabores son sorpresa mensual, con entrega local o envío a todo el país.',
     cta: 'Únete al club',
-    ctaDetail: 'Escríbenos o envíanos un DM para suscribirte, o completa el formulario abajo.',
+    ctaDetail: 'Completa el formulario de abajo para unirte al club.',
     joinHeadline: 'ÚNETE AL CLUB',
     plans: [
       { kits: 6, label: '6 kits', slug: '6-kits' },
@@ -72,7 +73,7 @@ export function getMonthlyTeaClub(locale: Locale) {
       {
         slug: 'local-delivery',
         label: 'Entrega local',
-        description: 'Entrega en un radio de 3 millas (pedido mínimo $25).',
+        description: 'Entrega en un radio de 3 millas de Wimauma (pedido mínimo $25).',
       },
       {
         slug: 'nationwide-shipping',
@@ -118,8 +119,9 @@ export function getCateringTagline(locale: Locale): string {
 export function getDelivery(locale: Locale) {
   if (locale !== 'es') return EN_DELIVERY;
   return {
-    local: 'Entrega local disponible en un radio de 3 millas (pedido mínimo $25).',
-    nationwide: 'Envíos a todo Estados Unidos.',
+    local: 'Entrega local disponible en un radio de 3 millas de Wimauma (pedido mínimo $25).',
+    nationwide: 'También ofrecemos envíos a todo Estados Unidos para Mega Tea Kits y cajas del Club.',
+    event: 'La entrega y el montaje para eventos están incluidos dentro de 20 millas.',
   };
 }
 
@@ -132,12 +134,12 @@ export function getMegaTeaKitsMarketing(locale: Locale) {
   if (locale !== 'es') {
     return {
       headline: 'Mega Tea Kits',
-      description: 'Prepara loaded teas en casa con boosters premium y el enhancer de sabor que elijas.',
+      description: 'Make loaded teas at home with premium boosters and the flavor enhancer of your choice.',
       convenienceNote:
-        'Los Mega Tea Kits vienen empaquetados individualmente — todo lo que necesitas para hacer loaded tea en casa.',
-      kitProductsLabel: 'Cada kit incluye 5 productos',
-      shopCta: 'Ver Mega Tea Kits',
-      eyebrow: 'Hecho para llevar',
+        'Mega Tea Kits come individually packaged - everything you need to make loaded tea at home.',
+      kitProductsLabel: 'Each kit includes 5 products',
+      shopCta: 'Shop Mega Tea Kits',
+      eyebrow: 'Made to Go',
     };
   }
   return {
@@ -190,7 +192,7 @@ export function getAcaiBowlEvent(locale: Locale): AcaiBowlEventCopy {
     bowlSizes: ['Mini bowl de 5 oz', 'Bowl de 9 oz', 'Bowl de 12 oz'],
     venueTypes: ['Interior', 'Exterior'],
     serviceArea: 'Servimos eventos en los condados de Hillsborough y Manatee',
-    deliveryNote: 'Entrega incluida dentro de 20 millas',
+    deliveryNote: 'La entrega y el montaje para eventos están incluidos dentro de 20 millas.',
     serviceDuration: 'Hasta 2 horas de servicio en el lugar',
     deposit: 'Se requiere un depósito del 50% para reservar la fecha de tu evento.',
     balance: 'El 50% restante debe pagarse antes del inicio del servicio el día del evento.',
@@ -223,7 +225,7 @@ export function getAcaiBowlEvent(locale: Locale): AcaiBowlEventCopy {
       'Montaje profesional del evento y estación de servicio',
       'Bowls terminados al momento con la fruta y toppings que elija cada invitado',
       'Hasta 2 horas de servicio',
-      'Entrega incluida dentro de 20 millas',
+      'Entrega y montaje del evento incluidos dentro de 20 millas',
     ],
     howItWorks: [
       'Llegamos con los bowls preporcionados para un servicio fluido y eficiente.',

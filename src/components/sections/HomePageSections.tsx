@@ -12,8 +12,8 @@ import { LifestyleMontage } from '@/components/sections/LifestyleMontage';
 import { SocialFollowSection } from '@/components/sections/SocialFollowSection';
 import { SITE_IMAGES } from '@/lib/site-images';
 import { Button } from '@/components/ui/Button';
+import { OrderNowLink } from '@/components/ui/OrderNowLink';
 import {
-  getDelivery,
   getHomePageCopy,
   getMonthlyTeaClub,
 } from '@/lib/marketing-i18n';
@@ -48,7 +48,6 @@ export function HomePageSections({
   const heroTitle = getLocalized(hero.title, locale);
   const { fuel: fuelLine, boost: boostLine } = splitBrandSlogan(heroTitle);
   const monthlyClub = getMonthlyTeaClub(locale);
-  const delivery = getDelivery(locale);
   const homeCopy = getHomePageCopy(locale);
 
   return (
@@ -74,7 +73,7 @@ export function HomePageSections({
       <AcaiBowlEventSection locale={locale} />
 
       {/* Monthly Tea Club */}      <SectionReveal>
-        <MonthlyTeaClubSection locale={locale} cateringTagline={resolveCatering(settings.catering, locale).tagline} />
+        <MonthlyTeaClubSection locale={locale} settings={settings} cateringTagline={resolveCatering(settings.catering, locale).tagline} />
       </SectionReveal>
 
       {/* 13. Catering */}
@@ -114,18 +113,6 @@ export function HomePageSections({
         </section>
       </SectionReveal>
 
-      {/* 15. Special offer */}
-      <SectionReveal>
-        <section className="section-yellow px-4 py-16">
-          <div className="mx-auto max-w-3xl rounded-2xl border border-pink/25 bg-white p-6 text-center shadow-sm sm:p-8">
-            <h2 className="font-display text-3xl">{monthlyClub.cta}</h2>
-            <p className="mt-4 text-grey">{monthlyClub.ctaDetail}</p>
-            <p className="mt-2 text-sm text-grey">{delivery.local}</p>
-            <Link href="/menu?category=monthly-tea-club" className="mt-6 inline-block text-pink font-semibold hover:underline">{homeCopy.signUpClub}</Link>
-          </div>
-        </section>
-      </SectionReveal>
-
       <LifestyleMontage locale={locale} />
 
       <SocialFollowSection locale={locale} social={settings.social} />
@@ -136,9 +123,7 @@ export function HomePageSections({
           <div className="mx-auto max-w-4xl px-4 text-center lg:px-6">
             <h2 className="font-display text-5xl text-white">{monthlyClub.taglines.secondary}</h2>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Link href="/menu?category=monthly-tea-club">
-                <Button size="lg">{monthlyClub.cta}</Button>
-              </Link>
+              <OrderNowLink locale={locale} className="px-8 py-4 text-base" />
               <Link href="/booking"><Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-ink">{homeCopy.bookCatering}</Button></Link>
             </div>
           </div>
