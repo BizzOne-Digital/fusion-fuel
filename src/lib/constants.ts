@@ -26,7 +26,7 @@ export const BRAND_COLORS = {
 
 export const BUSINESS_DEFAULTS = {
   email: 'fusionfuelboostco@gmail.com',
-  phone: '+17867122133',
+  phone: '+18138422594',
   address: {
     street: '',
     city: 'Wimauma',

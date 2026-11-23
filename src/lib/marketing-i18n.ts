@@ -73,7 +73,7 @@ export function getMonthlyTeaClub(locale: Locale) {
       {
         slug: 'local-delivery',
         label: 'Entrega local',
-        description: 'Entrega en un radio de 3 millas de Wimauma (pedido mínimo $25).',
+        description: 'Entrega en un radio de 5 millas de Wimauma (pedido mínimo $25).',
       },
       {
         slug: 'nationwide-shipping',
@@ -119,7 +119,7 @@ export function getCateringTagline(locale: Locale): string {
 export function getDelivery(locale: Locale) {
   if (locale !== 'es') return EN_DELIVERY;
   return {
-    local: 'Entrega local disponible en un radio de 3 millas de Wimauma (pedido mínimo $25).',
+    local: 'Entrega local disponible en un radio de 5 millas de Wimauma (pedido mínimo $25).',
     nationwide: 'También ofrecemos envíos a todo Estados Unidos para Mega Tea Kits y cajas del Club.',
     event: 'La entrega y el montaje para eventos están incluidos dentro de 20 millas.',
   };

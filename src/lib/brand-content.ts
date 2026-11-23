@@ -3,8 +3,8 @@
 import { MENU_FLAVORS } from '@/lib/menu-flavors';
 
 export const CONTACT = {
-  phone: '+17867122133',
-  phoneDisplay: '786-712-2133',
+  phone: '+18138422594',
+  phoneDisplay: '813-842-2594',
   email: 'fusionfuelboostco@gmail.com',
   instagramHandle: '@fusionfuelboostco',
   instagramUrl: 'https://www.instagram.com/fusionfuelboostco',
@@ -53,7 +53,7 @@ export const MONTHLY_TEA_CLUB = {
     {
       slug: 'local-delivery',
       label: 'Local Delivery',
-      description: 'Delivered within 3 miles of Wimauma ($25 minimum order).',
+      description: 'Delivered within 5 miles of Wimauma ($25 minimum order).',
     },
     {
       slug: 'nationwide-shipping',
@@ -91,7 +91,7 @@ export const MONTHLY_TEA_CLUB = {
 } as const;
 
 export const DELIVERY = {
-  local: 'Local delivery available within 3 miles of Wimauma (minimum order $25).',
+  local: 'Local delivery available within 5 miles of Wimauma (minimum order $25).',
   nationwide: 'Nationwide shipping is also available for Mega Tea Kits and Tea Club boxes.',
   event: 'Event delivery and setup are included within 20 miles.',
 } as const;

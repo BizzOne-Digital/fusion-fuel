@@ -498,7 +498,7 @@ Before full production launch, the client should provide:
 ## Business Contact (Seeded Defaults)
 
 - **Email:** fusionfuelboostco@gmail.com
-- **Phone:** 786-712-2133
+- **Phone:** 813-842-2594
 - **Instagram:** [@pereira_katerine](https://www.instagram.com/pereira_katerine?igsh=cGNiajFwZzNndjly)
 
 ---
